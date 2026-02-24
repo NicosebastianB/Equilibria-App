@@ -5,30 +5,6 @@
 ## Descripción del proyecto
 Equilibria es una aplicación móvil desarrollada con **JavaScript + Ionic**, orientada a estudiantes universitarios colombianos. Su propósito es integrar la organización académica con el bienestar personal en una sola plataforma digital. A diferencia de las agendas tradicionales, Equilibria combina planificación académica con hábitos saludables, ofreciendo una herramienta integral para mejorar rendimiento y calidad de vida.
 
-## Antecedentes
-Actualmente existen aplicaciones de agenda y aplicaciones de bienestar, pero pocas integran ambas experiencias en un solo sistema. Equilibria se diferencia al ofrecer:
-- Registro de asignaturas, créditos y horarios.
-- Cálculo automático de horas de estudio.
-- Planificador Pomodoro con estadísticas por materia.
-- Recordatorios académicos y de autocuidado.
-- Métricas de productividad y bienestar.
-- Elementos opcionales de gamificación.
-
-## Justificación
-La aplicación responde a dos perfiles de estudiantes:
-- **Descuidados:** necesitan recordatorios claros y sencillos para organizar su vida académica.  
-- **Organizados:** buscan estadísticas, métricas y seguimiento detallado para optimizar su rendimiento.  
-
-Equilibria ayuda a mantener un balance entre estudio y salud, convirtiéndose en un aliado práctico para la vida universitaria.
-
-## Nombre, logo y slogan
-- **Nombre:** *Equilibria*, refleja el balance entre responsabilidades académicas y bienestar personal.  
-- **Logo:** una balanza con un gorro de graduación y un corazón, simbolizando estudio y autocuidado.  
-- **Slogan:** *Estudia mejor, vive mejor*.  
-
-## Público objetivo
-Principalmente estudiantes universitarios colombianos, con posibilidad de expansión hacia instituciones educativas que deseen recomendar la aplicación como herramienta de apoyo.
-
 ## Metodología
 El desarrollo se realizará con **Scrum + Kanban**, organizando el trabajo en **7 sprints de dos semanas**:
 - Cada sprint cubre un requerimiento funcional + diseño de interfaz asociado.
@@ -140,6 +116,64 @@ Cuando terminen una parte del trabajo:
 - Cada rama es independiente, pero se sincroniza con el repositorio remoto en GitHub.
 - Los cambios se suben con git add, git commit, y git push origin rama.
 
+## 🔄 Mantener el proyecto sincronizado con GitHub
+
+
+**1. Actualizar tu rama con los últimos cambios**:
+Antes de empezar a trabajar, asegúrate de que tu copia local esté al día con el repositorio remoto:
+
+
+`git checkout nombre-de-la-rama`
+
+
+`git pull origin nombre-de-la-rama`
+
+
+**Ejemplo para Mauricio:**
+
+
+`git checkout database`
+`git pull origin database`
+
+
+
+**2. Verificar el estado de tu repositorio**:
+Revisa qué archivos cambiaste o agregaste:
+
+
+`git status`
+
+
+
+**3. Guardar tus cambios**:
+- Agregar los archivos modificados:
+
+  
+`git add .`
+
+
+- Crear un commit con un mensaje claro:
+
+  
+`git commit -m "feat: agregar script de base de datos"`
+
+
+
+**4. Subir tus cambios a GitHub**:
+Envía tus cambios a tu rama en el repositorio remoto:
+
+
+`git push origin nombre-de-la-rama`
+
+
+
+**✅ Resumen**: 
+
+
+- `git pull` → trae los cambios más recientes desde GitHub.
+- `git add` + `git commit` → guarda tus modificaciones localmente.
+- `git push` → sube tus cambios a tu rama en GitHub.
+- Siempre trabaja en tu rama asignada para mantener orden en el proyecto.
 
 ## Documentación
 - `docs/requerimientos.md`: especificación de requerimientos.  
