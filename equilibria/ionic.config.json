@@ -1,0 +1,7 @@
+{
+  "name": "equilibria",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
