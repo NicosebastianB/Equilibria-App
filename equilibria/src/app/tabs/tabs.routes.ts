@@ -7,30 +7,31 @@ export const routes: Routes = [
     component: TabsPage,
     children: [
       {
-        path: 'tab1',
-        loadComponent: () =>
-          import('../tab1/tab1.page').then((m) => m.Tab1Page),
+        path: 'calendar-and-tasks',
+        loadComponent: () => import('../calendar-and-tasks/calendar-and-tasks.page').then(m => m.CalendarAndTasksPage),
       },
       {
-        path: 'tab2',
-        loadComponent: () =>
-          import('../tab2/tab2.page').then((m) => m.Tab2Page),
+        path: 'materias',
+        loadComponent: () => import('../materias/materias.page').then(m => m.MateriasPage),
       },
       {
-        path: 'tab3',
-        loadComponent: () =>
-          import('../tab3/tab3.page').then((m) => m.Tab3Page),
+        path: 'estadisticas',
+        loadComponent: () => import('../estadisticas/estadisticas.page').then(m => m.EstadisticasPage),
+      },
+      {
+        path: 'modo-estudio',
+        loadComponent: () => import('../modo-estudio/modo-estudio.page').then(m => m.ModoEstudioPage),
       },
       {
         path: '',
-        redirectTo: '/tabs/tab1',
+        redirectTo: '/tabs/calendar-and-tasks',
         pathMatch: 'full',
       },
     ],
   },
   {
     path: '',
-    redirectTo: '/tabs/tab1',
+    redirectTo: '/tabs/calendar-and-tasks',
     pathMatch: 'full',
   },
 ];
