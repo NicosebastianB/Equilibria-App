@@ -1,7 +1,19 @@
 import { Corte } from './corte';
 import { Tarea } from './tarea';
+import { Semestre } from './semestre';
+import {RegistroEstudio} from './registroEstudio';
 
 export class Materia {
+  public definitiva?: number;
+  public notaFaltante?: number;
+  public cortes: Corte[];
+  public tareas: Tarea[] = [];
+  public horasTotales: number = 0;
+  public horasPresenciales: number = 0;
+  public horasIndependientes: number = 0;
+  public horasIndependientesPorSemana: number = 0;
+  public registros: RegistroEstudio[] = [];
+
   constructor(
     public idMateria: number,
     public nombre: string,
@@ -9,71 +21,107 @@ export class Materia {
     public creditos: number,
     public profesor: string,
     public salon: string,
-    public tiempoEstudio: number,
-    public definitiva?: number,
-    public notaFaltante?: number,
-    public cortes: Corte[] = [],
-    public tareas: Tarea[] = []
-  ) {}
-
-  // --- Gestión de cortes ---
-  agregarCorte(corte: Corte) {
-    this.cortes.push(corte);
+    public horasClaseSemanal: number,
+    public semanas?: number, // opcional
+    public finalizado: boolean = false
+  ) {
+    // Inicializar cortes dentro del constructor
+    this.cortes = [
+      new Corte(idMateria, 1, 'Corte 1', 30),
+      new Corte(idMateria, 2, 'Corte 2', 30),
+      new Corte(idMateria, 3, 'Corte 3', 40)
+    ];
   }
 
-  editarCorte(idCorte: number, nuevoCorte: Corte) {
-    const index = this.cortes.findIndex(c => c.idCorte === idCorte);
-    if (index !== -1) {
-      this.cortes[index] = nuevoCorte;
-    }
+
+
+  calcularHorasTrabajo(semestre?: Semestre) {
+    const semanasActivas = this.semanas ?? semestre?.semanasTotales ?? 0;
+
+    this.horasTotales = this.creditos * 48;
+    this.horasPresenciales = this.horasClaseSemanal * semanasActivas;
+    this.horasIndependientes = this.horasTotales - this.horasPresenciales;
+    this.horasIndependientesPorSemana =
+      semanasActivas > 0 ? this.horasIndependientes / semanasActivas : 0;
   }
 
-  eliminarCorte(idCorte: number) {
-    this.cortes = this.cortes.filter(c => c.idCorte !== idCorte);
-  }
-
-  validarPorcentajes(): boolean {
-    const total = this.cortes.reduce((acc, c) => acc + (c.porcentaje ?? 0), 0);
-    return total <= 100;
-  }
-
-  calcularDefinitiva(): number {
-    const totalNotas = this.cortes.reduce((acc, c) => acc + (c.notaDefinitiva ?? 0), 0);
-    this.definitiva = totalNotas;
-    return this.definitiva;
-  }
-
-  // --- Gestión de tareas ---
   agregarTarea(tarea: Tarea) {
     this.tareas.push(tarea);
   }
 
-  editarTarea(idTarea: number, nuevaTarea: Tarea) {
-    const index = this.tareas.findIndex(t => t.idTarea === idTarea);
-    if (index !== -1) {
-      this.tareas[index] = nuevaTarea;
+  validarPorcentajes(): boolean {
+    const total = this.cortes.reduce((acc, c) => acc + (c.porcentaje ?? 0), 0);
+    return total === 100;
+  }
+
+  calcularDefinitiva(): number {
+    if (this.cortes.length === 0) {
+      this.definitiva = 0;
+      return 0;
     }
+
+    const total = this.cortes.reduce((acc, corte) => {
+      const notaCorte = corte.calcularDefinitiva();
+      return acc + (notaCorte * (corte.porcentaje / 100));
+    }, 0);
+
+    this.definitiva = total;
+    return this.definitiva;
   }
 
-  eliminarTarea(idTarea: number) {
-    this.tareas = this.tareas.filter(t => t.idTarea !== idTarea);
-  }
+  calcularNotaFaltante(notaMinima: number = 3.0): number {
+    let notaActual = 0;
+    let pesoRestante = 0;
 
-  marcarTareaCompletada(idTarea: number) {
-    const tarea = this.tareas.find(t => t.idTarea === idTarea);
-    if (tarea) tarea.completado();
-  }
+    this.cortes.forEach(corte => {
+      const notaCorte = corte.calcularDefinitiva();
+      if (notaCorte > 0) {
+        notaActual += notaCorte * (corte.porcentaje / 100);
+      } else {
+        pesoRestante += corte.porcentaje;
+      }
+    });
 
-  marcarTareaPendiente(idTarea: number) {
-    const tarea = this.tareas.find(t => t.idTarea === idTarea);
-    if (tarea) tarea.pendiente();
-  }
+    if (pesoRestante === 0) {
+      this.notaFaltante = 0; // ya no hay cortes restantes
+      return 0;
+    }
 
-  calcularHorasDeEstudio(): number {
-    return this.tiempoEstudio * this.creditos;
+    const faltante = (notaMinima - notaActual) / (pesoRestante / 100);
+    this.notaFaltante = Math.max(faltante, 0); // nunca negativo
+    return this.notaFaltante;
   }
 
   validarCreditos(): boolean {
     return this.creditos > 0;
   }
+
+  //--Registro de horas estudiadas
+
+  agregarRegistro(registro: RegistroEstudio) {
+    this.registros.push(registro);
+  }
+
+  // Horas acumuladas en toda la materia
+  calcularHorasAcumuladas(): number {
+    return this.registros.reduce((acc, r) => acc + r.duracionMinutos, 0) / 60;
+  }
+
+  // Horas acumuladas por semana
+  calcularHistorialSemanal(semestre: Semestre): number[] {
+    const semanas: number[] = Array(semestre.semanasTotales).fill(0);
+
+    this.registros.forEach(r => {
+      const semana = semestre.calcularSemanaActual(r.fecha);
+      if (semana > 0 && semana <= semanas.length) {
+        semanas[semana - 1] += r.duracionMinutos / 60;
+      }
+    });
+
+    return semanas; // array con horas por semana
+  }
+
+
+
+
 }

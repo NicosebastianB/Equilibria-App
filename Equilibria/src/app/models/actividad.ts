@@ -8,7 +8,8 @@ export class Actividad {
     public nombre: string,
     public porcentaje: number,
     public calificables: Calificable[] = [],
-    public notaDefinitiva?: number
+    public notaDefinitiva?: number,
+    public fijo : boolean = false // atributo técnico para edición temporal
   ) {}
 
   agregarCalificable(calificable: Calificable) {
@@ -27,8 +28,13 @@ export class Actividad {
   }
 
   calcularDefinitiva(): number {
+    if (this.calificables.length === 0) {
+      this.notaDefinitiva = 0;
+      return 0;
+    }
     const totalNotas = this.calificables.reduce((acc, c) => acc + (c.nota ?? 0), 0);
-    this.notaDefinitiva = totalNotas;
+    this.notaDefinitiva = totalNotas / this.calificables.length;
     return this.notaDefinitiva;
   }
+
 }

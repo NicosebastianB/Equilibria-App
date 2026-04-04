@@ -1,12 +1,14 @@
 import { Materia } from './materia';
 import { Recordatorio } from './recordatorio';
+import { Semestre } from './semestre';
 
 export class Estudiante {
   constructor(
     public nombre: string,
     public avatar: string,
     public materias: Materia[] = [],
-    public recordatorios: Recordatorio[] = []
+    public recordatorios: Recordatorio[] = [],
+    public semestre: Semestre | null = null
   ) {}
 
   // Métodos básicos de estudiante
@@ -18,20 +20,22 @@ export class Estudiante {
     this.avatar = nuevoAvatar;
   }
 
-  // --- Gestión de materias ---
+  configurarSemestre(semestre: Semestre) {
+    this.semestre = semestre;
+  }
+
+  obtenerSemanaActual(fechaHoy: Date): number {
+    if (!this.semestre) throw new Error('No hay semestre configurado');
+    return this.semestre.calcularSemanaActual(fechaHoy);
+  }
+
+  obtenerSemanasTotales(): number {
+    if (!this.semestre) throw new Error('No hay semestre configurado');
+    return this.semestre.calcularSemanasTotales();
+  }
+
   crearMateria(materia: Materia) {
     this.materias.push(materia);
-  }
-
-  editarMateria(idMateria: number, nuevaMateria: Materia) {
-    const index = this.materias.findIndex(m => m.idMateria === idMateria);
-    if (index !== -1) {
-      this.materias[index] = nuevaMateria;
-    }
-  }
-
-  eliminarMateria(idMateria: number) {
-    this.materias = this.materias.filter(m => m.idMateria !== idMateria);
   }
 
   duplicadoMaterias(nombre: string): boolean {
