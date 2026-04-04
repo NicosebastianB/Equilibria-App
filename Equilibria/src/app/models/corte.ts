@@ -18,32 +18,9 @@ export class Corte {
     }
   }
 
-  agregarActividad(actividad: Actividad) {
-    this.actividades.push(actividad);
-    this.redistribuirPorcentajes();
-  }
-
-  eliminarActividad(idActividad: number) {
-    if (this.actividades.length <= 1) {
-      throw new Error('Un corte debe tener al menos una actividad.');
-    }
-    this.actividades = this.actividades.filter(a => a.idActividad !== idActividad);
-    this.redistribuirPorcentajes();
-  }
-
   validarPorcentajes(): boolean {
     const total = this.actividades.reduce((acc, a) => acc + (a.porcentaje ?? 0), 0);
     return total === 100;
-  }
-
-  private redistribuirPorcentajes() {
-    const cantidad = this.actividades.length;
-    if (cantidad === 1) {
-      this.actividades[0].porcentaje = 100;
-    } else {
-      const nuevoPorcentaje = 100 / cantidad;
-      this.actividades.forEach(a => a.porcentaje = nuevoPorcentaje);
-    }
   }
 
   calcularDefinitiva(): number {
