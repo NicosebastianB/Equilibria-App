@@ -4,11 +4,24 @@ import { Materia } from '../models/materia';
 import { Recordatorio } from '../models/recordatorio';
 import { Semestre } from '../models/semestre';
 
+// Añadir una interfaz que el equipo de backend o el cliente HTTP implemente
+export interface RemoteStudentClient {
+  listSummaries(): Promise<{ id: string; nombre: string; avatar: string }[]>;
+  createStudent(dto: any): Promise<any>;
+  updateStudent(dto: any): Promise<any>;
+  deleteStudent(id: string): Promise<any>;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class EstudianteService {
   private estudiante: Estudiante | null = null;
+  // Flag en memoria para controlar onboarding durante desarrollo (sin persistencia)
+  private onboardingCompleted: boolean = false;
+  // Lista simulada de estudiantes públicos (id, nombre, avatar) para que el equipo backend pruebe el contrato
+  private estudiantesPublicos: { id: string; nombre: string; avatar: string }[] = [];
+  private remoteClient?: RemoteStudentClient;
 
   setEstudiante(est: Estudiante) {
     this.estudiante = est;
@@ -129,5 +142,54 @@ export class EstudianteService {
 
   desactivarTodosLosRecordatorios() {
     this.estudiante?.desactivarTodosLosRecordatorios();
+  }
+
+  // Permitir registrar un cliente remoto (no obligatorio)
+  setRemoteClient(client: RemoteStudentClient) {
+    this.remoteClient = client;
+  }
+
+  // Exponer resumen local (útil para la UI o para ensamblar el payload del backend)
+  getLocalStudentSummary() {
+    if (!this.estudiante) return null;
+    return this.estudiante.getSummary();
+  }
+
+  // Método para obtener lista pública desde el servidor (si hay cliente)
+  async fetchRemoteSummaries(): Promise<{ id: string; nombre: string; avatar: string }[]> {
+    if (!this.remoteClient) return [];
+    return this.remoteClient.listSummaries();
+  }
+
+  // Ejemplo de stub de sincronización: empujar cambios locales marcados como 'dirty'
+  async syncIfNeeded(): Promise<void> {
+    if (!this.remoteClient || !this.estudiante) return;
+    if (this.estudiante.dirty) {
+      const dto = this.estudiante.toDTO();
+      if (!this.estudiante.idEstudiante.startsWith('st_')) {
+        await this.remoteClient.createStudent(dto);
+      } else {
+        await this.remoteClient.updateStudent(dto);
+      }
+      this.estudiante.markDirty(false);
+      this.estudiante.lastSyncAt = new Date().toISOString();
+    }
+  }
+
+  // Nuevos métodos para el estado de onboarding
+  isOnboardingCompleted(): boolean {
+    return this.onboardingCompleted;
+  }
+
+  markOnboardingComplete() {
+    this.onboardingCompleted = true;
+  }
+
+  addLocalStudentSummary(summary: { id: string; nombre: string; avatar: string }) {
+    this.estudiantesPublicos.push(summary);
+  }
+
+  getLocalStudentSummaries(): { id: string; nombre: string; avatar: string }[] {
+    return this.estudiantesPublicos.slice();
   }
 }

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Materia } from '../models/materia';
 import { Corte } from '../models/corte';
 import { Tarea } from '../models/tarea';
+import { Horario } from '../models/horario';
 import { Semestre } from '../models/semestre';
 
 
@@ -115,6 +116,39 @@ export class MateriaService {
       .reduce((acc, r) => acc + r.duracionMinutos, 0) / 60;
 
     return horasEsperadas > 0 ? (horasAcumuladasSemana / horasEsperadas) * 100 : 0;
+  }
+
+  // --- Horarios (bloques de 1 hora) ---
+  addHorario(idMateria: number, dia: number, horaInicio: number) {
+    const materia = this.materias.find(m => m.idMateria === idMateria);
+    if (!materia) return { success: false, message: 'Materia no encontrada' };
+    return materia.agregarBloqueHorario(dia, horaInicio);
+  }
+
+  updateHorario(idMateria: number, horarioId: number, dia: number, horaInicio: number) {
+    const materia = this.materias.find(m => m.idMateria === idMateria);
+    if (!materia) return { success: false, message: 'Materia no encontrada' };
+    return materia.editarBloqueHorario(horarioId, dia, horaInicio);
+  }
+
+  deleteHorario(idMateria: number, horarioId: number) {
+    const materia = this.materias.find(m => m.idMateria === idMateria);
+    if (!materia) return false;
+    return materia.eliminarBloqueHorario(horarioId);
+  }
+
+  obtenerHorarios(idMateria: number): Horario[] {
+    const materia = this.materias.find(m => m.idMateria === idMateria);
+    if (!materia) return [];
+    return materia.obtenerHorarios();
+  }
+
+  replaceHorarios(idMateria: number, horarios: Horario[]) {
+    const materia = this.materias.find(m => m.idMateria === idMateria);
+    if (!materia) return { success: false, message: 'Materia no encontrada' };
+    materia.horarios = [];
+    horarios.forEach(h => materia.agregarBloqueHorario(h.dia, h.horaInicio));
+    return { success: true };
   }
 
 

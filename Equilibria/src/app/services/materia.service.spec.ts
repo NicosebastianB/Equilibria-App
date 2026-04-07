@@ -208,3 +208,64 @@ describe('MateriaService . Estadísticas de notas', () => {
     expect(faltante).toBe(0);
   });
 });
+
+describe('Materia - Gestión de horarios', () => {
+  let service: MateriaService;
+  let materia: Materia;
+
+  beforeEach(() => {
+    service = new MateriaService();
+    materia = new Materia(1, 'Matemáticas', 'azul', 3, 'Profesor X', 'Aula 101', 5);
+    service.agregarMateria(materia);
+  });
+
+  it('debería agregar tres bloques el lunes y calcular rango 7..10', () => {
+    const r1 = service.addHorario(materia.idMateria, 1, 7);
+    expect((r1 as any).success).toBeTrue();
+    const r2 = service.addHorario(materia.idMateria, 1, 8);
+    expect((r2 as any).success).toBeTrue();
+    const r3 = service.addHorario(materia.idMateria, 1, 9);
+    expect((r3 as any).success).toBeTrue();
+
+    const horarios = service.obtenerHorarios(materia.idMateria);
+    expect(horarios.length).toBe(3);
+    expect(horarios[0].dia).toBe(1);
+    expect(horarios[0].horaInicio).toBe(7);
+
+    const rango = materia.calcularRangoHorarioDia(1);
+    expect(rango).not.toBeNull();
+    if (rango) {
+      expect(rango.inicio).toBe(7);
+      expect(rango.fin).toBe(10);
+    }
+  });
+
+  it('no debería permitir agregar más bloques que horasClaseSemanal', () => {
+    // limitar horas presenciales a 2
+    materia.horasClaseSemanal = 2;
+    const a1 = service.addHorario(materia.idMateria, 2, 9);
+    expect((a1 as any).success).toBeTrue();
+    const a2 = service.addHorario(materia.idMateria, 2, 10);
+    expect((a2 as any).success).toBeTrue();
+    const a3 = service.addHorario(materia.idMateria, 2, 11);
+    expect((a3 as any).success).toBeFalse();
+  });
+
+  it('debería editar y eliminar un bloque horario', () => {
+    const added = service.addHorario(materia.idMateria, 3, 10) as any;
+    expect(added.success).toBeTrue();
+    const id = added.horario.id;
+
+    const upd = service.updateHorario(materia.idMateria, id, 4, 11) as any;
+    expect(upd.success).toBeTrue();
+
+    const horarios = service.obtenerHorarios(materia.idMateria);
+    expect(horarios.find(h => h.id === id)?.dia).toBe(4);
+    expect(horarios.find(h => h.id === id)?.horaInicio).toBe(11);
+
+    const del = service.deleteHorario(materia.idMateria, id);
+    expect(del).toBeTrue();
+    const after = service.obtenerHorarios(materia.idMateria);
+    expect(after.find(h => h.id === id)).toBeUndefined();
+  });
+});

@@ -11,7 +11,7 @@ describe('EstudianteService', () => {
   beforeEach(() => {
     service = new EstudianteService();
     // Inicializar el unico estudiante de la app con un nombre y avatar
-    estudiante = new Estudiante('Nico', 'Avatar_1');
+    estudiante = new Estudiante(undefined, 'Nico', 'Avatar_1');
     service.setEstudiante(estudiante);
   });
 
@@ -173,7 +173,7 @@ describe('EstudianteService - Proporción de estudio', () => {
 
   beforeEach(() => {
     service = new EstudianteService();
-    estudiante = new Estudiante('Nico', 'Avatar_1');
+    estudiante = new Estudiante(undefined, 'Nico', 'Avatar_1');
     service.setEstudiante(estudiante);
   });
 

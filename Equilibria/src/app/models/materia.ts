@@ -2,6 +2,7 @@ import { Corte } from './corte';
 import { Tarea } from './tarea';
 import { Semestre } from './semestre';
 import {RegistroEstudio} from './registroEstudio';
+import {Horario} from './horario';
 
 export class Materia {
   public definitiva?: number;
@@ -13,6 +14,8 @@ export class Materia {
   public horasIndependientes: number = 0;
   public horasIndependientesPorSemana: number = 0;
   public registros: RegistroEstudio[] = [];
+  public horarios: Horario[] = [];
+  private nextHorarioId: number = 1;
 
   constructor(
     public idMateria: number,
@@ -31,6 +34,91 @@ export class Materia {
       new Corte(idMateria, 2, 'Corte 2', 30),
       new Corte(idMateria, 3, 'Corte 3', 40)
     ];
+  }
+
+  // -- Horarios (bloques de 1 hora, dias 1=Lunes .. 6=Sábado)
+
+  // Agrega un bloque horario de 1 hora. Devuelve objeto con resultado y mensaje.
+  agregarBloqueHorario(dia: number, horaInicio: number): { success: boolean; message?: string; horario?: Horario } {
+    // Validaciones básicas
+    if (dia < 1 || dia > 6) {
+      return { success: false, message: 'El día debe estar entre 1 (Lunes) y 6 (Sábado).' };
+    }
+
+    if (horaInicio < 0 || horaInicio > 23) {
+      return { success: false, message: 'La hora de inicio debe estar entre 0 y 23.' };
+    }
+
+    // No permitir duplicados exactos
+    const existente = this.horarios.find(h => h.dia === dia && h.horaInicio === horaInicio);
+    if (existente) {
+      return { success: false, message: 'Ya existe un bloque en ese día y hora.' };
+    }
+
+    // Validar contra horas por semana (usar horasClaseSemanal como límite de bloques semanales)
+    const bloquesActuales = this.horarios.length;
+    if (this.horasClaseSemanal > 0 && bloquesActuales + 1 > this.horasClaseSemanal) {
+      return { success: false, message: 'Excede el número de horas presenciales por semana.' };
+    }
+
+    const nuevo = new Horario(this.nextHorarioId++, dia, horaInicio, 1);
+    this.horarios.push(nuevo);
+    return { success: true, horario: nuevo };
+  }
+
+  editarBloqueHorario(id: number, dia: number, horaInicio: number): { success: boolean; message?: string; horario?: Horario } {
+    const idx = this.horarios.findIndex(h => h.id === id);
+    if (idx === -1) {
+      return { success: false, message: 'Bloque no encontrado.' };
+    }
+
+    if (dia < 1 || dia > 6) {
+      return { success: false, message: 'El día debe estar entre 1 (Lunes) y 6 (Sábado).' };
+    }
+    if (horaInicio < 0 || horaInicio > 23) {
+      return { success: false, message: 'La hora de inicio debe estar entre 0 y 23.' };
+    }
+
+    // Verificar que no se genere conflicto con otro bloque
+    const conflicto = this.horarios.find(h => h.id !== id && h.dia === dia && h.horaInicio === horaInicio);
+    if (conflicto) {
+      return { success: false, message: 'Otro bloque ya ocupa ese día y hora.' };
+    }
+
+    const horario = this.horarios[idx];
+    horario.dia = dia;
+    horario.horaInicio = horaInicio;
+    return { success: true, horario };
+  }
+
+  eliminarBloqueHorario(id: number): boolean {
+    const idx = this.horarios.findIndex(h => h.id === id);
+    if (idx === -1) return false;
+    this.horarios.splice(idx, 1);
+    return true;
+  }
+
+  obtenerHorarios(): Horario[] {
+    return this.horarios.slice().sort((a, b) => (a.dia - b.dia) || (a.horaInicio - b.horaInicio));
+  }
+
+  obtenerHorariosPorDia(dia: number): Horario[] {
+    return this.horarios.filter(h => h.dia === dia).sort((a, b) => a.horaInicio - b.horaInicio);
+  }
+
+  // Devuelve el rango de horario para un día (ej: inicio 7, fin 10 si hay bloques 7,8,9). Retorna null si no hay bloques.
+  calcularRangoHorarioDia(dia: number): { inicio: number; fin: number } | null {
+    const bloques = this.obtenerHorariosPorDia(dia);
+    if (bloques.length === 0) return null;
+    const inicio = Math.min(...bloques.map(b => b.horaInicio));
+    const fin = Math.max(...bloques.map(b => b.horaInicio)) + 1; // fin es hora posterior al último bloque
+    return { inicio, fin };
+  }
+
+  // Valida que el número de bloques semanales no exceda las horas de clase por semana
+  validarBloquesConHorasClaseSemanal(): boolean {
+    if (this.horasClaseSemanal <= 0) return true; // sin restricción definida
+    return this.horarios.length <= this.horasClaseSemanal;
   }
 
 
