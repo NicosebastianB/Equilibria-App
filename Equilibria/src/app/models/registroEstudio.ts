@@ -4,6 +4,5 @@ export class RegistroEstudio {
     public idMateria: number,        // referencia a la materia
     public fecha: Date,              // cuándo se estudió
     public duracionMinutos: number,  // cuánto tiempo duró
-    public tipo?: string             // opcional: lectura, práctica, repaso...
   ) {}
 }
