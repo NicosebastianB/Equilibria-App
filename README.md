@@ -71,8 +71,7 @@ La aplicación se organiza en tres capas principales:
 ## 👥 Equipo de desarrollo
 - Carlos Mateo Chimunja — Interfaz  
 - Mauricio Andrés Berrío — Base de datos  
-- Karen Sofía Rodríguez — Funcionalidad  
-- Nico Sebastián B. — Líder y lógica de negocio  
+- Karen Sofía Rodríguez — Funcionalidad y lógica del negocio
 
 ## 📄 Licencia
 Este proyecto se distribuye bajo la licencia **Creative Commons BY-NC**.  
