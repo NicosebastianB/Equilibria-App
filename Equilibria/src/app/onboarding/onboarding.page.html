@@ -1,0 +1,33 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Bienvenido a Equilibria</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="onboarding-inner">
+    <h2>Comienza a organizar tu tiempo</h2>
+    <p>Registra tus materias, horarios y tiempo de estudio. Ingresa tu nombre y avatar para empezar.</p>
+
+    <ion-item>
+      <ion-label position="stacked">Tu nombre</ion-label>
+      <ion-input [(ngModel)]="nombre" placeholder="Ej. Nico"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Avatar</ion-label>
+      <div class="avatar-grid">
+        <div class="avatar-item"
+             *ngFor="let a of avatarFiles"
+             (click)="selectAvatar(a.filename)"
+             [class.selected]="a.filename === avatar">
+          <img [src]="a.url" alt="avatar">
+        </div>
+      </div>
+    </ion-item>
+
+    
+
+    <ion-button expand="block" (click)="completar()" [disabled]="!nombre">Comenzar</ion-button>
+  </div>
+</ion-content>

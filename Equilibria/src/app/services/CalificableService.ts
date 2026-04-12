@@ -7,21 +7,6 @@ import { Calificable } from '../models/calificable';
 export class CalificableService {
   private calificables: Calificable[] = [];
 
-  agregarCalificable(calificable: Calificable) {
-    this.calificables.push(calificable);
-  }
-
-  editarCalificable(idCalificable: number, nuevoCalificable: Calificable) {
-    const index = this.calificables.findIndex(c => c.idCalificable === idCalificable);
-    if (index !== -1) {
-      this.calificables[index] = nuevoCalificable;
-    }
-  }
-
-  eliminarCalificable(idCalificable: number) {
-    this.calificables = this.calificables.filter(c => c.idCalificable !== idCalificable);
-  }
-
   obtenerCalificables(): Calificable[] {
     return this.calificables;
   }

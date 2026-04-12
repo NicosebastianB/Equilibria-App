@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { book, calendar, folderOpen, statsChart, settings, roseSharp, settingsSharp} from 'ionicons/icons';
+import { Router } from '@angular/router';
+import { EstudianteService } from './services/EstudianteService';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +11,7 @@ import { book, calendar, folderOpen, statsChart, settings, roseSharp, settingsSh
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
-  constructor()
+  constructor(private router: Router, private estSrv: EstudianteService)
   {
     addIcons({
       book,
@@ -20,6 +22,15 @@ export class AppComponent {
       roseSharp,
       settingsSharp
 });
+    this.initialize();
+  }
 
+  private initialize() {
+    // Sin persistencia: consultar el flag en memoria
+    if (this.estSrv.isOnboardingCompleted()) {
+      this.router.navigateByUrl('/home', { replaceUrl: true });
+    } else {
+      this.router.navigateByUrl('/onboarding', { replaceUrl: true });
+    }
   }
 }

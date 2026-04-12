@@ -33,4 +33,8 @@ export const routes: Routes = [
     path: 'modo-estudio',
     loadComponent: () => import('./modo-estudio/modo-estudio.page').then( m => m.ModoEstudioPage)
   },
+  {
+    path: 'onboarding',
+    loadComponent: () => import('./onboarding/onboarding.page').then( m => m.OnboardingPage)
+  },
 ];
