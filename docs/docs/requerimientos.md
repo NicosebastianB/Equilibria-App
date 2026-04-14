@@ -3,10 +3,15 @@ Carlos Mateo Chimunja, Mauricio Andrés Berrío, Karen Sofía Rodríguez
 
 ## ⭐Introducción
 Propósito: Documentar los requerimientos funcionales y no funcionales de la aplicación Equilibria, una agenda saludable inteligente para estudiantes universitarios.
+
 Alcance: Aplicación android móvil que integra la organización académica con el bienestar personal
+
 Definiciones:
+
 Pomodoro: Técnica de productividad basada en intervalos de trabajo y descanso
+
 Referencias: Documentación Android, Ionic Framework, Pressman & Maxim
+
 
 ## 🔎📃Descripción general
 Perspectiva del producto: Aplicación móvil independiente, con almacenamiento local.
