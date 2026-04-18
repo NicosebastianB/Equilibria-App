@@ -1,7 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonInput, IonButton } from '@ionic/angular/standalone';
+import {
+  IonContent,
+  IonHeader,
+  IonTitle,
+  IonToolbar,
+  IonItem,
+  IonLabel,
+  IonInput,
+  IonButton,
+} from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { EstudianteService } from '../services/EstudianteService';
 import { Estudiante } from '../models/estudiante';
@@ -12,10 +21,20 @@ import { AvatarService } from '../services/avatar.service';
   templateUrl: './onboarding.page.html',
   styleUrls: ['./onboarding.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonInput, IonButton, CommonModule, FormsModule]
+  imports: [
+    IonContent,
+    IonHeader,
+    IonTitle,
+    IonToolbar,
+    IonItem,
+    IonLabel,
+    IonInput,
+    IonButton,
+    CommonModule,
+    FormsModule,
+  ],
 })
 export class OnboardingPage implements OnInit {
-
   nombre: string = '';
   avatar: string = '';
 
@@ -24,7 +43,7 @@ export class OnboardingPage implements OnInit {
   constructor(
     private router: Router,
     private estSrv: EstudianteService,
-    private avatarSrv: AvatarService
+    private avatarSrv: AvatarService,
   ) {}
 
   ngOnInit() {
@@ -37,8 +56,8 @@ export class OnboardingPage implements OnInit {
     this.estSrv.setEstudiante(nuevo);
     // marcar onboarding completado en memoria
     this.estSrv.markOnboardingComplete();
-    // registrar resumen público simulado
-    this.estSrv.addLocalStudentSummary(nuevo.getSummary());
+
+    localStorage.setItem('usuarioConfigurado', 'true');
     // navegar a la página principal (calendar-and-tasks)
     this.router.navigateByUrl('/tabs/calendar-and-tasks', { replaceUrl: true });
   }
@@ -50,5 +69,4 @@ export class OnboardingPage implements OnInit {
   getAvatarUrl(filename?: string) {
     return this.avatarSrv.getAvatarUrl(filename);
   }
-
 }
