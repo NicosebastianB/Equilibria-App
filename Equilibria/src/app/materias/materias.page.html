@@ -16,10 +16,42 @@
   </ion-toolbar>
 </ion-header>
 
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Materias</ion-title>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">materias</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-list>
+    <ion-item>
+      <ion-input placeholder="Nueva tarea" [(ngModel)]="nuevaTarea">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-select placeholder="Materia" [(ngModel)]="materiaSeleccionada">
+        <ion-select-option *ngFor="let m of materias" [value]="m.id">
+          {{ m.nombre }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-button expand="full" (click)="agregarTarea()">
+      Agregar tarea
+    </ion-button>
+
+    <ion-item *ngFor="let materia of materias">
+      <div>
+        <strong>{{ materia.nombre }} - {{ materia.profesor }}</strong>
+
+        <div *ngFor="let tarea of tareas">
+          <div *ngIf="tarea.materiaId === materia.id">
+            • {{ tarea.titulo }}
+            <button (click)="eliminarTarea(tarea.id)">❌</button>
+          </div>
+        </div>
+      </div>
+    </ion-item>
+  </ion-list>
 </ion-content>
