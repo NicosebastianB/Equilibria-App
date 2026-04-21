@@ -13,14 +13,69 @@
         <ion-icon slot="icon-only" name="rose-sharp"></ion-icon>
       </ion-button>
     </ion-buttons>
-
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">calendar-and-tasks</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <!-- Horario -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Horario semanal</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="horario-scroll">
+        <ion-grid class="horario-grid">
+          <!-- Encabezado -->
+          <ion-row>
+            <ion-col size="1">Hora</ion-col>
+            <ion-col size="2">Lunes</ion-col>
+            <ion-col size="2">Martes</ion-col>
+            <ion-col size="2">Miércoles</ion-col>
+            <ion-col size="2">Jueves</ion-col>
+            <ion-col size="2">Viernes</ion-col>
+            <ion-col size="2">Sábado</ion-col>
+          </ion-row>
+
+          <!-- Filas de horas -->
+          <ion-row *ngFor="let hora of horas">
+            <ion-col size="1">{{ hora }}:00</ion-col>
+
+            <!-- Columna por cada día -->
+            <ion-col size="2" *ngFor="let dia of [1,2,3,4,5,6]">
+              <div *ngIf="getHorario(dia, hora)"
+                   class="horario-bloque"
+                   [style.background]="getHorario(dia, hora)?.materiaColor">
+                {{ getHorario(dia, hora)?.materiaNombre }}
+                <span *ngIf="getHorario(dia, hora)?.materiaSalon">
+                  ({{ getHorario(dia, hora)?.materiaSalon }})
+                </span>
+              </div>
+            </ion-col>
+
+          </ion-row>
+        </ion-grid>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Tareas -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Tareas pendientes</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let tarea of tareasPendientes">
+          <ion-checkbox slot="start" [checked]="tarea.estado"></ion-checkbox>
+          <ion-label>
+            <h2>{{ tarea.nombre }}</h2>
+            <p>{{ getMateriaDeTarea(tarea.idMateria)?.nombre }}</p>
+          </ion-label>
+          <ion-note slot="end" color="danger">
+            Vence: {{ tarea.fecha | date:'dd/MM/yyyy' }}
+          </ion-note>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

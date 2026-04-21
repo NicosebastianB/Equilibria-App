@@ -1,7 +1,7 @@
 // recordatorios-saludables.ts
 import { Recordatorio } from '../models/recordatorio';
 
-export const RECORDATORIOS_SALUDABLES: Recordatorio[] = [
+export const RecordatorioSaludable: Recordatorio[] = [
   new Recordatorio(1, 'Bebe agua', 'azul', 'daily', 'general', true),
   new Recordatorio(2, 'Cuida tu postura', 'verde', 'daily', 'general', true),
   new Recordatorio(3, 'Toma un descanso activo', 'naranja', 'once','study_mode', true),

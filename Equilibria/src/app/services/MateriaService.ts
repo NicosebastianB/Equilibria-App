@@ -122,13 +122,13 @@ export class MateriaService {
   addHorario(idMateria: number, dia: number, horaInicio: number) {
     const materia = this.materias.find(m => m.idMateria === idMateria);
     if (!materia) return { success: false, message: 'Materia no encontrada' };
-    return materia.agregarBloqueHorario(dia, horaInicio);
+    return materia.agregarBloqueHorario(dia, horaInicio, undefined);
   }
 
   updateHorario(idMateria: number, horarioId: number, dia: number, horaInicio: number) {
     const materia = this.materias.find(m => m.idMateria === idMateria);
     if (!materia) return { success: false, message: 'Materia no encontrada' };
-    return materia.editarBloqueHorario(horarioId, dia, horaInicio);
+    return materia.editarBloqueHorario(horarioId, dia, horaInicio, undefined);
   }
 
   deleteHorario(idMateria: number, horarioId: number) {
