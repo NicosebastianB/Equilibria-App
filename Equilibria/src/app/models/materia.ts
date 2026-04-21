@@ -23,7 +23,7 @@ export class Materia {
     public color: string,
     public creditos: number,
     public profesor: string,
-    public salon: string,
+    // salon movido al modelo Horario (opcional por bloque)
     public horasClaseSemanal: number,
     public semanas?: number, // opcional
     public finalizado: boolean = false
@@ -39,7 +39,7 @@ export class Materia {
   // -- Horarios (bloques de 1 hora, dias 1=Lunes .. 6=Sábado)
 
   // Agrega un bloque horario de 1 hora. Devuelve objeto con resultado y mensaje.
-  agregarBloqueHorario(dia: number, horaInicio: number): { success: boolean; message?: string; horario?: Horario } {
+  agregarBloqueHorario(dia: number, horaInicio: number, salon?: string): { success: boolean; message?: string; horario?: Horario } {
     // Validaciones básicas
     if (dia < 1 || dia > 6) {
       return { success: false, message: 'El día debe estar entre 1 (Lunes) y 6 (Sábado).' };
@@ -61,12 +61,12 @@ export class Materia {
       return { success: false, message: 'Excede el número de horas presenciales por semana.' };
     }
 
-    const nuevo = new Horario(this.nextHorarioId++, dia, horaInicio, 1);
+    const nuevo = new Horario(this.nextHorarioId++, this.idMateria, dia, horaInicio, 1, salon);
     this.horarios.push(nuevo);
     return { success: true, horario: nuevo };
   }
 
-  editarBloqueHorario(id: number, dia: number, horaInicio: number): { success: boolean; message?: string; horario?: Horario } {
+  editarBloqueHorario(id: number, dia: number, horaInicio: number, salon?: string): { success: boolean; message?: string; horario?: Horario } {
     const idx = this.horarios.findIndex(h => h.id === id);
     if (idx === -1) {
       return { success: false, message: 'Bloque no encontrado.' };
@@ -88,6 +88,7 @@ export class Materia {
     const horario = this.horarios[idx];
     horario.dia = dia;
     horario.horaInicio = horaInicio;
+    if (salon !== undefined) horario.salon = salon;
     return { success: true, horario };
   }
 

@@ -9,11 +9,13 @@
     <h2>Comienza a organizar tu tiempo</h2>
     <p>Registra tus materias, horarios y tiempo de estudio. Ingresa tu nombre y avatar para empezar.</p>
 
+    <!-- Nombre -->
     <ion-item>
       <ion-label position="stacked">Tu nombre</ion-label>
-      <ion-input [(ngModel)]="nombre" placeholder="Ej. Nico"></ion-input>
+      <ion-input [(ngModel)]="nombre" name="nombre" placeholder="Ej. Nico"></ion-input>
     </ion-item>
 
+    <!-- Avatares -->
     <ion-item>
       <ion-label position="stacked">Avatar</ion-label>
       <div class="avatar-grid">
@@ -26,8 +28,100 @@
       </div>
     </ion-item>
 
-    
 
-    <ion-button expand="block" (click)="completar()" [disabled]="!nombre">Comenzar</ion-button>
+    <div class="button-row">
+      <ion-button id="open-modal">
+        <ion-icon slot="start" name="calendar-outline"></ion-icon>
+        Inicio del Semestre
+      </ion-button>
+      <ion-button id="open-modal-2">
+        <ion-icon slot="start" name="calendar-outline"></ion-icon>
+        Fin del Semestre
+      </ion-button>
+    </div>
+
+    <!-- Modal 1 -->
+    <ion-modal trigger="open-modal" [initialBreakpoint]="0.5" [breakpoints]="[0.5]">
+      <ng-template>
+        <div class="datetime-wrapper">
+          <ion-datetime presentation="date"
+                        [showDefaultButtons]="true"
+                        [(ngModel)]="semestreInicio">
+          </ion-datetime>
+        </div>
+      </ng-template>
+    </ion-modal>
+
+    <!-- Modal 2 -->
+    <ion-modal trigger="open-modal-2" [initialBreakpoint]="0.5" [breakpoints]="[0.5]">
+      <ng-template>
+        <div class="datetime-wrapper">
+          <ion-datetime presentation="date"
+                        [showDefaultButtons]="true"
+                        [(ngModel)]="semestreFin">
+          </ion-datetime>
+        </div>
+      </ng-template>
+    </ion-modal>
+
+    <div class="button-row">
+      <ion-button id="open-vacaciones-inicio">
+        <ion-icon slot="start" name="calendar-outline"></ion-icon>
+        Inicio Vacaciones
+      </ion-button>
+
+      <ion-button id="open-vacaciones-fin">
+        <ion-icon slot="start" name="calendar-outline"></ion-icon>
+        Fin Vacaciones
+      </ion-button>
+    </div>
+
+    <!-- Modal Inicio Vacaciones -->
+    <ion-modal trigger="open-vacaciones-inicio" [initialBreakpoint]="0.5" [breakpoints]="[0.5]">
+      <ng-template>
+        <div class="datetime-wrapper">
+          <ion-datetime presentation="date"
+                        [showDefaultButtons]="true"
+                        [(ngModel)]="vacacionesSemestreInicio">
+          </ion-datetime>
+        </div>
+      </ng-template>
+    </ion-modal>
+
+    <!-- Modal Fin Vacaciones -->
+    <ion-modal trigger="open-vacaciones-fin" [initialBreakpoint]="0.5" [breakpoints]="[0.5]">
+      <ng-template>
+        <div class="datetime-wrapper">
+          <ion-datetime presentation="date"
+                        [showDefaultButtons]="true"
+                        [(ngModel)]="vacacionesSemestreFin">
+          </ion-datetime>
+        </div>
+      </ng-template>
+    </ion-modal>
+
+    <div class="resumen-fechas">
+      <ion-item>
+        <ion-label>
+          <p><strong>Inicio semestre:</strong> {{ semestreInicio | date:'yyyy-MM-dd' }}</p>
+          <p><strong>Fin semestre:</strong> {{ semestreFin | date:'yyyy-MM-dd' }}</p>
+          <p><strong>Inicio vacaciones:</strong> {{ vacacionesSemestreInicio | date:'yyyy-MM-dd' }}</p>
+          <p><strong>Fin vacaciones:</strong> {{ vacacionesSemestreFin | date:'yyyy-MM-dd' }}</p>
+        </ion-label>
+      </ion-item>
+
+    </div>
+
+
+
+
+
+    <!-- Botón comenzar -->
+    <ion-button expand="block" (click)="completar()" [disabled]="!canContinue">
+      Comenzar
+    </ion-button>
+
   </div>
 </ion-content>
+
+

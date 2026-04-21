@@ -1,3 +1,51 @@
 ion-title {
   text-align: center;
 }
+
+.horario-scroll {
+  max-height: 500px; /* altura máxima del bloque */
+  overflow-y: auto; /* scroll vertical */
+  overflow-x: auto; /* scroll horizontal */
+  -webkit-overflow-scrolling: touch; /* mejor scrolling en móviles */
+  /* asegurar que el contenedor no colapse su ancho con el contenido */
+  display: block;
+  width: 100%;
+}
+
+.horario-grid ion-row {
+  border-bottom: 1px solid #ccc;
+  display: flex; /* usar flex para que las columnas no envuelvan */
+  flex-wrap: nowrap; /* evitar que la última columna pase a la siguiente línea */
+  align-items: stretch;
+}
+
+.horario-grid ion-col {
+  border-right: 1px solid #ccc;
+  text-align: center;
+  padding: 6px;
+  font-size: 14px;
+  white-space: nowrap; /* evita que el texto se rompa */
+  min-width: 90px; /* ancho mínimo más pequeño según lo pedido */
+  flex: 0 0 90px; /* fija el ancho de cada columna y evita que se compriman */
+  box-sizing: border-box;
+}
+
+.horario-grid ion-row:first-child {
+  font-weight: bold;
+  background: #f0f0f0;
+}
+
+/* Si deseas que la fila ocupe solo el ancho necesario y permita scroll horizontal */
+.horario-grid {
+  width: max-content;
+  min-width: 100%;
+}
+
+.horario-bloque {
+  font-size: 0.75rem;
+  line-height: 1.1;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+

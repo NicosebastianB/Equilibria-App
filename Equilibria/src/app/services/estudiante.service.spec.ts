@@ -17,7 +17,7 @@ describe('EstudianteService', () => {
 
   //RF01 Caso 1: agregar materia
   it('debería agregar una materia al estudiante', () => {
-    const materia = new Materia(1, 'Matemáticas', 'azul', 3, 'Profesor X', 'Aula 101', 5);
+    const materia = new Materia(1, 'Matemáticas', 'azul', 3, 'Profesor X', 5);
     service.agregarMateria(materia);
 
     const materias = service.obtenerMaterias();
@@ -27,24 +27,23 @@ describe('EstudianteService', () => {
 
   //RF01 Caso 2: editar materia
   it('debería editar atributos de una materia existente', () => {
-    const materia = new Materia(1, 'Matemáticas', 'azul', 3, 'Profesor X', 'Aula 101', 5);
+    const materia = new Materia(1, 'Matemáticas', 'azul', 3, 'Profesor X', 5);
     service.agregarMateria(materia);
 
     // Editamos directamente atributos de la materia existente
-    service.editarMateria(1, { nombre: 'Álgebra', color: 'rojo', creditos: 4, profesor: 'Profesor Y', salon: 'Aula 202' });
+    service.editarMateria(1, { nombre: 'Álgebra', color: 'rojo', creditos: 4, profesor: 'Profesor Y' });
 
     const materias = service.obtenerMaterias();
     expect(materias[0].nombre).toBe('Álgebra');
     expect(materias[0].color).toBe('rojo');
     expect(materias[0].creditos).toBe(4);
     expect(materias[0].profesor).toBe('Profesor Y');
-    expect(materias[0].salon).toBe('Aula 202');
   });
 
   //RF01 Caso 3: eliminar materia
 
   it('debería eliminar una materia ya existente', () => {
-    const materia = new Materia(1, 'Matemáticas', 'azul', 3, 'Profesor X', 'Aula 101', 5);
+    const materia = new Materia(1, 'Matemáticas', 'azul', 3, 'Profesor X', 5);
     service.agregarMateria(materia);
 
     service.eliminarMateria(1);
@@ -62,7 +61,6 @@ describe('EstudianteService', () => {
       'azul',
       3,              // créditos
       'Profesor X',
-      'Salon 101',
       3,              // horasClaseSemanal
       16              // semanas
     );
@@ -83,7 +81,6 @@ describe('EstudianteService', () => {
       'verde',
       4,              // créditos
       'Profesor Y',
-      'Salon 202',
       5,              // horasClaseSemanal
       16              // semanas
     );
@@ -178,8 +175,8 @@ describe('EstudianteService - Proporción de estudio', () => {
   });
 
   it('debería calcular correctamente la proporción de estudio entre materias activas', () => {
-    const fisica = new Materia(1, 'Física', 'azul', 4, 'Profesor F', 'Aula 101', 5, 16);
-    const software = new Materia(2, 'Ingeniería de Software', 'verde', 3, 'Profesor S', 'Aula 202', 3, 16);
+    const fisica = new Materia(1, 'Física', 'azul', 4, 'Profesor F', 5, 16);
+    const software = new Materia(2, 'Ingeniería de Software', 'verde', 3, 'Profesor S', 3, 16);
 
     // Agregamos materias al estudiante
     service.agregarMateria(fisica);
@@ -196,8 +193,8 @@ describe('EstudianteService - Proporción de estudio', () => {
   });
 
   it('no debería incluir materias finalizadas en la proporción', () => {
-    const fisica = new Materia(1, 'Física', 'azul', 4, 'Profesor F', 'Aula 101', 5, 16);
-    const software = new Materia(2, 'Ingeniería de Software', 'verde', 3, 'Profesor S', 'Aula 202', 3, 16);
+    const fisica = new Materia(1, 'Física', 'azul', 4, 'Profesor F', 5, 16);
+    const software = new Materia(2, 'Ingeniería de Software', 'verde', 3, 'Profesor S', 3, 16);
 
     service.agregarMateria(fisica);
     service.agregarMateria(software);

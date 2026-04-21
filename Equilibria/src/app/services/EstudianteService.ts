@@ -69,7 +69,6 @@ export class EstudianteService {
       if (cambios.color !== undefined) materia.color = cambios.color;
       if (cambios.creditos !== undefined) materia.creditos = cambios.creditos;
       if (cambios.profesor !== undefined) materia.profesor = cambios.profesor;
-      if (cambios.salon !== undefined) materia.salon = cambios.salon;
     }
   }
 
