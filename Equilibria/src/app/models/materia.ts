@@ -25,7 +25,11 @@ export class Materia {
     public creditos: number | null,
     public profesor: string,
     // salon movido al modelo Horario (opcional por bloque)
+<<<<<<< HEAD
     public horasClaseSemanal: number | null,
+=======
+    public horasClaseSemanal: number,
+>>>>>>> d3726cc96087019a7ea6e0f4f42a19dc08fcf423
     public semanas?: number, // opcional
     public finalizado: boolean = false
   ) {

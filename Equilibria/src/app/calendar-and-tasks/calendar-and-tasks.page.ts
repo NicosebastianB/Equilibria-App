@@ -1,10 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+<<<<<<< HEAD
 import { Materia } from '../models/materia';
 import { Tarea } from '../models/tarea';
 import { HorarioEnriquecido } from '../models/horario-enriquecido';
 import { DataService } from '../services/data'; 
+=======
+import { MockService } from '../services/MockService';
+import { Materia } from '../models/materia';
+import { MateriaService } from '../services/MateriaService';
+import { Tarea } from '../models/tarea';
+import { TareaService } from '../services/TareaService';
+import { HorarioEnriquecido } from '../models/horario-enriquecido';
+>>>>>>> d3726cc96087019a7ea6e0f4f42a19dc08fcf423
 import
 {
   IonContent,
@@ -14,6 +23,11 @@ import
   IonButtons,
   IonButton,
   IonIcon,
+<<<<<<< HEAD
+=======
+  IonSegment,
+  IonSegmentButton,
+>>>>>>> d3726cc96087019a7ea6e0f4f42a19dc08fcf423
   IonLabel,
   IonGrid,
   IonRow,
@@ -35,18 +49,28 @@ import
   standalone: true,
   imports: [
     FormsModule,
+<<<<<<< HEAD
     IonContent, IonHeader, IonToolbar, IonTitle, 
     IonButtons, IonButton, IonIcon, 
     IonLabel, IonGrid, IonRow, IonCol,
     IonList, IonItem, IonCheckbox, IonNote,
     IonCard, IonCardHeader, IonCardTitle, 
     IonCardContent, CommonModule
+=======
+    IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon,
+    IonSegment, IonSegmentButton, IonLabel,
+    IonGrid, IonRow, IonCol,
+    IonList, IonItem, IonCheckbox, IonNote,
+    IonCard, IonCardHeader, IonCardTitle, IonCardContent,
+    CommonModule
+>>>>>>> d3726cc96087019a7ea6e0f4f42a19dc08fcf423
   ]
 })
 export class CalendarAndTasksPage implements OnInit {
 
   materias: Materia[] = [];
   tareasPendientes: Tarea[] = [];
+<<<<<<< HEAD
   tareasCompletadas: Tarea[] = [];
   horarios: HorarioEnriquecido[] = [];
 
@@ -78,17 +102,30 @@ export class CalendarAndTasksPage implements OnInit {
     this.refrescarTareas();
 
     // Construir horarios iniciales
+=======
+  horarios: HorarioEnriquecido[] = [];
+
+  constructor(private mockData: MockService, private tareaService: TareaService) { }
+
+  ngOnInit(): void {
+    this.materias = this.mockData.getMaterias();
+>>>>>>> d3726cc96087019a7ea6e0f4f42a19dc08fcf423
     this.horarios = this.materias.flatMap(materia =>
       materia.horarios.map(horario => ({
         dia: horario.dia,
         horaInicio: horario.horaInicio,
         duracionHoras: horario.duracionHoras,
         salon: horario.salon,
+<<<<<<< HEAD
         materiaColor: this.getColorHex(materia.color), // 👈 aquí el hex
+=======
+        materiaColor: materia.color,
+>>>>>>> d3726cc96087019a7ea6e0f4f42a19dc08fcf423
         materiaNombre: materia.nombre,
         materiaSalon: horario.salon ?? null
       }))
     );
+<<<<<<< HEAD
   }
 
   segmentValue: string = 'horario';
@@ -122,6 +159,21 @@ export class CalendarAndTasksPage implements OnInit {
 
 
 
+=======
+
+    this.tareasPendientes = this.materias.flatMap(materia => materia.tareas.filter(t => !t.estado));
+
+  }
+  segmentValue: string = 'horario';
+
+  horas: number[] = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+
+
+  getMateriaDeTarea(idMateria: number): Materia | undefined {
+    return this.materias.find(m => m.idMateria === idMateria);
+  }
+
+>>>>>>> d3726cc96087019a7ea6e0f4f42a19dc08fcf423
   getHorario(dia: number, hora: number) {
     return this.horarios.find(h =>
       h.dia === dia &&
@@ -130,6 +182,7 @@ export class CalendarAndTasksPage implements OnInit {
     );
   }
 
+<<<<<<< HEAD
   getColorHex(nombreColor: string): string {
     const color = this.colores.find(c => c.value === nombreColor);
     return color ? color.hex : '#ffffff'; // blanco por defecto si no encuentra
@@ -161,6 +214,8 @@ export class CalendarAndTasksPage implements OnInit {
 
 
 
+=======
+>>>>>>> d3726cc96087019a7ea6e0f4f42a19dc08fcf423
 
 }
 
