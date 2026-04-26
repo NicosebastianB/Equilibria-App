@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Recordatorio } from '../models/recordatorio';
-import { RECORDATORIOS_SALUDABLES } from '../models/recordatorios-saludables';
+import { RecordatorioSaludable } from '../models/recordatorios-saludables';
 
 @Injectable({ providedIn: 'root' })
 export class RecordatorioService {
@@ -8,7 +8,7 @@ export class RecordatorioService {
 
   constructor() {
     // Inicializar con los saludables por defecto
-    this.recordatorios = [...RECORDATORIOS_SALUDABLES];
+    this.recordatorios = [...RecordatorioSaludable];
   }
 
   obtenerRecordatorios(): Recordatorio[] {

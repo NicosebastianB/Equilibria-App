@@ -1,3 +1,38 @@
 ion-title {
   text-align: center;
 }
+.color-scroll {
+  width: 100%;
+  overflow-x: auto; /* activa scroll horizontal */
+  -webkit-overflow-scrolling: touch; /* scroll suave en móviles */
+}
+
+.color-selector {
+  display: flex;
+  flex-wrap: nowrap; /* todos en una sola fila */
+  gap: 8px;
+  padding: 8px 0;
+}
+
+  .color-selector ion-chip {
+    flex: 0 0 auto; /* evita que se encojan */
+    min-width: 40px;
+  }
+
+.materia-card {
+  margin: 0 16px 16px;
+}
+.materia-card-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.materia-color-bubble {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+.materia-card-title-text {
+  font-weight: 700;
+}

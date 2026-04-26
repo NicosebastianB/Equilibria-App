@@ -62,10 +62,11 @@ export class MateriaService {
 
 
   // --- Tareas dentro de materia ---
-  agregarTarea(idMateria: number, tarea: Tarea) {
+  agregarTarea(idMateria: number, nombre: string, fecha: Date, tipoRecordatorio: string) {
     const materia = this.materias.find(m => m.idMateria === idMateria);
-    materia?.agregarTarea(tarea);
+    materia?.agregarTarea(nombre, fecha, tipoRecordatorio);
   }
+
 
   editarTarea(materiaId: number, tareaId: number, cambios: Partial<Tarea>) {
     const materia = this.materias.find(m => m.idMateria === materiaId);
@@ -108,15 +109,26 @@ export class MateriaService {
 
   // Cumplimiento semanal de una materia
   obtenerCumplimientoSemanal(materia: Materia, semestre: Semestre): number {
+    materia.calcularHorasTrabajo(semestre); // 🔑 asegura que los valores estén listos
+
     const horasEsperadas = materia.horasIndependientesPorSemana ?? 0;
-    const semanaActual = semestre.semanaActual;
+    const semanaActual = semestre.calcularSemanaActual(new Date());
 
-    const horasAcumuladasSemana = materia.registros
-      .filter(r => semestre.calcularSemanaActual(r.fecha) === semanaActual)
-      .reduce((acc, r) => acc + r.duracionMinutos, 0) / 60;
+    const registrosSemana = materia.registros.filter(
+      r => semestre.calcularSemanaActual(r.fecha) === semanaActual
+      
+    );
 
-    return horasEsperadas > 0 ? (horasAcumuladasSemana / horasEsperadas) * 100 : 0;
+    const horasAcumuladasSemana = registrosSemana.reduce(
+      (acc, r) => acc + r.duracionMinutos,
+      0
+    ) / 60;
+    const porcentaje = horasEsperadas > 0 ? (horasAcumuladasSemana / horasEsperadas) * 100 : 0;
+
+    return porcentaje;
   }
+
+
 
   // --- Horarios (bloques de 1 hora) ---
   addHorario(idMateria: number, dia: number, horaInicio: number) {
