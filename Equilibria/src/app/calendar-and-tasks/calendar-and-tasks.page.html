@@ -59,10 +59,14 @@
   </ion-card>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   <!-- Tareas pendientes -->
 =======
   <!-- Tareas -->
 >>>>>>> d3726cc96087019a7ea6e0f4f42a19dc08fcf423
+=======
+  <!-- Tareas pendientes -->
+>>>>>>> origin/main
   <ion-card>
     <ion-card-header>
       <ion-card-title>Tareas pendientes</ion-card-title>
@@ -70,15 +74,21 @@
     <ion-card-content>
       <ion-list>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/main
         <ion-item *ngFor="let tarea of tareasPendientes; trackBy: trackByTarea">
           <ion-checkbox slot="start" [checked]="tarea.estado"
                         (ionChange)="onTareaCompletada(tarea)">
           </ion-checkbox>
 
+<<<<<<< HEAD
 =======
         <ion-item *ngFor="let tarea of tareasPendientes">
           <ion-checkbox slot="start" [checked]="tarea.estado"></ion-checkbox>
 >>>>>>> d3726cc96087019a7ea6e0f4f42a19dc08fcf423
+=======
+>>>>>>> origin/main
           <ion-label>
             <h2>{{ tarea.nombre }}</h2>
             <p>{{ getMateriaDeTarea(tarea.idMateria)?.nombre }}</p>
@@ -91,6 +101,9 @@
     </ion-card-content>
   </ion-card>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/main
 
   <!-- Tareas completadas -->
   <ion-card>
@@ -115,6 +128,9 @@
     </ion-card-content>
   </ion-card>
 
+<<<<<<< HEAD
 =======
 >>>>>>> d3726cc96087019a7ea6e0f4f42a19dc08fcf423
+=======
+>>>>>>> origin/main
 </ion-content>
