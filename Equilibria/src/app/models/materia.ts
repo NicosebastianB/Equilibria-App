@@ -8,6 +8,7 @@ export class Materia {
   public definitiva?: number;
   public notaFaltante?: number;
   public cortes: Corte[];
+  private nextTareaId: number = 1;
   public tareas: Tarea[] = [];
   public horasTotales: number = 0;
   public horasPresenciales: number = 0;
@@ -21,10 +22,10 @@ export class Materia {
     public idMateria: number,
     public nombre: string,
     public color: string,
-    public creditos: number,
+    public creditos: number | null,
     public profesor: string,
     // salon movido al modelo Horario (opcional por bloque)
-    public horasClaseSemanal: number,
+    public horasClaseSemanal: number | null,
     public semanas?: number, // opcional
     public finalizado: boolean = false
   ) {
@@ -57,7 +58,7 @@ export class Materia {
 
     // Validar contra horas por semana (usar horasClaseSemanal como límite de bloques semanales)
     const bloquesActuales = this.horarios.length;
-    if (this.horasClaseSemanal > 0 && bloquesActuales + 1 > this.horasClaseSemanal) {
+    if (this.horasClaseSemanal != null && this.horasClaseSemanal > 0 && bloquesActuales + 1 > this.horasClaseSemanal) {
       return { success: false, message: 'Excede el número de horas presenciales por semana.' };
     }
 
@@ -118,7 +119,7 @@ export class Materia {
 
   // Valida que el número de bloques semanales no exceda las horas de clase por semana
   validarBloquesConHorasClaseSemanal(): boolean {
-    if (this.horasClaseSemanal <= 0) return true; // sin restricción definida
+    if (!this.horasClaseSemanal || this.horasClaseSemanal <= 0) return true; // sin restricción definida
     return this.horarios.length <= this.horasClaseSemanal;
   }
 
@@ -127,16 +128,25 @@ export class Materia {
   calcularHorasTrabajo(semestre?: Semestre) {
     const semanasActivas = this.semanas ?? semestre?.semanasTotales ?? 0;
 
-    this.horasTotales = this.creditos * 48;
-    this.horasPresenciales = this.horasClaseSemanal * semanasActivas;
+    this.horasTotales = this.creditos ? this.creditos * 48 : 0;
+    this.horasPresenciales = this.horasClaseSemanal ? this.horasClaseSemanal * semanasActivas : 0;
     this.horasIndependientes = this.horasTotales - this.horasPresenciales;
     this.horasIndependientesPorSemana =
       semanasActivas > 0 ? this.horasIndependientes / semanasActivas : 0;
   }
 
-  agregarTarea(tarea: Tarea) {
-    this.tareas.push(tarea);
+  agregarTarea(nombre: string, fecha: Date, tipoRecordatorio: string) {
+    const nueva = new Tarea(this.idMateria, nombre, fecha, tipoRecordatorio);
+
+    // 👇 autonumeración única por materia
+    nueva.idTarea = this.idMateria * 1000 + this.nextTareaId++;
+
+    this.tareas.push(nueva);
+
+
+    console.log('Tarea creada en Materia:', nueva); 
   }
+
 
   validarPorcentajes(): boolean {
     const total = this.cortes.reduce((acc, c) => acc + (c.porcentaje ?? 0), 0);
@@ -182,7 +192,7 @@ export class Materia {
   }
 
   validarCreditos(): boolean {
-    return this.creditos > 0;
+    return this.creditos != null && this.creditos > 0;
   }
 
   //--Registro de horas estudiadas
@@ -210,7 +220,20 @@ export class Materia {
     return semanas; // array con horas por semana
   }
 
+  // Obtiene el último calificable ingresado en la materia
+  obtenerUltimoCalificable() {
+    let ultimoCalificable: any = null;
 
+    this.cortes.forEach(corte => {
+      corte.actividades.forEach(actividad => {
+        actividad.calificables.forEach(calif => {
+          if (!ultimoCalificable || new Date(calif.fecha) > new Date(ultimoCalificable.fecha)) {
+            ultimoCalificable = calif;
+          }
+        });
+      });
+    });
 
-
+    return ultimoCalificable;
+  }
 }

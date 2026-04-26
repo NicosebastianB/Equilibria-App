@@ -96,7 +96,7 @@ export class EstudianteService {
   }
 
   //-- Registro de horas de estudio en materia
-  calcularProporcionEstudio(): { [nombreMateria: string]: number } {
+  calcularProporcionEstudio(): { [idMateria: number]: number } {
     if (!this.estudiante) throw new Error('No hay estudiante creado');
 
     // Filtrar solo materias activas (no finalizadas)
@@ -108,15 +108,16 @@ export class EstudianteService {
       0
     );
 
-    // Calcular proporción por materia
-    const proporciones: { [nombreMateria: string]: number } = {};
+    // Calcular proporción por materia usando idMateria
+    const proporciones: { [idMateria: number]: number } = {};
     materiasActivas.forEach(m => {
       const horas = m.calcularHorasAcumuladas();
-      proporciones[m.nombre] = totalHoras > 0 ? (horas / totalHoras) * 100 : 0;
+      proporciones[m.idMateria] = totalHoras > 0 ? (horas / totalHoras) * 100 : 0;
     });
 
     return proporciones;
   }
+
 
   // --- Recordatorios ---
   agregarRecordatorio(recordatorio: Recordatorio) {

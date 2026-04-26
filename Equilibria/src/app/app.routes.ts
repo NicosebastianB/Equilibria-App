@@ -14,6 +14,10 @@ export const routes: Routes = [
     loadComponent: () => import('./materias/materias.page').then( m => m.MateriasPage)
   },
   {
+    path: 'student-subject/:idMateria',
+    loadComponent: () => import('./student-subject/student-subject.page').then(m => m.StudentSubjectPage)
+  },
+  {
     path: 'student-subject',
     loadComponent: () => import('./student-subject/student-subject.page').then( m => m.StudentSubjectPage)
   },

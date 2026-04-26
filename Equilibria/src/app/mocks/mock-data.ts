@@ -30,79 +30,55 @@ import { RegistroEstudio } from '../models/registroEstudio';
 
 // Unico semestre completo
 export const MOCK_SEMESTRE = new Semestre(1, "Semestre 2026-1", new Date("2026-01-20"), new Date("2026-05-23"), [
-  { inicio: new Date("2026-03-01"), fin: new Date("2026-03-07") }, 
+  { inicio: new Date("2026-03-01"), fin: new Date("2026-03-07") },
 ]);
 
-// Calidicable para cada actividad
+MOCK_SEMESTRE.calcularSemanasTotales();
 
-// calificables de matematicas
-const calificable1 = new Calificable(1, 1, 1, 1, "Calificable 1 Matemáticas", new Date("2026-02-15"), "día anterior", 4.2);
-
-const calificable2 = new Calificable(1, 2, 1, 2, "Calificable 2 Matemáticas", new Date("2026-03-15"), "día anterior", 3.8);
-
-const calificable3 = new Calificable(1, 3, 1, 3, "Calificable 3 Matemáticas", new Date("2026-04-15"), "día anterior", 4.5);
-
-// calificables de historia
-const calificable4 = new Calificable(2, 1, 1, 1, "Calificable 1 Historia", new Date("2026-02-15"), "día anterior", 4.0);
-
-const calificable5 = new Calificable(2, 2, 1, 2, "Calificable 2 Historia", new Date("2026-03-15"), "día anterior", 3.5);
-
-const calificable6 = new Calificable(2, 3, 1, 3, "Calificable 3 Historia", new Date("2026-04-15"), "día anterior", 4.2);
-
-
-// horario de las materias (dias 1=Lunes .. 6=Sábado)
-const horarioMatematicas = [
-  new Horario(1, 1, 1, 7, 3, "101"), // Lunes 7-10
-];
-const horarioHistoria = [
-  new Horario(1, 2, 3, 14, 2, "202"), // Miércoles 14-16
-];
-
-// agregar una tarea a cada materia
-const tareaMatematicas = new Tarea(1, 1, "Tarea 1 Matemáticas", new Date("2026-02-20"), "Daily", false);
-
-const tareaHistoria = new Tarea(2, 1, "Tarea 1 Historia", new Date("2026-02-25"), "One day before", false);
-
-// agregar un registro de estudio a cada materia
-const registroMatematicas = new RegistroEstudio(1, 1, new Date("2026-02-10"), 30); // 30 minutos de estudio en matemáticas
-
-const registroHistoria = new RegistroEstudio(2, 2, new Date("2026-02-12"), 45); // 45 minutos de estudio en historia
-
-// Dos materias (ya tienen 3 cortes por defecto y cada corte tiene 1 actividad por defecto)
+// Dos materias
 export const MOCK_MATERIAS = [
-  new Materia(1, "Matemáticas", "red", 3, "Profesor X", 3),
-  new Materia(2, "Historia", "blue", 2, "Profesor Y", 2)
+  new Materia(1, "Matemáticas", "naranja", 3, "Profesor X", 3),
+  new Materia(2, "Historia", "violeta", 2, "Profesor Y", 2)
 ];
 
-// Agregar horarios a las materias
-MOCK_MATERIAS[0].horarios = horarioMatematicas;
-MOCK_MATERIAS[1].horarios = horarioHistoria;
+// Horarios
+MOCK_MATERIAS[0].horarios = [new Horario(1, 1, 1, 7, 3, "101")]; // Lunes 7-10
+MOCK_MATERIAS[1].horarios = [new Horario(1, 2, 3, 14, 2, "202")]; // Miércoles 14-16
 
-// agregar calificables a los cortes de cada materia
-MOCK_MATERIAS[0].cortes[0].actividades[0].calificables.push(calificable1);
-MOCK_MATERIAS[0].cortes[1].actividades[0].calificables.push(calificable2);
-MOCK_MATERIAS[0].cortes[2].actividades[0].calificables.push(calificable3);
-MOCK_MATERIAS[1].cortes[0].actividades[0].calificables.push(calificable4);
-MOCK_MATERIAS[1].cortes[1].actividades[0].calificables.push(calificable5);
-MOCK_MATERIAS[1].cortes[2].actividades[0].calificables.push(calificable6);
+// Calificables
+MOCK_MATERIAS[0].cortes[0].actividades[0].calificables.push(
+  new Calificable(1, 1, 1, 1, "Calificable 1 Matemáticas", new Date("2026-02-15"), "día anterior", 4.2)
+);
+MOCK_MATERIAS[0].cortes[1].actividades[0].calificables.push(
+  new Calificable(1, 2, 1, 2, "Calificable 2 Matemáticas", new Date("2026-03-15"), "día anterior", 3.8)
+);
+MOCK_MATERIAS[0].cortes[2].actividades[0].calificables.push(
+  new Calificable(1, 3, 1, 3, "Calificable 3 Matemáticas", new Date("2026-04-15"), "día anterior", 4.5)
+);
+
+MOCK_MATERIAS[1].cortes[0].actividades[0].calificables.push(
+  new Calificable(2, 1, 1, 1, "Calificable 1 Historia", new Date("2026-02-15"), "día anterior", 4.0)
+);
+MOCK_MATERIAS[1].cortes[1].actividades[0].calificables.push(
+  new Calificable(2, 2, 1, 2, "Calificable 2 Historia", new Date("2026-03-15"), "día anterior", 3.5)
+);
+MOCK_MATERIAS[1].cortes[2].actividades[0].calificables.push(
+  new Calificable(2, 3, 1, 3, "Calificable 3 Historia", new Date("2026-04-15"), "día anterior", 4.2)
+);
+
+// 🔑 Crear tareas usando el método de Materia
+MOCK_MATERIAS[0].agregarTarea("Tarea 1 Matemáticas", new Date("2026-02-20"), "Daily");
+MOCK_MATERIAS[1].agregarTarea("Tarea 1 Historia", new Date("2026-02-25"), "One day before");
+
+// Registros de estudio
+MOCK_MATERIAS[0].registros.push(new RegistroEstudio(1, 1, new Date("2026-04-26"), 300));
+MOCK_MATERIAS[1].registros.push(new RegistroEstudio(2, 2, new Date("2026-04-26"), 200));
 
 
-//agregar tareas a las materias
-MOCK_MATERIAS[0].tareas.push(tareaMatematicas);
-MOCK_MATERIAS[1].tareas.push(tareaHistoria);
-
-// agregar registros de estudio a las materias
-MOCK_MATERIAS[0].registros.push(registroMatematicas);
-MOCK_MATERIAS[1].registros.push(registroHistoria);
-
-// agregar un solo recordatorio personalizado al estudiante
+// Recordatorio
 export const MOCK_RECORDATORIO = new Recordatorio(1, "Tomar la pastilla para el dolor de cabeza", "yellow", "diaria", "desactivado", true);
 
-
-// Unico estudiante completo
+// Estudiante
 export const MOCK_ESTUDIANTE = [
   new Estudiante("est_1", "Nico", "avatar1.png", MOCK_MATERIAS, [MOCK_RECORDATORIO], MOCK_SEMESTRE)
-]
-
-
-
+];

@@ -1,13 +1,95 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>student-subject</ion-title>
+    <ion-title>{{ materia.nombre }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="editarMateria(materia)">
+        <ion-icon slot="icon-only" name="pencil"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">student-subject</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+
+  <!-- Criterios de calificación -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Criterios de calificación</ion-card-title>
+      <ion-buttons slot="end">
+        <ion-button fill="clear" size="small" (click)="modificarCriterios(materia)">
+          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let corte of materia.cortes">
+          <ion-label>
+            {{ corte.nombre }} - {{ corte.porcentaje }}%
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Lista de tareas -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Lista de tareas</ion-card-title>
+      <ion-buttons slot="end">
+        <ion-button fill="clear" size="small" (click)="agregarTarea(materia.idMateria)">
+          <ion-icon slot="icon-only" name="add"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let tarea of materia.tareas">
+          <ion-label>
+            {{ tarea.nombre }}
+            <div>Fecha: {{ tarea.fecha | date:'shortDate' }}</div>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Lista de actividades -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Lista de actividades</ion-card-title>
+      <ion-buttons slot="end">
+        <ion-button fill="clear" size="small" (click)="agregarActividad(materia.idMateria)">
+          <ion-icon slot="icon-only" name="add"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <!--*ngFor="let actividad of materia.cortes.flatMap(c => c.actividades)"-->
+          <ion-label>
+            Actividades...
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Tiempo de estudio semanal -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Tiempo de estudio semanal</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>Tu tiempo</ion-label>
+        <ion-progress-bar ></ion-progress-bar>
+      </ion-item>
+      <ion-item>
+        <ion-label>Tiempo recomendado:</ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
 </ion-content>

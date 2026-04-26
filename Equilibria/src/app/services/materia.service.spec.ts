@@ -17,7 +17,7 @@ describe('MateriaService', () => {
   //crear una instancia de materia
   beforeEach(() => {
     service = new MateriaService();
-    materia = new Materia(1, 'Matemáticas', 'azul', 3, 'Profesor X', 'Aula 101', 5);
+    materia = new Materia(1, 'Matemáticas', 'azul', 3, 'Profesor X', 5);
     service.agregarMateria(materia);
   });
 
@@ -97,7 +97,7 @@ describe('MateriaService . Estadisticas de materia', () => {
   //crear una instancia de materia
   beforeEach(() => {
     service = new MateriaService();
-    materia = new Materia(1, 'Matemáticas', 'azul', 3, 'Profesor X', 'Aula 101', 5);
+    materia = new Materia(1, 'Matemáticas', 'azul', 3, 'Profesor X', 5);
     service.agregarMateria(materia);
   });
 
@@ -152,7 +152,7 @@ describe('MateriaService . Estadísticas de notas', () => {
 
   beforeEach(() => {
     service = new MateriaService();
-    materia = new Materia(1, 'Matemáticas', 'azul', 3, 'Profesor X', 'Aula 101', 5);
+    materia = new Materia(1, 'Matemáticas', 'azul', 3, 'Profesor X', 5);
     service.agregarMateria(materia);
 
     // Configuramos cortes con porcentajes
@@ -215,7 +215,7 @@ describe('Materia - Gestión de horarios', () => {
 
   beforeEach(() => {
     service = new MateriaService();
-    materia = new Materia(1, 'Matemáticas', 'azul', 3, 'Profesor X', 'Aula 101', 5);
+    materia = new Materia(1, 'Matemáticas', 'azul', 3, 'Profesor X', 5);
     service.agregarMateria(materia);
   });
 
