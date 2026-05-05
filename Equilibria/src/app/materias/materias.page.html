@@ -26,33 +26,39 @@
     </ion-button>
   </ion-item>
 
-  <ion-card *ngFor="let materia of materias"
-            class="materia-card"
-            [routerLink]="['/student-subject', materia.idMateria]">
+  <ion-card *ngFor="let materia of materias" class="materia-card">
     <ion-card-header>
       <div class="materia-card-title">
         <span class="materia-color-bubble" [style.background]="getColorHex(materia.color)"></span>
         <span class="materia-card-title-text">{{ materia.nombre }}</span>
+
+        <!-- Estado de la materia -->
+        <ion-note *ngIf="materia.finalizado" color="success" class="estado-materia">
+          Completada
+        </ion-note>
+        <ion-note *ngIf="!materia.finalizado" color="medium" class="estado-materia">
+          Activa
+        </ion-note>
+
         <ion-button fill="clear" size="small" (click)="editarMateria(materia); $event.stopPropagation()">
           <ion-icon slot="icon-only" name="pencil"></ion-icon>
         </ion-button>
       </div>
     </ion-card-header>
+
+
     <ion-card-content>
-      <ion-item lines="none">
-        <ion-label>Dedicación</ion-label>
-        <ion-note slot="end">{{ obtenerDedicacion(materia.idMateria) }}</ion-note>
-      </ion-item>
-      <ion-item lines="none">
-        <ion-label>Cumplimiento semanal</ion-label>
-        <ion-note slot="end">{{ obtenerCumplimientoSemanal(materia.idMateria) }}</ion-note>
-      </ion-item>
-      <ion-item lines="none">
-        <ion-label>Última nota registrada</ion-label>
-        <ion-note slot="end">{{ obtenerUltimaNotaMateria(materia.idMateria) }}</ion-note>
+      <!-- Botón/ítem que lleva al detalle -->
+      <ion-item button detail="true" [routerLink]="['/student-subject', materia.idMateria]">
+        <ion-label>
+          <div>Dedicación: {{ obtenerDedicacion(materia.idMateria) }}</div>
+          <div>Cumplimiento semanal: {{ obtenerCumplimientoSemanal(materia.idMateria) }}</div>
+          <div>Última nota: {{ obtenerUltimaNotaMateria(materia.idMateria) }}</div>
+        </ion-label>
       </ion-item>
     </ion-card-content>
   </ion-card>
+
 
   <!-- Modal para agregar/editar materias -->
   <ion-modal (willDismiss)="onWillDismiss($event)">

@@ -17,47 +17,54 @@ export class MateriaService {
     this.materias.push(materia);
   }
 
+  setMaterias(materias: Materia[]) {
+    this.materias = materias;
+  }
+
+
   //no se ha testeado aún!!
   validarDuplicado(nombre: string): boolean {
     return this.materias.some(m => m.nombre === nombre);
   }
 
   // --- Cortes dentro de materia ---
+
   editarCorte(idMateria: number, idCorte: number, cambios: Partial<Corte>) {
     const materia = this.materias.find(m => m.idMateria === idMateria);
-    if (!materia) return;
+    console.log("Materia encontrada:", materia);
 
-    const corteEditado = materia.cortes.find(c => c.idCorte === idCorte);
-    if (!corteEditado) return;
-
-    if (cambios.nombre !== undefined) {
-      corteEditado.nombre = cambios.nombre;
-    }
+    const corteEditado = materia?.cortes.find(c => c.idCorte === idCorte);
+    console.log("Corte antes de cambios:", corteEditado);
 
     if (cambios.porcentaje !== undefined) {
-      corteEditado.fijo = true;
-      corteEditado.porcentaje = cambios.porcentaje;
-
-      const total = materia.cortes.reduce((acc, c) => acc + c.porcentaje, 0);
-      const diferencia = 100 - total;
-
-      const flexibles = materia.cortes.filter(c => !c.fijo);
-      if (flexibles.length > 0) {
-        const ajustePorCorte = diferencia / flexibles.length;
-        flexibles.forEach(c => c.porcentaje += ajustePorCorte);
-      }
+      corteEditado!.porcentaje = cambios.porcentaje;
+      console.log("Nuevo porcentaje asignado:", corteEditado!.porcentaje);
     }
+
+    corteEditado!.calcularDefinitiva();
+    console.log("Definitiva recalculada:", corteEditado!.notaDefinitiva);
   }
 
+
+  // Validación final: suma debe ser 100
   finalizarEdicion(idMateria: number) {
     const materia = this.materias.find(m => m.idMateria === idMateria);
-    if (!materia) return;
-
-    if (!materia.validarPorcentajes()) {
-      throw new Error('Los porcentajes no suman 100 al finalizar edición.');
+    if (!materia) {
+      console.log("No se encontró la materia con id:", idMateria);
+      return;
     }
 
-    materia.cortes.forEach(c => c.fijo = false);
+    console.log("Validando porcentajes de la materia:", materia.nombre);
+    materia.cortes.forEach(c => {
+      console.log(`Corte ${c.idCorte} - ${c.nombre}: ${c.porcentaje}% (tipo: ${typeof c.porcentaje})`);
+    });
+
+    const total = materia.cortes.reduce((acc, c) => acc + Number(c.porcentaje), 0);
+    console.log("Suma total de porcentajes:", total);
+
+    if (total !== 100) {
+      throw new Error(`Los porcentajes deben sumar 100%. Actualmente suman ${total}%.`);
+    }
   }
 
 
@@ -126,6 +133,24 @@ export class MateriaService {
     const porcentaje = horasEsperadas > 0 ? (horasAcumuladasSemana / horasEsperadas) * 100 : 0;
 
     return porcentaje;
+  }
+
+  obtenerCumplimientoSemanalPorSemana(materia: Materia, semestre: Semestre, semana: number): number {
+    materia.calcularHorasTrabajo(semestre); // asegura que los valores estén listos
+
+    const horasEsperadas = materia.horasIndependientesPorSemana ?? 0;
+
+    // Filtrar registros de la semana indicada
+    const registrosSemana = materia.registros.filter(
+      r => semestre.calcularSemanaActual(r.fecha) === semana
+    );
+
+    const horasAcumuladasSemana = registrosSemana.reduce(
+      (acc, r) => acc + r.duracionMinutos,
+      0
+    ) / 60;
+
+    return horasEsperadas > 0 ? (horasAcumuladasSemana / horasEsperadas) * 100 : 0;
   }
 
 

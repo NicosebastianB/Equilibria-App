@@ -7,6 +7,7 @@ export class Tarea {
     public nombre: string,
     public fecha: Date,
     public tipoRecordatorio: string,
+    public fechaRecordatorio?: Date 
   ) {}
 
   completado() {

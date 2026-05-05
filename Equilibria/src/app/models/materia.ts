@@ -17,6 +17,8 @@ export class Materia {
   public registros: RegistroEstudio[] = [];
   public horarios: Horario[] = [];
   private nextHorarioId: number = 1;
+  private nextCorteId: number = 1;
+  private nextRegistroId: number = 1;
 
   constructor(
     public idMateria: number,
@@ -29,12 +31,18 @@ export class Materia {
     public semanas?: number, // opcional
     public finalizado: boolean = false
   ) {
-    // Inicializar cortes dentro del constructor
+    //TRES CORTES OBLIGATORIOS PERMANENTES, CON PORCENTAJE PREDEFINIDO
+    // Inicializar cortes dentro del constructor con corte autonumerado
     this.cortes = [
-      new Corte(idMateria, 1, 'Corte 1', 30),
-      new Corte(idMateria, 2, 'Corte 2', 30),
-      new Corte(idMateria, 3, 'Corte 3', 40)
+      new Corte(idMateria, idMateria * 1000 + this.nextCorteId++, 'Corte 1', 30),
+      new Corte(idMateria, idMateria * 1000 + this.nextCorteId++, 'Corte 2', 30),
+      new Corte(idMateria, idMateria * 1000 + this.nextCorteId++, 'Corte 3', 40)
     ];
+    // después de inicializar cortes
+    if (this.tareas.length > 0) {
+      const maxId = Math.max(...this.tareas.map(t => t.idTarea));
+      this.nextTareaId = (maxId % 100) + 1; // reinicia desde el último usado
+    } 
   }
 
   // -- Horarios (bloques de 1 hora, dias 1=Lunes .. 6=Sábado)
@@ -124,7 +132,6 @@ export class Materia {
   }
 
 
-
   calcularHorasTrabajo(semestre?: Semestre) {
     const semanasActivas = this.semanas ?? semestre?.semanasTotales ?? 0;
 
@@ -133,18 +140,17 @@ export class Materia {
     this.horasIndependientes = this.horasTotales - this.horasPresenciales;
     this.horasIndependientesPorSemana =
       semanasActivas > 0 ? this.horasIndependientes / semanasActivas : 0;
-  }
+  };
+  
+
 
   agregarTarea(nombre: string, fecha: Date, tipoRecordatorio: string) {
     const nueva = new Tarea(this.idMateria, nombre, fecha, tipoRecordatorio);
 
-    // 👇 autonumeración única por materia
-    nueva.idTarea = this.idMateria * 1000 + this.nextTareaId++;
+    // autonumeración única por materia
+    nueva.idTarea = this.idMateria * 100 + this.nextTareaId++;
 
     this.tareas.push(nueva);
-
-
-    console.log('Tarea creada en Materia:', nueva); 
   }
 
 
@@ -167,6 +173,12 @@ export class Materia {
     this.definitiva = total;
     return this.definitiva;
   }
+
+  public recalcularTodo(): void {
+    this.cortes.forEach(c => c.calcularDefinitiva());
+    this.calcularDefinitiva();
+  }
+
 
   calcularNotaFaltante(notaMinima: number = 3.0): number {
     let notaActual = 0;
@@ -203,8 +215,10 @@ export class Materia {
 
   // Horas acumuladas en toda la materia
   calcularHorasAcumuladas(): number {
-    return this.registros.reduce((acc, r) => acc + r.duracionMinutos, 0) / 60;
+    const acumuladas = this.registros.reduce((acc, r) => acc + r.duracionMinutos, 0) / 60;
+    return acumuladas;
   }
+
 
   // Horas acumuladas por semana
   calcularHistorialSemanal(semestre: Semestre): number[] {

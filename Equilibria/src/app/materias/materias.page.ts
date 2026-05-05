@@ -28,6 +28,7 @@ import {
   IonPopover,
   IonInput,
   IonCard,
+  IonCardTitle,
   IonCardHeader,
   IonCardContent,
   IonNote
@@ -62,6 +63,7 @@ import { OverlayEventDetail } from '@ionic/core/components';
     IonPopover,
     IonInput,
     IonCard,
+    IonCardTitle,
     IonCardHeader,
     IonCardContent,
     IonNote
@@ -71,7 +73,7 @@ import { OverlayEventDetail } from '@ionic/core/components';
 export class MateriasPage implements OnInit {
   @ViewChild(IonModal) modal!: IonModal;
 
-
+  private nextMateriaId = 1;
   message = '';
   materias: Materia[] = [];
   tiempoDedicadoPorMateria: { [nombre: string]: number } = {};
@@ -148,21 +150,23 @@ export class MateriasPage implements OnInit {
 
   ngOnInit() {
     this.materias = this.dataService.getMaterias();
-    if (this.materias.length === 0) {
-      const mockMaterias = this.mockService.getMaterias();
-      mockMaterias.forEach(m => this.dataService.addMateria(m));
-      this.materias = this.dataService.getMaterias();
+    if (this.materias.length > 0) {
+      const maxId = Math.max(...this.materias.map(m => m.idMateria));
+      this.nextMateriaId = maxId + 1;
     }
-
-    // 🔑 Asignar registros a cada materia
-    this.materias.forEach(m => {
-      console.log(`Materia ${m.nombre} (${m.idMateria}) tiene calificables:`,
-        m.cortes.flatMap(c => c.actividades.flatMap(a => a.calificables)));
-    });
-
-
+    this.ordenarMaterias();   // 🔑 ordenar al iniciar
     this.loadDedicacion();
   }
+
+  // Ordena las materias activas/no activas
+  private ordenarMaterias() {
+    this.materias.sort((a, b) => {
+      // Activas primero (finalizado = false), completadas después (finalizado = true)
+      if (a.finalizado === b.finalizado) return 0;
+      return a.finalizado ? 1 : -1;
+    });
+  }
+
 
   // Función que valida si un nuevo bloque horario choca con cualquier otro bloque
   private validarChoqueGlobal(
@@ -196,10 +200,12 @@ export class MateriasPage implements OnInit {
     return false;
   }
 
+  
+
   // Función para resetear el estado del modal
   resetMateria() {
     this.materia = new Materia(
-      Date.now(),
+      this.nextMateriaId++, // 🔑 ID incremental desde el componente
       '',
       '',
       null,
@@ -328,29 +334,39 @@ export class MateriasPage implements OnInit {
     this.modal.dismiss(null, 'cancel');
   }
 
-  confirm() {
+  async confirm() {
     const horasClase = Number(this.materia.horasClaseSemanal ?? 0);
+
+    // Helper para mostrar IonAlert
+    const mostrarError = async (mensaje: string) => {
+      const alert = document.createElement('ion-alert');
+      alert.header = 'Error';
+      alert.message = mensaje;
+      alert.buttons = ['OK'];
+      document.body.appendChild(alert);
+      await alert.present();
+    };
 
     // Validar campos obligatorios
     if (!this.materia.nombre || !this.materia.color || this.materia.creditos == null || this.materia.creditos <= 0 || horasClase <= 0) {
-      alert('Debes llenar todos los campos obligatorios de la materia.');
+      await mostrarError('Debes llenar todos los campos obligatorios de la materia.');
       return;
     }
 
-    // ✅ Validar nombre duplicado
+    // Validar nombre duplicado
     const nombreExiste = this.materias.some(m =>
       m.nombre.trim().toLowerCase() === this.materia.nombre.trim().toLowerCase() &&
       m.idMateria !== this.materia.idMateria // permitir el mismo en edición
     );
 
     if (nombreExiste) {
-      alert('Ya existe una materia con ese nombre.');
+      await mostrarError('Ya existe una materia con ese nombre.');
       return;
     }
 
     // Validar que exista al menos un bloque horario
     if (this.horarios.length === 0) {
-      alert('Debes agregar al menos un bloque horario.');
+      await mostrarError('Debes agregar al menos un bloque horario.');
       return;
     }
 
@@ -359,7 +375,7 @@ export class MateriasPage implements OnInit {
 
     // Validar que no exceda las horas semanales
     if (totalHoras > horasClase) {
-      alert('Los bloques horarios exceden las horas semanales permitidas.');
+      await mostrarError('Los bloques horarios exceden las horas semanales permitidas.');
       return;
     }
 
@@ -369,21 +385,22 @@ export class MateriasPage implements OnInit {
     if (this.modoEditar) {
       this.dataService.updateMateria(this.materia);
       this.materias = this.dataService.getMaterias();
+      this.ordenarMaterias();   // 🔑 ordenar después de editar
       this.loadDedicacion();
       this.modal.dismiss();
     } else {
       this.modal.dismiss(this.materia, 'confirm');
     }
-
     this.resetMateria();
   }
 
 
+
   public onWillDismiss(event: CustomEvent<OverlayEventDetail>) {
     if (event.detail.role === 'confirm' && !this.modoEditar) {
-      // Solo agregar nueva materia si no es edición
       this.dataService.addMateria(event.detail.data);
       this.materias = this.dataService.getMaterias();
+      this.ordenarMaterias();   // 🔑 ordenar después de agregar
       this.loadDedicacion();
       this.message = `Materia agregada: ${event.detail.data.nombre}`;
     }

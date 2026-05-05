@@ -1,95 +1,423 @@
 <ion-header>
   <ion-toolbar>
+    <!-- Botón volver atrás -->
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/materias"></ion-back-button>
+    </ion-buttons>
+
     <ion-title>{{ materia.nombre }}</ion-title>
+
+    <!-- Botón de menú contextual -->
     <ion-buttons slot="end">
-      <ion-button (click)="editarMateria(materia)">
-        <ion-icon slot="icon-only" name="pencil"></ion-icon>
+      <ion-button id="menu-trigger">
+        <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
       </ion-button>
     </ion-buttons>
+
+    <ion-popover trigger="menu-trigger" [dismissOnSelect]="true">
+      <ng-template>
+        <ion-content>
+          <ion-list>
+            <ion-item button (click)="toggleFinalizado()">
+              <ion-label>
+                {{ materia.finalizado ? 'Desmarcar materia como completada' : 'Marcar materia como completada' }}
+              </ion-label>
+            </ion-item>
+            <ion-item button (click)="confirmarEliminarMateria()">
+              <ion-label color="danger">Eliminar materia</ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-content>
+      </ng-template>
+    </ion-popover>
+
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content>
 
-  <!-- Criterios de calificación -->
+  <ion-item>
+    <ion-label slot="start">Criterios de evaluacion</ion-label>
+    <ion-button slot="end" (click)="abrirModalCriterios()">
+      <ion-icon name="pencil"></ion-icon>
+      Modificar criterios
+    </ion-button>
+  </ion-item>
+
+
+  <!-- Tareas pendientes -->
   <ion-card>
     <ion-card-header>
-      <ion-card-title>Criterios de calificación</ion-card-title>
-      <ion-buttons slot="end">
-        <ion-button fill="clear" size="small" (click)="modificarCriterios(materia)">
-          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-        </ion-button>
-      </ion-buttons>
+      <ion-card-title>Tareas pendientes</ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <ion-list>
-        <ion-item *ngFor="let corte of materia.cortes">
+        <ion-item *ngFor="let tarea of tareasPendientes; trackBy: trackByTarea">
+          <ion-checkbox slot="start" [checked]="tarea.estado"
+                        (ionChange)="onTareaCompletada(tarea)">
+          </ion-checkbox>
+
           <ion-label>
-            {{ corte.nombre }} - {{ corte.porcentaje }}%
+            <h2>{{ tarea.nombre }}</h2>
+            <p>{{ tarea.tipoRecordatorio }}</p>
           </ion-label>
+
+          <ion-note slot="end" color="danger">
+            Vence: {{ tarea.fecha | date:'dd/MM/yyyy' }}
+          </ion-note>
+
+          <!-- Botón de edición -->
+          <ion-button fill="clear" size="small" (click)="abrirModalEditarTarea(tarea)">
+            <ion-icon slot="icon-only" name="pencil"></ion-icon>
+          </ion-button>
+
+          <!-- Botón de eliminación -->
+          <ion-button fill="clear" color="danger" size="small" (click)="onEliminarTarea(tarea)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-list>
+
+      <!-- Botón para agregar nueva tarea -->
+      <ion-button expand="block" color="primary" (click)="abrirModalNuevaTarea()">
+        <ion-icon name="add" slot="start"></ion-icon>
+        Agregar tarea
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Tareas completadas -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Tareas completadas</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let tarea of tareasCompletadas; trackBy: trackByTarea">
+          <ion-checkbox slot="start" [checked]="tarea.estado"
+                        (ionChange)="onRevertirTarea(tarea)">
+          </ion-checkbox>
+
+          <ion-label class="completada">
+            <h2>{{ tarea.nombre }}</h2>
+            <p>{{ materia.nombre }}</p>
+          </ion-label>
+
+          <ion-note slot="end" color="medium">
+            Completada
+          </ion-note>
+
+          <!-- Botón de edición -->
+          <ion-button fill="clear" size="small" (click)="abrirModalEditarTarea(tarea)">
+            <ion-icon slot="icon-only" name="pencil"></ion-icon>
+          </ion-button>
+
+          <!-- Botón de eliminación -->
+          <ion-button fill="clear" color="danger" size="small" (click)="onEliminarTarea(tarea)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
         </ion-item>
       </ion-list>
     </ion-card-content>
   </ion-card>
 
-  <!-- Lista de tareas -->
+
+
   <ion-card>
     <ion-card-header>
-      <ion-card-title>Lista de tareas</ion-card-title>
-      <ion-buttons slot="end">
-        <ion-button fill="clear" size="small" (click)="agregarTarea(materia.idMateria)">
-          <ion-icon slot="icon-only" name="add"></ion-icon>
-        </ion-button>
-      </ion-buttons>
+      <ion-card-title>
+        Lista de Calificables
+      </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <!-- lista de CALIFICABLES de la materia -->
+      <ion-accordion-group>
+        <ion-accordion *ngFor="let corte of materia.cortes" value="{{corte.idCorte}}">
+          <ion-item slot="header">
+            <ion-label>{{ corte.nombre }} ({{ corte.porcentaje }}%)</ion-label>
+          </ion-item>
+
+          <div slot="content">
+            <ion-accordion-group>
+              <ion-accordion *ngFor="let actividad of corte.actividades" value="{{actividad.idActividad}}">
+                <ion-item slot="header">
+                  <ion-label>{{ actividad.nombre }} - Definitiva: {{ actividad.notaDefinitiva }}</ion-label>
+                </ion-item>
+
+                <div slot="content">
+                  <ion-item *ngFor="let cal of actividad.calificables">
+                    <ion-label>
+                      {{ cal.nombre }} - Nota: {{ cal.nota }} - Fecha: {{ cal.fecha | date:'shortDate' }}
+                    </ion-label>
+                    <ion-button fill="clear" size="small" (click)="abrirModalEditarCalificable(cal)">
+                      <ion-icon slot="icon-only" name="pencil"></ion-icon>
+                    </ion-button>
+                    <ion-button fill="clear" color="danger" size="small" (click)="eliminarCalificable(corte.idCorte, actividad.idActividad, cal.idCalificable)">
+                      <ion-icon slot="icon-only" name="trash"></ion-icon>
+                    </ion-button>
+                  </ion-item>
+                </div>
+              </ion-accordion>
+            </ion-accordion-group>
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
+
+
+      <!-- Botón para agregar nuevo calificable -->
+      <ion-button expand="block" color="primary" (click)="abrirModalNuevoCalificable()">
+        <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+        Agregar Calificable
+      </ion-button>
+    </ion-card-content>
+
+
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Progreso total de estudio independiente</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <ion-list>
-        <ion-item *ngFor="let tarea of materia.tareas">
-          <ion-label>
-            {{ tarea.nombre }}
-            <div>Fecha: {{ tarea.fecha | date:'shortDate' }}</div>
-          </ion-label>
-        </ion-item>
-      </ion-list>
+      <ion-progress-bar [value]="getProgresoMateria(materia) / 100"
+                        [color]="getFeedbackProgreso(materia).color">
+      </ion-progress-bar>
+      <ion-note>
+        {{ getProgresoMateria(materia) | number:'1.0-0' }}% completado -
+        {{ getFeedbackProgreso(materia).mensaje }}
+      </ion-note>
     </ion-card-content>
   </ion-card>
 
-  <!-- Lista de actividades -->
   <ion-card>
     <ion-card-header>
-      <ion-card-title>Lista de actividades</ion-card-title>
-      <ion-buttons slot="end">
-        <ion-button fill="clear" size="small" (click)="agregarActividad(materia.idMateria)">
-          <ion-icon slot="icon-only" name="add"></ion-icon>
-        </ion-button>
-      </ion-buttons>
+      <ion-card-title>Definitiva parcial</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <ion-list>
+      <ion-note color="primary">
+        {{ materia.definitiva ? (materia.definitiva | number:'1.1-2') : 'Sin calificaciones aún' }}
+      </ion-note>
+      <p *ngIf="materia.definitiva">
+        Esta nota refleja el promedio parcial según los calificables registrados hasta ahora.
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+
+
+  <!-- Modal para modificar los criterios de evaluación -->
+  <ion-modal (willDismiss)="onWillDismiss($event)">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button (click)="cancel()">
+              <ion-icon name="arrow-back-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+          <ion-title>Modificar Criterios de Evaluación</ion-title>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+        <ion-text>
+          <h2>
+            Cortes y actividades
+          </h2>
+        </ion-text>
+        <ion-button fill="clear" size="small" (click)="abrirPopoverCorte($event)" $event.stopPropagation()>
+          <ion-icon slot="icon-only" name="pencil"></ion-icon>
+        </ion-button>
+
+        <ion-card *ngFor="let corte of materia.cortes" class="materia-card">
+          <ion-card-header>
+            <div class="card">
+              <ion-card-title>
+                {{ corte.nombre }}    | Porcentaje: {{corte.porcentaje}}    | Definitiva: {{ corte.notaDefinitiva }}
+              </ion-card-title>
+              <ion-button fill="clear" size="small" (click)="abrirPopoverActividad($event, corte)" $event.stopPropagation()>
+                <ion-icon slot="icon-only" name="pencil"></ion-icon>
+              </ion-button>
+
+            </div>
+          </ion-card-header>
+          <ion-item *ngFor="let actividad of corte.actividades">
+            <ion-label>
+              {{ actividad.nombre }} | Porcentaje: {{ actividad.porcentaje }} | Definitiva: {{ actividad.notaDefinitiva }}
+            </ion-label>
+
+            <!-- Botón eliminar directamente en la lista -->
+            <ion-button fill="clear" color="danger" (click)="eliminarActividad(corte, actividad.idActividad)">
+              <ion-icon slot="icon-only" name="trash"></ion-icon>
+            </ion-button>
+
+          </ion-item>
+        </ion-card>
+
+
+        <ion-popover [isOpen]="popoverOpenCorte" (didDismiss)="popoverOpenCorte=false">
+          <ng-template>
+            <ion-content>
+              <ion-item *ngFor="let corte of materia.cortes">
+                <ion-label position="stacked">Nombre del corte</ion-label>
+                <ion-input [(ngModel)]="corte.nombre" name="nombreCorte"></ion-input>
+
+                <ion-label position="stacked">Porcentaje del corte</ion-label>
+                <ion-input [(ngModel)]="corte.porcentaje"
+                           name="porcentajeCorte"
+                           type="number" min="0" max="100">
+                </ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label>
+                  Suma actual de porcentajes: {{ obtenerSumaPorcentajes() }}%
+                </ion-label>
+              </ion-item>
+
+              <ion-item>
+                <ion-note color="medium">
+                  Recuerda: los porcentajes deben sumar exactamente 100%.
+                </ion-note>
+              </ion-item>
+              <ion-button expand="block" (click)="editarCorte()">Confirmar</ion-button>
+            </ion-content>
+          </ng-template>
+
+        </ion-popover>
+
+        <ion-popover [isOpen]="popoverOpenActividad" (didDismiss)="popoverOpenActividad=false">
+          <ng-template>
+            <ion-content>
+              <ion-item *ngFor="let actividad of corteSeleccionado?.actividades">
+                <ion-label position="stacked">Nombre de la actividad</ion-label>
+                <ion-input [(ngModel)]="actividad.nombre"></ion-input>
+
+                <ion-label position="stacked">Porcentaje de la actividad</ion-label>
+                <ion-input [(ngModel)]="actividad.porcentaje" type="number" min="0" max="100"></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label>
+                  Suma actual de porcentajes: {{ obtenerSumaPorcentajesActividades(corteSeleccionado) }}%
+                </ion-label>
+              </ion-item>
+
+              <ion-item>
+                <ion-note color="medium">
+                  Recuerda: los porcentajes de las actividades deben sumar exactamente 100% dentro del corte.
+                </ion-note>
+              </ion-item>
+
+              <!-- Botón para agregar nueva actividad -->
+              <ion-button expand="block" (click)="agregarActividad()">
+                <ion-icon name="add-circle-outline"></ion-icon>
+              </ion-button>
+
+              <ion-button expand="block" (click)="editarActividades()">Confirmar</ion-button>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Modal para agregar / modificar los calificables -->
+  <ion-modal [isOpen]="modalCalificableOpen" (didDismiss)="cerrarModalCalificable()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{ calificableSeleccionado ? 'Editar Calificable' : 'Nuevo Calificable' }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarModalCalificable()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
         <ion-item>
-          <!--*ngFor="let actividad of materia.cortes.flatMap(c => c.actividades)"-->
-          <ion-label>
-            Actividades...
-          </ion-label>
+          <ion-label position="stacked">Nombre</ion-label>
+          <ion-input [(ngModel)]="formCalificable.nombre"></ion-input>
         </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
 
-  <!-- Tiempo de estudio semanal -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Tiempo de estudio semanal</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-item>
-        <ion-label>Tu tiempo</ion-label>
-        <ion-progress-bar ></ion-progress-bar>
-      </ion-item>
-      <ion-item>
-        <ion-label>Tiempo recomendado:</ion-label>
-      </ion-item>
-    </ion-card-content>
-  </ion-card>
+        <ion-item>
+          <ion-label position="stacked">Nota</ion-label>
+          <ion-input type="number"
+                     step="0.01"
+                     min="0"
+                     max="5"
+                     [(ngModel)]="formCalificable.nota"
+                     (ionBlur)="validarNota()">
+          </ion-input>
+        </ion-item>
+
+
+        <ion-item>
+          <ion-label position="stacked">Fecha</ion-label>
+          <ion-datetime [(ngModel)]="formCalificable.fecha"
+                        presentation="date"
+                        locale="es-CO">
+          </ion-datetime>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Actividad</ion-label>
+          <ion-select [(ngModel)]="formCalificable.idActividad" (ionChange)="setCorteSeleccionado($event)">
+            <ng-container *ngFor="let corte of materia.cortes">
+              <ion-select-option *ngFor="let actividad of corte.actividades"
+                                 [value]="actividad.idActividad"
+                                 [attr.data-corte]="corte.idCorte">
+                {{ corte.nombre }} - {{ actividad.nombre }}
+              </ion-select-option>
+            </ng-container>
+          </ion-select>
+
+        </ion-item>
+
+        <ion-button expand="block" (click)="guardarCalificable()">
+          {{ calificableSeleccionado ? 'Actualizar' : 'Crear' }}
+        </ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Modal para agregar /modificar las tareas -->
+  <ion-modal [isOpen]="modalTareaOpen" (didDismiss)="cerrarModalTarea()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Editar Tarea</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="guardarTarea()">Actualizar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+        <ion-item>
+          <ion-label position="stacked">Nombre</ion-label>
+          <ion-input [(ngModel)]="formTarea.nombre"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Fecha</ion-label>
+          <ion-datetime [(ngModel)]="formTarea.fecha" presentation="date"></ion-datetime>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Recordatorio</ion-label>
+          <ion-select [(ngModel)]="formTarea.tipoRecordatorio">
+            <ion-select-option value="daily">Diario</ion-select-option>
+            <ion-select-option value="weekly">Semanal</ion-select-option>
+            <ion-select-option value="once">Una sola vez</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+
 
 </ion-content>

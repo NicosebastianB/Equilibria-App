@@ -1,90 +1,75 @@
+import { Injectable } from '@angular/core';
 import { Corte } from '../models/corte';
 import { Actividad } from '../models/actividad';
 
+@Injectable({
+  providedIn: 'root'
+})
 export class CorteService {
 
-  iniciarCreacion(corte: Corte) {
-    // Limpia flags antes de empezar
-    corte.actividades.forEach(a => a.fijo = false);
-  }
-
+  // Agregar nueva actividad
   agregarActividad(corte: Corte, actividad: Actividad) {
-    // Agregar nueva actividad y marcarla como fija
-    actividad.fijo = true;
+    if (!corte) return;
     corte.actividades.push(actividad);
   }
 
-  finalizarCreacion(corte: Corte) {
-    const total = corte.actividades.reduce((acc, a) => acc + a.porcentaje, 0);
-    const diferencia = 100 - total;
-
-    // Redistribuir diferencia entre actividades no fijas
-    const flexibles = corte.actividades.filter(a => !a.fijo);
-    if (flexibles.length > 0) {
-      const ajustePorActividad = diferencia / flexibles.length;
-      flexibles.forEach(a => a.porcentaje += ajustePorActividad);
-    }
-
-    // Validar que sumen 100
-    if (!corte.validarPorcentajes()) {
-      throw new Error('Los porcentajes no suman 100 al finalizar creación.');
-    }
-
-    // Resetear flags
-    corte.actividades.forEach(a => a.fijo = false);
-  }
-
+  // Editar actividad existente
   editarActividad(corte: Corte, idActividad: number, cambios: Partial<Actividad>) {
     const actividad = corte.actividades.find(a => a.idActividad === idActividad);
     if (!actividad) return;
 
-    // Actualizar nombre si viene en cambios
     if (cambios.nombre !== undefined) {
       actividad.nombre = cambios.nombre;
     }
-
-    // Actualizar porcentaje si viene en cambios
     if (cambios.porcentaje !== undefined) {
-      // Marcar esta actividad como fija
-      actividad.fijo = true;
       actividad.porcentaje = cambios.porcentaje;
-
-      // Calcular diferencia con respecto a 100
-      const total = corte.actividades.reduce((acc, a) => acc + a.porcentaje, 0);
-      const diferencia = 100 - total;
-
-      // Redistribuir diferencia entre actividades flexibles
-      const flexibles = corte.actividades.filter(a => !a.fijo);
-      if (flexibles.length > 0) {
-        const ajustePorActividad = diferencia / flexibles.length;
-        flexibles.forEach(a => a.porcentaje += ajustePorActividad);
-      }
     }
   }
 
-
+  // Eliminar actividad (validando que quede al menos una)
   eliminarActividad(corte: Corte, idActividad: number) {
     if (corte.actividades.length <= 1) {
       throw new Error('Un corte debe tener al menos una actividad.');
     }
+
+    const actividad = corte.actividades.find(a => a.idActividad === idActividad);
+
+    // Logs antes de eliminar
+    console.log(">>> Eliminando actividad:", actividad?.nombre, "ID:", idActividad);
+    console.log(">>> Calificables asociados que se eliminarán:", actividad?.calificables);
+
+    // Eliminar la actividad completa (con sus calificables)
     corte.actividades = corte.actividades.filter(a => a.idActividad !== idActividad);
-    this.redistribuirPorcentajes(corte);
-  }
 
-  finalizarEdicion(corte: Corte) {
-    if (!corte.validarPorcentajes()) {
-      throw new Error('Los porcentajes no suman 100 al finalizar edición.');
-    }
-    corte.actividades.forEach(a => a.fijo = false);
-  }
+    // Logs después de eliminar
+    console.log(">>> Actividades restantes en corte", corte.idCorte, ":", corte.actividades.map(a => a.nombre));
+    console.log(">>> Calificables restantes en corte", corte.idCorte, ":",
+      corte.actividades.flatMap(a => a.calificables));
 
-  private redistribuirPorcentajes(corte: Corte) {
+    // Redistribuir porcentajes
     const cantidad = corte.actividades.length;
     if (cantidad === 1) {
       corte.actividades[0].porcentaje = 100;
-    } else {
-      const nuevoPorcentaje = 100 / cantidad;
-      corte.actividades.forEach(a => a.porcentaje = nuevoPorcentaje);
+      return;
     }
+
+    const base = Math.floor(100 / cantidad);
+    let restante = 100 - (base * cantidad);
+
+    corte.actividades.forEach((a, index) => {
+      a.porcentaje = base;
+      if (restante > 0) {
+        a.porcentaje += 1;
+        restante--;
+      }
+    });
+
+    // Log final de porcentajes
+    console.log(">>> Porcentajes redistribuidos en corte", corte.idCorte, ":",
+      corte.actividades.map(a => ({ nombre: a.nombre, porcentaje: a.porcentaje })));
   }
+
+
+
+  
 }

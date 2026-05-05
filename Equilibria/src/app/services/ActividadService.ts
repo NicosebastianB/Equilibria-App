@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { Materia } from '../models/materia';
+import { Corte } from '../models/corte';
 import { Actividad } from '../models/actividad';
 import { Calificable } from '../models/calificable';
 
@@ -6,67 +8,55 @@ import { Calificable } from '../models/calificable';
   providedIn: 'root'
 })
 export class ActividadService {
-  private actividades: Actividad[] = [];
 
-  agregarActividad(actividad: Actividad) {
-    this.actividades.push(actividad);
+  //--- Gestión de actividades dentro de un corte ---
+  agregarActividad(corte: Corte, actividad: Actividad) {
+    corte.actividades.push(actividad);
+    corte.calcularDefinitiva(); // recalcular corte
   }
 
-  editarActividad(idActividad: number, nuevaActividad: Actividad) {
-    const index = this.actividades.findIndex(a => a.idActividad === idActividad);
-    if (index !== -1) {
-      this.actividades[index] = nuevaActividad;
+  editarActividad(corte: Corte, idActividad: number, cambios: Partial<Actividad>) {
+    const actividad = corte.actividades.find(a => a.idActividad === idActividad);
+    if (actividad) {
+      if (cambios.nombre !== undefined) actividad.nombre = cambios.nombre;
+      if (cambios.porcentaje !== undefined) actividad.porcentaje = cambios.porcentaje;
+      actividad.calcularDefinitiva();
+      corte.calcularDefinitiva();
     }
   }
 
-  eliminarActividad(idActividad: number) {
-    this.actividades = this.actividades.filter(a => a.idActividad !== idActividad);
+  eliminarActividad(corte: Corte, idActividad: number) {
+    corte.actividades = corte.actividades.filter(a => a.idActividad !== idActividad);
+    corte.calcularDefinitiva();
   }
 
-  obtenerActividades(): Actividad[] {
-    return this.actividades;
+  obtenerActividades(corte: Corte): Actividad[] {
+    return corte.actividades;
   }
-
 
   //--- Gestión de calificables dentro de actividad ---
-  agregarCalificable(idActividad: number, calificable: Calificable) {
-    const actividad = this.actividades.find(a => a.idActividad === idActividad);
-    actividad?.agregarCalificable(calificable);
+  agregarCalificable(actividad: Actividad, calificable: Calificable) {
+    actividad.calificables.push(calificable);
+    actividad.calcularDefinitiva();
   }
 
-  editarCalificable(idActividad: number, calificableId: number, cambios: Partial<Calificable>) {
-    const actividad = this.actividades.find(m => m.idActividad === idActividad);
-    if (actividad) {
-      const calificable = actividad.calificables.find(t => t.idCalificable === calificableId);
-      if (calificable) {
-        if (cambios.nombre !== undefined) calificable.nombre = cambios.nombre;
-        if (cambios.fecha !== undefined) calificable.fecha = cambios.fecha;
-        if (cambios.tipoRecordatorio !== undefined) calificable.tipoRecordatorio = cambios.tipoRecordatorio;
-        if (cambios.nota !== undefined) calificable.nota = cambios.nota;
-      }
+  editarCalificable(actividad: Actividad, calificableId: number, cambios: Partial<Calificable>) {
+    const calificable = actividad.calificables.find(c => c.idCalificable === calificableId);
+    if (calificable) {
+      if (cambios.nombre !== undefined) calificable.nombre = cambios.nombre;
+      if (cambios.fecha !== undefined) calificable.fecha = cambios.fecha;
+      if (cambios.tipoRecordatorio !== undefined) calificable.tipoRecordatorio = cambios.tipoRecordatorio;
+      if (cambios.nota !== undefined) calificable.nota = cambios.nota;
+      actividad.calcularDefinitiva();
     }
   }
 
-  eliminarCalificable(idActividad: number, idCalificable: number) {
-    const actividad = this.actividades.find(a => a.idActividad === idActividad);
-    if (actividad) {
-      actividad.calificables = actividad.calificables.filter(
-        c => c.idCalificable !== idCalificable
-      );
-    }
+  eliminarCalificable(actividad: Actividad, idCalificable: number) {
+    actividad.calificables = actividad.calificables.filter(c => c.idCalificable !== idCalificable);
+    actividad.calcularDefinitiva();
   }
 
-
-  obtenerCalificable(idActividad: number): Calificable[] {
-  const actividad = this.actividades.find(m => m.idActividad === idActividad);
-  if (!actividad) {
-    return [];
-  }
-  return actividad.calificables;
-}
-
-  calcularDefinitivaActividad(idActividad: number): number {
-    const actividad = this.actividades.find(a => a.idActividad === idActividad);
-    return actividad ? actividad.calcularDefinitiva() : 0;
+  obtenerCalificables(actividad: Actividad): Calificable[] {
+    return actividad.calificables;
   }
 }
