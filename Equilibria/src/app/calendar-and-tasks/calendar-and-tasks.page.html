@@ -17,6 +17,21 @@
 </ion-header>
 
 <ion-content>
+
+  <ng-container *ngIf="materias.length === 0">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Sin materias activas</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-note color="medium">
+          Actualmente no tienes materias activas registradas.
+          Marca alguna materia como activa desde su página o agrega una nueva para ver tu horario y tareas aquí.
+        </ion-note>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+
   <!-- Horario -->
   <ion-card>
     <ion-card-header>

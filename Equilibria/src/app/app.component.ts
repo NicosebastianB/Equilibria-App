@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
+import { DataService } from '../app/services/data';
+import { MockService } from '../app/services/MockService';
 
 import {
   book,
@@ -21,10 +23,12 @@ import { EstudianteService } from './services/EstudianteService';
   imports: [IonApp, IonRouterOutlet],
 
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   constructor(
     private router: Router,
     private estSrv: EstudianteService,
+    private dataService: DataService,
+    private mockService: MockService
   ) {
     addIcons({
       book,
@@ -35,16 +39,40 @@ export class AppComponent {
       roseSharp,
       settingsSharp,
     });
-    this.initialize();
   }
 
-  private initialize() {
-    const usuarioConfigurado = localStorage.getItem('usuarioConfigurado');
+  ngOnInit() {
+    // 🔑 cargar datos desde localStorage
+    this.dataService.cargarDatos();
 
+    // Si no hay materias en localStorage, poblar con mock
+    if (this.dataService.getMaterias().length === 0) {
+      const mockMaterias = this.mockService.getMaterias();
+      mockMaterias.forEach(m => this.dataService.addMateria(m));
+    }
+
+    const usuarioConfigurado = localStorage.getItem('usuarioConfigurado');
     if (usuarioConfigurado === 'true') {
       this.router.navigateByUrl('/tabs/materias', { replaceUrl: true });
     } else {
       this.router.navigateByUrl('/onboarding', { replaceUrl: true });
     }
   }
+
+  private initialize() {
+    this.dataService.cargarDatos(); // 🔑 ahora sí se ejecuta siempre
+
+    if (this.dataService.getMaterias().length === 0) {
+      const mockMaterias = this.mockService.getMaterias();
+      mockMaterias.forEach(m => this.dataService.addMateria(m));
+    }
+
+    const usuarioConfigurado = localStorage.getItem('usuarioConfigurado');
+    if (usuarioConfigurado === 'true') {
+      this.router.navigateByUrl('/tabs/materias', { replaceUrl: true });
+    } else {
+      this.router.navigateByUrl('/onboarding', { replaceUrl: true });
+    }
+  }
+
 }

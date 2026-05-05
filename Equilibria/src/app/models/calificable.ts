@@ -3,12 +3,13 @@ export class Calificable {
     public idMateria: number,
     public idCorte: number,
     public idActividad: number,
-    public idCalificable: number,
+    public idCalificable: number, // ahora se pasa desde Actividad
     public nombre: string,
     public fecha: Date,
     public tipoRecordatorio: string,
     public nota?: number
-  ) {}
+  ) { }
+
 
   validarNota(): boolean {
     // Ejemplo: nota válida entre 0 y 5

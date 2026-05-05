@@ -11,7 +11,6 @@
     "test": "ng test",
     "lint": "ng lint",
     "ts-prune": "ts-prune"
-
   },
   "private": true,
   "dependencies": {
@@ -29,7 +28,9 @@
     "@capacitor/keyboard": "8.0.1",
     "@capacitor/status-bar": "8.0.1",
     "@ionic/angular": "^8.0.0",
+    "chart.js": "^3.9.1",
     "ionicons": "^7.4.0",
+    "ng2-charts": "^3.1.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

@@ -70,26 +70,58 @@ export class CalendarAndTasksPage implements OnInit {
   { }
 
   ngOnInit(): void {
-    // Inicializar materias desde DataService
-    this.materias = this.dataService.getMaterias();
+    // 🔑 Usar solo materias activas
+    this.materias = this.dataService.getMateriasActivas();
 
-    // Inicializar tareas directamente desde las materias
-    const tareas = this.dataService.getTareas();
+    // Inicializar tareas directamente desde las materias activas
+    const tareas = this.dataService.getTareas().filter(t =>
+      this.materias.some(m => m.idMateria === t.idMateria)
+    );
     this.refrescarTareas();
 
-    // Construir horarios iniciales
+    // Construir horarios iniciales solo con materias activas
     this.horarios = this.materias.flatMap(materia =>
       materia.horarios.map(horario => ({
         dia: horario.dia,
         horaInicio: horario.horaInicio,
         duracionHoras: horario.duracionHoras,
         salon: horario.salon,
-        materiaColor: this.getColorHex(materia.color), // 👈 aquí el hex
+        materiaColor: this.getColorHex(materia.color),
         materiaNombre: materia.nombre,
         materiaSalon: horario.salon ?? null
       }))
     );
   }
+
+  ionViewWillEnter() {
+    // 🔑 Refrescar solo materias activas
+    this.materias = this.dataService.getMateriasActivas();
+
+    // Filtrar tareas solo de materias activas
+    const tareas = this.dataService.getTareas().filter(t =>
+      this.materias.some(m => m.idMateria === t.idMateria)
+    );
+    this.tareasPendientes = tareas.filter(t => !t.estado);
+    this.tareasCompletadas = tareas.filter(t => t.estado);
+
+    // Reconstruir horarios solo con materias activas
+    this.horarios = this.materias.flatMap(materia =>
+      materia.horarios.map(horario => ({
+        dia: horario.dia,
+        horaInicio: horario.horaInicio,
+        duracionHoras: horario.duracionHoras,
+        salon: horario.salon,
+        materiaColor: materia.color,
+        materiaNombre: materia.nombre,
+        materiaSalon: horario.salon ?? null
+      }))
+    );
+
+
+    // 🔑 reconstruir horarios
+    this.refrescarHorarios();
+  }
+
 
   segmentValue: string = 'horario';
 
@@ -104,6 +136,21 @@ export class CalendarAndTasksPage implements OnInit {
     this.tareasPendientes = todas.filter(t => !t.estado);
     this.tareasCompletadas = todas.filter(t => t.estado);
   }
+
+  private refrescarHorarios() {
+    this.horarios = this.materias.flatMap(materia =>
+      materia.horarios.map(horario => ({
+        dia: horario.dia,
+        horaInicio: horario.horaInicio,
+        duracionHoras: horario.duracionHoras,
+        salon: horario.salon,
+        materiaColor: this.getColorHex(materia.color),
+        materiaNombre: materia.nombre,
+        materiaSalon: horario.salon ?? null
+      }))
+    );
+  }
+
 
   onTareaCompletada(tarea: Tarea) {
     this.dataService.marcarTareaComoCompletada(tarea.idMateria, tarea.idTarea);
@@ -134,33 +181,6 @@ export class CalendarAndTasksPage implements OnInit {
     const color = this.colores.find(c => c.value === nombreColor);
     return color ? color.hex : '#ffffff'; // blanco por defecto si no encuentra
   }
-
-
-  ionViewWillEnter() {
-    // Refrescar materias y tareas al entrar en la página
-    this.materias = this.dataService.getMaterias();
-
-    const tareas = this.dataService.getTareas();
-    this.tareasPendientes = tareas.filter(t => !t.estado);
-    this.tareasCompletadas = tareas.filter(t => t.estado);
-
-    // Reconstruir horarios
-    this.horarios = this.materias.flatMap(materia =>
-      materia.horarios.map(horario => ({
-        dia: horario.dia,
-        horaInicio: horario.horaInicio,
-        duracionHoras: horario.duracionHoras,
-        salon: horario.salon,
-        materiaColor: materia.color,
-        materiaNombre: materia.nombre,
-        materiaSalon: horario.salon ?? null
-      }))
-    );
-  }
-
-
-
-
 
 }
 

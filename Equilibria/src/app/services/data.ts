@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Materia } from '../models/materia';
+import { MateriaService } from './MateriaService';
 import { Tarea } from '../models/tarea';
 import { Horario } from '../models/horario';
 import { Corte } from '../models/corte';
@@ -18,12 +19,12 @@ export class DataService {
   }
 
   // Cargar desde localStorage
-  private cargarDatos() {
+  public cargarDatos() {
     const materiasGuardadas = localStorage.getItem('materias');
-
 
     if (materiasGuardadas) {
       const materiasData = JSON.parse(materiasGuardadas);
+
       this.materias = materiasData.map((data: any) => {
         const materia = new Materia(
           data.idMateria,
@@ -40,7 +41,6 @@ export class DataService {
         materia.notaFaltante = data.notaFaltante;
 
         // 🔑 reconstruir cortes con actividades y calificables
-        // 🔑 reconstruir cortes con actividades y calificables
         if (data.cortes) {
           materia.cortes = data.cortes.map((c: any) => {
             const corte = new Corte(data.idMateria, c.idCorte, c.nombre, c.porcentaje);
@@ -48,32 +48,30 @@ export class DataService {
 
             if (c.actividades) {
               corte.actividades = c.actividades.map((a: any) => {
-                // Inicializar actividad con calificables vacíos
                 const actividad = new Actividad(
                   a.idMateria,
                   a.idCorte,
                   a.idActividad,
                   a.nombre,
                   a.porcentaje,
-                  [], // 🔑 inicializar vacío
+                  [], // inicializar vacío
                   a.notaDefinitiva,
                   a.fijo
                 );
 
-                // Reconstruir calificables como instancias reales
                 if (a.calificables) {
-                  actividad.calificables = a.calificables.map((cal: any) => {
-                    return new Calificable(
+                  actividad.calificables = a.calificables.map((cal: any) =>
+                    new Calificable(
                       cal.idMateria,
                       cal.idCorte,
                       cal.idActividad,
                       cal.idCalificable,
                       cal.nombre,
-                      new Date(cal.fecha), // 🔑 reconstruir fecha
+                      new Date(cal.fecha),
                       cal.tipoRecordatorio,
                       cal.nota
-                    );
-                  });
+                    )
+                  );
                 }
 
                 return actividad;
@@ -83,7 +81,6 @@ export class DataService {
             return corte;
           });
         }
-  
 
         materia.horarios = (data.horarios || []).map((h: any) =>
           new Horario(h.id, materia.idMateria, h.dia, h.horaInicio, h.duracionHoras, h.salon)
@@ -94,7 +91,7 @@ export class DataService {
             const tarea = new Tarea(
               t.idMateria,
               t.nombre,
-              new Date(t.fecha), // 🔑 reconstruir fecha
+              new Date(t.fecha),
               t.tipoRecordatorio
             );
             tarea.idTarea = t.idTarea;
@@ -108,20 +105,24 @@ export class DataService {
             new RegistroEstudio(
               r.idRegistro,
               r.idMateria,
-              new Date(r.fecha), // 🔑 reconstruir fecha
+              new Date(r.fecha),
               r.duracionMinutos
             )
           );
         }
 
+        // 🔑 recalcular definitivas al final de la reconstrucción
+        materia.calcularHorasTrabajo();
+
+        materia.recalcularTodo();
 
         return materia;
       });
-
     } else {
       this.materias = [];
     }
   }
+
 
   // Guardar en localStorage
   private guardarDatos() {
@@ -188,28 +189,32 @@ export class DataService {
         duracionMinutos: r.duracionMinutos
       }))
     }));
-
+    console.log("Serializando materias para localStorage:", this.materias);
     localStorage.setItem('materias', JSON.stringify(materiasData));
   }
 
 
   // Materias
+
   getMaterias(): Materia[] {
     return this.materias;
   }
+
+  // Agregar materia
 
   addMateria(materia: Materia) {
     this.materias.push(materia);
     this.guardarDatos();
   }
 
+  // Actualizar materia por id
 
   updateMateria(materia: Materia) {
     const index = this.materias.findIndex(m => m.idMateria === materia.idMateria);
     if (index !== -1) {
       const existente = this.materias[index];
 
-      // 🔑 actualizar solo los campos editables
+      // Actualizar solo los campos editables
       existente.nombre = materia.nombre;
       existente.color = materia.color;
       existente.creditos = materia.creditos;
@@ -217,19 +222,31 @@ export class DataService {
       existente.horasClaseSemanal = materia.horasClaseSemanal;
       existente.horarios = materia.horarios;
 
-      // ⚠️ NO tocamos cortes, tareas ni registros → se preservan
-      // existente.cortes, existente.tareas y existente.registros siguen intactos
+      // Mantener cortes, actividades, calificables y tareas intactos
+      // existente.cortes, existente.tareas, etc. no se tocan
 
+      console.log("Materia actualizada sin perder información interna:", existente);
       this.guardarDatos();
     }
   }
 
-
+  // Eliminar materia por id
 
   eliminarMateria(id: number) {
     this.materias = this.materias.filter(m => m.idMateria !== id);
     this.guardarDatos();
   }
+
+  // Obtener todas las materias activas (no finalizadas)
+  getMateriasActivas(): Materia[] {
+    return this.materias.filter(m => !m.finalizado);
+  }
+
+  // Obtener todas las materias finalizadas
+  getMateriasFinalizadas(): Materia[] {
+    return this.materias.filter(m => m.finalizado);
+  }
+
 
   // Tareas (siempre desde materias)
   getTareas(): Tarea[] {
@@ -251,6 +268,8 @@ export class DataService {
     }
   }
 
+  // actualizar el estado de la tarea a completada
+
   marcarTareaComoCompletada(idMateria: number, idTarea: number) {
     const materia = this.materias.find(m => m.idMateria === idMateria);
     const tarea = materia?.tareas.find(t => t.idTarea === idTarea);
@@ -260,6 +279,8 @@ export class DataService {
     }
   }
 
+  // actualizar el estado de la tarea a pendiente
+
   marcarTareaComoPendiente(idMateria: number, idTarea: number) {
     const materia = this.materias.find(m => m.idMateria === idMateria);
     const tarea = materia?.tareas.find(t => t.idTarea === idTarea);
@@ -268,4 +289,65 @@ export class DataService {
       this.guardarDatos();
     }
   }
+
+  // --- Calificables (siempre desde materias) ---
+  agregarCalificable(idMateria: number, idCorte: number, idActividad: number, calificable: Calificable) {
+    console.log("Intentando agregar calificable:", calificable, "a materia:", idMateria, "corte:", idCorte, "actividad:", idActividad);
+
+    const materia = this.materias.find(m => m.idMateria === idMateria);
+    const corte = materia?.cortes.find(c => c.idCorte === idCorte);
+    const actividad = corte?.actividades.find(a => a.idActividad === idActividad);
+
+    console.log("Materia encontrada:", materia);
+    console.log("Corte encontrado:", corte);
+    console.log("Actividad encontrada:", actividad);
+
+    if (actividad) {
+      actividad.calificables.push(calificable);
+      console.log("Calificables actuales en actividad:", actividad.calificables);
+      actividad.calcularDefinitiva();
+      corte?.calcularDefinitiva();
+      materia?.recalcularTodo();
+      this.updateMateria(materia!);
+    }
+  }
+
+
+  editarCalificable(idMateria: number, idCorte: number, idActividad: number, idCalificable: number, cambios: Partial<Calificable>) {
+    const materia = this.materias.find(m => m.idMateria === idMateria);
+    const corte = materia?.cortes.find(c => c.idCorte === idCorte);
+    const actividad = corte?.actividades.find(a => a.idActividad === idActividad);
+
+    if (actividad) {
+      const calificable = actividad.calificables.find(c => c.idCalificable === idCalificable);
+      if (calificable) {
+        if (cambios.nombre !== undefined) calificable.nombre = cambios.nombre;
+        if (cambios.fecha !== undefined) calificable.fecha = cambios.fecha;
+        if (cambios.tipoRecordatorio !== undefined) calificable.tipoRecordatorio = cambios.tipoRecordatorio;
+        if (cambios.nota !== undefined) calificable.nota = cambios.nota;
+        actividad.calcularDefinitiva();
+        corte?.calcularDefinitiva();
+        materia?.recalcularTodo();
+        this.updateMateria(materia!);
+      }
+    }
+  }
+
+  eliminarCalificable(idMateria: number, idCorte: number, idActividad: number, idCalificable: number) {
+    const materia = this.materias.find(m => m.idMateria === idMateria);
+    const corte = materia?.cortes.find(c => c.idCorte === idCorte);
+    const actividad = corte?.actividades.find(a => a.idActividad === idActividad);
+
+    if (actividad) {
+      actividad.calificables = actividad.calificables.filter(c => c.idCalificable !== idCalificable);
+      actividad.calcularDefinitiva();
+      corte?.calcularDefinitiva();
+      materia?.recalcularTodo();
+      this.updateMateria(materia!);
+    }
+  }
+
+
+
+
 }

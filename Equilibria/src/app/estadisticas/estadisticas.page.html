@@ -16,10 +16,146 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">estadisticas</ion-title>
-    </ion-toolbar>
-  </ion-header>
+
+<ion-content>
+
+  <!-- 1. Definitivas parciales -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Definitivas parciales</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <!-- Lista textual -->
+      <ion-list>
+        <ion-item *ngFor="let materia of materiasActivas">
+          <ion-label>
+            {{ materia.nombre }}:
+            <strong>{{ materia.definitiva ? (materia.definitiva | number:'1.1-2') : 'Sin calificaciones' }}</strong>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+
+      <!-- Gráfico de barras -->
+      <div style="display:block">
+        <canvas baseChart
+                [data]="barChartData"
+                [labels]="barChartLabels"
+                [options]="barChartOptions"
+                [type]="barChartType">
+        </canvas>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- 2. Proporción de estudio -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Proporción de estudio</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <!-- Lista textual -->
+      <ion-list>
+        <ion-item *ngFor="let materia of materiasActivas">
+          <ion-label>
+            {{ materia.nombre }}: {{ proporciones[materia.idMateria] | number:'1.0-0' }}%
+          </ion-label>
+        </ion-item>
+      </ion-list>
+
+      <!-- Gráfico de pastel -->
+      <div style="display:block">
+        <canvas baseChart
+                [data]="pieChartData"
+                [options]="pieChartOptions"
+                [type]="pieChartType">
+        </canvas>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- 6. Cumplimiento semanal (gráfico) -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Cumplimiento semanal</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div style="display:block">
+        <canvas baseChart
+                [data]="lineChartData"
+                [options]="lineChartOptions"
+                [type]="lineChartType">
+        </canvas>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- 4. Cantidad de registros -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Registros totales</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let materia of materiasActivas">
+          <ion-label>
+            {{ materia.nombre }}: {{ materia.registros.length }} registros
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- 5. Simulador -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Simulador de nota mínima</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-button expand="block" (click)="abrirModalSimulador()">
+        Cuánto me falta para pasar
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Modal simulador -->
+  <ion-modal [isOpen]="modalSimuladorOpen" (didDismiss)="cerrarModalSimulador()">
+    <ng-template>
+      <ion-content class="ion-padding">
+        <!-- contenido del modal -->
+        <ion-item>
+          <ion-label position="stacked">Selecciona materia</ion-label>
+          <ion-select [(ngModel)]="materiaSeleccionada">
+            <ion-select-option *ngFor="let materia of materiasActivas" [value]="materia.idMateria">
+              {{ materia.nombre }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Selecciona cortes a analizar</ion-label>
+          <ion-select multiple="true" [(ngModel)]="cortesSeleccionados">
+            <ion-select-option *ngFor="let corte of getCortesMateria(materiaSeleccionada)" [value]="corte.idCorte">
+              {{ corte.nombre }} ({{ corte.porcentaje }}%)
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-button expand="block" (click)="calcularNotaNecesaria()">
+          Calcular cuánto falta
+        </ion-button>
+
+        <ion-note *ngIf="resultadoSimulador">
+          {{ resultadoSimulador }}
+        </ion-note>
+
+        <!-- Botón de cerrar dentro del contenido -->
+        <ion-button expand="block" color="medium" (click)="cerrarModalSimulador()">
+          Cerrar
+        </ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+
 </ion-content>
