@@ -388,6 +388,63 @@ export class DataService {
     }
   }
 
+  // --- Calificables (siempre desde materias) ---
+  agregarCalificable(idMateria: number, idCorte: number, idActividad: number, calificable: Calificable) {
+    console.log("Intentando agregar calificable:", calificable, "a materia:", idMateria, "corte:", idCorte, "actividad:", idActividad);
+
+    const materia = this.materias.find(m => m.idMateria === idMateria);
+    const corte = materia?.cortes.find(c => c.idCorte === idCorte);
+    const actividad = corte?.actividades.find(a => a.idActividad === idActividad);
+
+    console.log("Materia encontrada:", materia);
+    console.log("Corte encontrado:", corte);
+    console.log("Actividad encontrada:", actividad);
+
+    if (actividad) {
+      actividad.calificables.push(calificable);
+      console.log("Calificables actuales en actividad:", actividad.calificables);
+      actividad.calcularDefinitiva();
+      corte?.calcularDefinitiva();
+      materia?.recalcularTodo();
+      this.updateMateria(materia!);
+    }
+  }
+
+
+  editarCalificable(idMateria: number, idCorte: number, idActividad: number, idCalificable: number, cambios: Partial<Calificable>) {
+    const materia = this.materias.find(m => m.idMateria === idMateria);
+    const corte = materia?.cortes.find(c => c.idCorte === idCorte);
+    const actividad = corte?.actividades.find(a => a.idActividad === idActividad);
+
+    if (actividad) {
+      const calificable = actividad.calificables.find(c => c.idCalificable === idCalificable);
+      if (calificable) {
+        if (cambios.nombre !== undefined) calificable.nombre = cambios.nombre;
+        if (cambios.fecha !== undefined) calificable.fecha = cambios.fecha;
+        if (cambios.tipoRecordatorio !== undefined) calificable.tipoRecordatorio = cambios.tipoRecordatorio;
+        if (cambios.nota !== undefined) calificable.nota = cambios.nota;
+        actividad.calcularDefinitiva();
+        corte?.calcularDefinitiva();
+        materia?.recalcularTodo();
+        this.updateMateria(materia!);
+      }
+    }
+  }
+
+  eliminarCalificable(idMateria: number, idCorte: number, idActividad: number, idCalificable: number) {
+    const materia = this.materias.find(m => m.idMateria === idMateria);
+    const corte = materia?.cortes.find(c => c.idCorte === idCorte);
+    const actividad = corte?.actividades.find(a => a.idActividad === idActividad);
+
+    if (actividad) {
+      actividad.calificables = actividad.calificables.filter(c => c.idCalificable !== idCalificable);
+      actividad.calcularDefinitiva();
+      corte?.calcularDefinitiva();
+      materia?.recalcularTodo();
+      this.updateMateria(materia!);
+    }
+  }
+
   agregarRegistro(idMateria: number, registro: RegistroEstudio) {
     const materia = this.materias.find(m => m.idMateria === idMateria);
     if (materia) {

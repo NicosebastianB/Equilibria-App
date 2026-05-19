@@ -183,6 +183,11 @@ export class Materia {
     this.calcularDefinitiva();
   }
 
+  public recalcularTodo(): void {
+    this.cortes.forEach(c => c.calcularDefinitiva());
+    this.calcularDefinitiva();
+  }
+
 
   calcularNotaFaltante(notaMinima: number = 3.0): number {
     let notaActual = 0;
