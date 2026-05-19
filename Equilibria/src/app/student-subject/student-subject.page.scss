@@ -1,15 +1,456 @@
-.card {
+ion-datetime {
+  --background: #ffffff; 
+  --color: #333333;
+  --title-color: #877DC0; // Mes y año en morado oscuro
+  --highlight-color: #ffffff; 
+  --highlight-background: #877DC0; 
+
+  /* SOLUCIÓN AL CALENDARIO: Fuerza a los días del Shadow DOM a ser legibles */
+  &::part(calendar-day) {
+    color: #333333 !important;
+  }
+  &::part(calendar-day-active) {
+    color: #ffffff !important;
+  }
+}
+
+/* CONFIGURACIÓN GENERAL Y HEADER ALINEADO*/
+ion-content {
+  --background: #EBEFFF; 
+}
+
+.header-referencia-custom {
+  background: #ffffff !important;
+  height: 100px;
+  padding: 12px 10px 4px 6px;
+
+  .contenedor-header-lineal {
+    display: flex;
+    flex-direction: row;
+    align-items: center; /* Alineación vertical centrada */
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 25px;
+  }
+}
+
+.boton-regresar-morado {
+  --color: #877DC0;
+  font-size: 1.1rem;
+}
+
+.titulo-materia-header {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1.9rem; 
+  color: #877DC0; 
+  margin: 0;
+  flex: 1;
+  padding-left: 8px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.boton-tres-puntos {
+  --color: #877DC0;
+  font-size: 1.4rem;
+  margin: 0;
+  --padding-start: 8px;
+  --padding-end: 8px;
+}
+
+/* ELEMENTOS DE DIVISIÓN Y TÍTULOS DE SECCIÓN= */
+.seccion-titulo {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  color: #877DC0;
+  font-size: 1.2rem;
+  margin: 24px 20px 10px 20px;
+}
+
+.contenedor-titulo-seccion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px 0 0;
+
+  .seccion-titulo {
+    margin-right: 0;
+  }
+}
+
+.boton-modificar-pildora {
+  --background: #FFF5AC !important; 
+  --color: #877DC0 !important;
+  --border-radius: 12px !important;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  height: 32px;
+  width: 100px;
+  margin-top: 15px;
+}
+
+.linea-separadora-morada {
+  height: 2px;
+  background-color: #877DC0;
+  margin: 18px 20px;
+  opacity: 0.6;
+}
+
+/* DISEÑO ESTRUCTURAL DE TARJETAS (CON / SIN BORDE)*/
+.tareas-custom-card {
+  border-radius: 28px !important; 
+  background: #ffffff;
+  margin: 0 20px 16px 20px;
+  overflow: hidden;
+
+  ion-card-content {
+    padding: 12px 4px;
+  }
+}
+
+.tarjeta-con-borde {
+  border: 3px solid #877DC0 !important;
+  box-shadow: none;
+}
+
+.tarjeta-limpia-sin-borde {
+  border: none;
+  box-shadow: 0 4px 16px rgba(135, 125, 192, 0.06);
+}
+
+/* ESTRUCTURA DE TAREAS */
+.item-tarea-custom {
+  --padding-start: 8px;
+  --inner-padding-end: 8px;
+  margin-bottom: 6px;
+
+  .info-tarea-centro {
+    h2 {
+      font-family: 'Montserrat', sans-serif;
+      color: #877DC0; 
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin: 0 0 2px 0;
+    }
+    p {
+      font-family: 'Montserrat', sans-serif;
+      color: #a39ccb; 
+      font-weight: 400;
+      font-size: 0.85rem;
+      margin: 0;
+    }
+  }
+}
+
+.bloque-acciones-derecha {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; 
+  justify-content: center;
+  min-width: 110px;
+}
+
+.fecha-vence-texto {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #FF76A7; 
+  margin-bottom: 2px;
+}
+
+.texto-completado {
+  color: #a39ccb;
+}
+
+.contenedor-iconos-accion {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-end;
+  margin-right: -6px; 
+
+  .boton-accion-icono {
+    --padding-start: 4px;
+    --padding-end: 4px;
+    height: 28px;
+    margin: 0;
+    font-size: 0.9rem;
+    --color: #877DC0;
+  }
+}
+
+/* BOTONES */
+.boton-agregar-materia, .boton-agregar-bloque {
+  --background: #877DC0 !important;
+  --color: #ffffff !important;
+  --border-radius: 20px !important;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  height: 40px;
+  margin: 0 auto;
+}
+
+/* ELEMENTOS COMPLEMENTARIOS (CHECKBOX, ACORDEONES, DEFINITIVA)*/
+ion-checkbox {
+  width: 22px;
+  height: 22px;
+
+  &::part(container) {
+    border-radius: 50%;
+    background: transparent;
+    border: 2px solid #877DC0;
+    box-shadow: none;
+  }
+  --checkmark-color: #877DC0;
 }
 
 .completada {
   text-decoration: line-through;
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
-ion-card-title {
-  font-weight: bold;
+ion-list {
+  background: transparent;
 }
 
+ion-item {
+  --background: #ffffff;
+  --border-style: none;
+  --inner-border-width: 0px;
+}
+
+ion-accordion {
+  background: #ffffff;
+  ion-item[slot="header"] {
+    --background: #ffffff;
+    border-bottom: 1px solid #EBEFFF;
+  }
+}
+
+.contenedor-definitiva-central {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  margin: 12px 0 32px 0;
+  padding: 0 24px;
+}
+
+.nota-definitiva-gigante {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 4.2rem;
+  font-weight: 700;
+  color: #877DC0;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.subtexto-definitiva-central {
+  font-family: 'Montserrat', sans-serif;
+  color: #a39ccb;
+  font-size: 0.85rem;
+  max-width: 280px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* INTERFAZ DE FORMULARIOS Y MODALES */
+.modal-formulario-custom, .cuerpo-modal-blanco {
+
+  .item-formulario, ion-item:not([slot="header"]) {
+    --background: #ffffff;
+    border: 1px solid rgba(135, 125, 192, 0.3);
+    border-radius: 12px;
+    margin-bottom: 12px;
+
+    ion-label {
+      color: #877DC0 !important;
+      font-weight: 600 !important;
+    }
+
+    ion-input, ion-textarea, input, select, ion-select {
+      --color: #877DC0 !important;
+      color: #877DC0 !important;
+      font-weight: 500;
+    }
+  }
+
+  .item-formulario:has(p), .contenedor-advertencia-porcentaje {
+    border: 1px solid rgba(135, 125, 192, 0.3);
+    background: #ffffff;
+    padding: 14px;
+    border-radius: 12px;
+
+    .item-formulario, ion-item {
+      border: none !important;
+      margin-bottom: 0;
+      padding: 0;
+    }
+  }
+
+  .toolbar-modal {
+    --background: #877DC0 !important;
+    --color: #ffffff !important;
+    
+    ion-title {
+      color: #ffffff;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+    }
+    ion-button {
+      --color: #ffffff;
+    }
+  }
+
+  .subtitulo-modal {
+    font-family: 'Montserrat', sans-serif;
+    color: #877DC0;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  /* BOTÓN CONFIRMAR */
+  .boton-confirmar, .boton-confirmar-interno, [expand="block"] {
+    --background: #877DC0 !important; 
+    --color: #ffffff !important;      
+    color: #ffffff !important;
+    --border-radius: 24px !important; 
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    height: 44px;
+    margin-top: 20px;
+  }
+
+  .boton-guardar-modal {
+    --background: #877DC0 !important;
+    --color: #ffffff !important;
+    --border-radius: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    margin-top: 20px;
+  }
+}
+
+/*SUB-MODAL / CRITERIOS */
+.tarjeta-interna-modal {
+  background: #f7f8ff;
+  border: 1px solid rgba(135, 125, 192, 0.25);
+  border-radius: 16px;
+  margin: 0 0 16px 0;
+  box-shadow: none;
+}
+
+.header-tarjeta-modal {
+  padding: 14px 14px 8px 14px;
+}
+
+.linea-titulo-corte {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.texto-titulo-corte {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #877DC0;
+  margin: 0;
+}
+
+.porcentaje-badge {
+  color: #a39ccb;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.info-definitiva-corte {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  color: #666666;
+  margin-top: 4px;
+}
+
+.lista-interna-modal {
+  background: transparent;
+  padding: 0 6px 6px 6px;
+}
+
+.item-interno-modal {
+  --background: #ffffff;
+  margin: 4px 6px;
+  border-radius: 12px;
+  border: 1px solid rgba(135, 125, 192, 0.1);
+
+  .label-actividad-modal {
+    h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #444444;
+      margin: 0 0 2px 0;
+    }
+    p {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.8rem;
+      color: #777777;
+      margin: 0;
+    }
+  }
+}
+
+.boton-lapiz-modal {
+  --color: #877DC0 !important;
+  font-size: 0.95rem;
+  height: 32px;
+  margin: 0;
+}
+
+.boton-basura-modal {
+  --color: #FF76A7 !important;
+  font-size: 0.95rem;
+  height: 32px;
+  margin: 0;
+}
+
+/*CONFIGURACIÓN DE MENÚS DESPLEGABLES (ION-POPOVER) */
+ion-popover {
+  --background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(135, 125, 192, 0.1);
+
+  ion-list {
+    background: transparent;
+    padding: 0;
+
+    ion-item {
+      --background: #ffffff;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.9rem;
+      border-bottom: 1px solid rgba(135, 125, 192, 0.1);
+
+      &:last-of-type {
+        border-bottom: none;
+      }
+      &:first-of-type ion-label {
+        color: #877DC0 !important;
+      }
+      &:last-of-type, &[color="danger"], .item-eliminar {
+        --color: #E63946 !important;
+        color: #E63946 !important;
+        
+        ion-label {
+          color: #E63946 !important;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}

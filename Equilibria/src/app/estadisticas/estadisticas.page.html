@@ -2,7 +2,7 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-button routerLink="/settings">
-        <ion-icon slot="icon-only" name="settings-sharp"></ion-icon>
+        <ion-icon slot="icon-only" src="assets/icon/logo-setting.svg"></ion-icon>
       </ion-button>
     </ion-buttons>
 
@@ -10,20 +10,17 @@
 
     <ion-buttons slot="end">
       <ion-button routerLink="/bienestar">
-        <ion-icon slot="icon-only" name="rose-sharp"></ion-icon>
+        <ion-icon slot="icon-only" src="assets/icon/logo-bienestar.svg"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-
+<!-- 1. Definitivas parciales -->
 <ion-content>
 
-  <!-- 1. Definitivas parciales -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Definitivas parciales</ion-card-title>
-    </ion-card-header>
+  <h2 class="seccion-titulo">Definitivas parciales</h2>
+  <ion-card class="tareas-custom-card">
     <ion-card-content>
       <!-- Lista textual -->
       <ion-list>
@@ -48,10 +45,8 @@
   </ion-card>
 
   <!-- 2. Proporción de estudio -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Proporción de estudio</ion-card-title>
-    </ion-card-header>
+  <h2 class="seccion-titulo">Proporción de estudio</h2>
+  <ion-card class="tareas-custom-card">
     <ion-card-content>
       <!-- Lista textual -->
       <ion-list>
@@ -62,7 +57,7 @@
         </ion-item>
       </ion-list>
 
-      <!-- Gráfico de pastel -->
+      <!-- Lista textual -->
       <div style="display:block">
         <canvas baseChart
                 [data]="pieChartData"
@@ -74,10 +69,8 @@
   </ion-card>
 
   <!-- 6. Cumplimiento semanal (gráfico) -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Cumplimiento semanal</ion-card-title>
-    </ion-card-header>
+  <h2 class="seccion-titulo">Cumplimiento semanal</h2>
+  <ion-card class="tareas-custom-card">
     <ion-card-content>
       <div style="display:block">
         <canvas baseChart
@@ -89,34 +82,25 @@
     </ion-card-content>
   </ion-card>
 
-
   <!-- 4. Cantidad de registros -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Registros totales</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list>
-        <ion-item *ngFor="let materia of materiasActivas">
-          <ion-label>
-            {{ materia.nombre }}: {{ materia.registros.length }} registros
-          </ion-label>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
+  <h2 class="seccion-titulo">Registros totales</h2>
+  <div class="contenedor-registros-pildora">
+    <div *ngFor="let materia of materiasActivas" 
+         class="registro-pildora-item" 
+         style="background: #ffffff;">
+      <span class="texto-pildora" style="color: #877DC0 !important;">
+        {{ materia.nombre }}: {{ materia.registros.length }} registros
+      </span>
+    </div>
+  </div>
 
   <!-- 5. Simulador -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Simulador de nota mínima</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-button expand="block" (click)="abrirModalSimulador()">
-        Cuánto me falta para pasar
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
+  <h2 class="seccion-titulo titulo-centrado">Simulador de nota mínima</h2>
+  <div class="contenedor-boton-onboarding">
+    <ion-button expand="block" class="boton-onboarding" (click)="abrirModalSimulador()">
+      Cuánto me falta para pasar
+    </ion-button>
+  </div>
 
   <!-- Modal simulador -->
   <ion-modal [isOpen]="modalSimuladorOpen" (didDismiss)="cerrarModalSimulador()">
@@ -156,6 +140,5 @@
       </ion-content>
     </ng-template>
   </ion-modal>
-
 
 </ion-content>
