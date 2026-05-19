@@ -4,6 +4,7 @@ import { Corte } from '../models/corte';
 import { Tarea } from '../models/tarea';
 import { Horario } from '../models/horario';
 import { Semestre } from '../models/semestre';
+import { RegistroEstudio } from '../models/registroEstudio'
 
 
 @Injectable({
@@ -25,6 +26,13 @@ export class MateriaService {
   //no se ha testeado aún!!
   validarDuplicado(nombre: string): boolean {
     return this.materias.some(m => m.nombre === nombre);
+  }
+
+  agregarRegistro(idMateria: number, registro: RegistroEstudio) {
+    const materia = this.materias.find(m => m.idMateria === idMateria);
+    if (materia) {
+      materia.agregarRegistro(registro);
+    }
   }
 
   // --- Cortes dentro de materia ---
