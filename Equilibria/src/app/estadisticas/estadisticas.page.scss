@@ -1,3 +1,191 @@
+ion-content {
+  --background: #EBEFFF; /* Fondo lila claro de tu marca */
+}
+
+/* --- Estilos del Header (Equilibria) --- */
+ion-toolbar {
+  --background: #ffffff;
+  --border-style: none;
+  border: none;
+  --min-height: 100px; 
+  
+  ion-button {
+    width: 70px !important;
+    height: 70px !important;
+    margin: 0px 0px -20px 0px !important;
+
+    ion-icon {
+      font-size: 60px !important; 
+      width: 60px !important;
+      height: 60px !important;
+    }
+  }
+}
+
 ion-title {
   text-align: center;
+  font-family: 'RTL-Roman', serif; 
+  color: #877DC0; 
+  font-size: 2.5rem;
+  margin-top: 20px;
+}
+
+/* --- Estilo de Títulos por Fuera de las Tarjetas --- */
+.seccion-titulo {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  color: #877DC0;
+  font-size: 1.4rem;
+  margin: 24px 20px 10px 20px; /* Separación elegante */
+}
+
+/* --- NUEVO: Centrar título específico del simulador --- */
+.titulo-centrado {
+  text-align: center !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* --- Estilo de Tarjetas con Contorno Morado Liso --- */
+.tareas-custom-card {
+  border: 3px solid #877DC0; 
+  border-radius: 28px !important; 
+  box-shadow: none; 
+  background: #ffffff;
+  margin: 0 16px 16px 16px;
+  overflow: hidden;
+
+  ion-card-content {
+    padding: 16px 12px;
+  }
+
+  // Estilo de los textos de las listas dentro de las estadísticas
+  ion-label {
+    font-family: 'Montserrat', sans-serif;
+    color: #877DC0 !important;
+    font-weight: 500;
+  }
+}
+
+/* --- Limpieza de las listas internas nativas --- */
+ion-list {
+  background: transparent !important;
+  --background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+ion-item {
+  --background: #ffffff !important;
+  --border-style: none !important;
+  --inner-border-width: 0px !important;
+  --border-width: 0px !important;
+  border-style: none !important;
+  box-shadow: none !important;
+}
+
+/* --- NUEVO: Diseño estilo píldora para registros totales (Segunda Imagen) --- */
+.contenedor-registros-pildora {
+  padding: 0 20px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Separación entre las barras individuales */
+}
+
+.registro-pildora-item {
+  // Configuración estructural idéntica a tus referencias visuales
+  border-radius: 50px !important; /* Bordes de cápsula perfecta */
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(135, 125, 192, 0.1);
+  width: 100%;
+}
+
+.texto-pildora {
+  font-family: 'Montserrat', sans-serif;
+  color: #ffffff !important; /* Texto totalmente blanco que resalta con el fondo */
+  font-weight: 500;
+  font-size: 1.05rem;
+}
+
+/* --- BOTÓN ESTILO ONBOARDING (Simulador Principal) ---*/
+.contenedor-boton-onboarding {
+  padding: 0 16px;
+  margin-bottom: 30px;
+}
+
+.boton-onboarding {
+  --background: #72CBF1; /* El azul celeste brillante de tu onboarding/figma */
+  --color: #000000;
+  --border-radius: 30px; /* Estilo píldora */
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  height: 52px; /* Un botón más alto e imponente */
+  margin: 0px 50px 0px 50px;
+}
+
+/* --- DISEÑO CORREGIDO PARA EL MODAL INTERNO DEL SIMULADOR ---*/
+ion-modal {
+  // Configuración de los bloques de selección del formulario interno
+  ion-item {
+    --background: #ffffff !important;
+    margin-bottom: 16px;
+    border-radius: 16px !important;
+    
+    // SOLUCCIÓN AL CONTORNO SEPARADO:
+    --padding-start: 16px !important;
+    --inner-padding-end: 16px !important;
+    border: none !important;
+    box-shadow: 0 0 0 3px #877DC0 !important; 
+
+    ion-label {
+      font-family: 'Montserrat', sans-serif;
+      color: #877DC0 !important; /* Texto morado lila legible para etiquetas */
+      font-weight: 600;
+    }
+
+    ion-select {
+      font-family: 'Montserrat', sans-serif;
+      color: #333333 !important; /* Texto de opciones seleccionadas en gris oscuro nítido */
+      --placeholder-color: #a39ccb;
+    }
+  }
+
+  // Estilo de los mensajes informativos o de resultados de la nota
+  ion-note {
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    color: #877DC0 !important;
+    font-weight: 500;
+    text-align: center;
+    margin: 15px 0;
+    font-size: 1.05rem;
+  }
+
+  // BOTONES DENTRO DEL MODAL (Estilo Onboarding / Redondeado)
+  ion-button {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    height: 48px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    --border-radius: 25px !important; /* Esquinas curvas estilo píldora */
+    
+    // El botón de acción principal "Calcular cuánto falta"
+    &:not([color="medium"]) {
+      --background: #72CBF1 !important; /* El mismo azul celeste brillante de comenzar */
+      --color: #000000 !important;
+    }
+
+    // SOLUCIÓN TOTAL AL BOTÓN GRIS:
+    &[color="medium"] {
+      // Usamos el color base puro para forzar al motor de Ionic a ignorar el gris nativo
+      --ion-color-base: #ffffff !important;
+      color: #000000 !important;
+      border-radius: 25px !important;
+    }
+  }
 }

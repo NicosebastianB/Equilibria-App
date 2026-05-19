@@ -2,7 +2,7 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-button routerLink="/settings">
-        <ion-icon slot="icon-only" name="settings-sharp"></ion-icon>
+        <ion-icon slot="icon-only" src="assets/icon/logo-setting.svg"></ion-icon>
       </ion-button>
     </ion-buttons>
 
@@ -10,7 +10,7 @@
 
     <ion-buttons slot="end">
       <ion-button routerLink="/bienestar">
-        <ion-icon slot="icon-only" name="rose-sharp"></ion-icon>
+        <ion-icon slot="icon-only" src="assets/icon/logo-bienestar.svg"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -33,10 +33,9 @@
   </ng-container>
 
   <!-- Horario -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Horario semanal</ion-card-title>
-    </ion-card-header>
+  <h2 class="seccion-titulo">Horario semanal</h2>
+  
+  <ion-card class="horario-card">
     <ion-card-content>
       <div class="horario-scroll">
         <ion-grid class="horario-grid">
@@ -74,13 +73,12 @@
   </ion-card>
 
   <!-- Tareas pendientes -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Tareas pendientes</ion-card-title>
-    </ion-card-header>
+  <h2 class="seccion-titulo">Tareas pendientes...</h2>
+  
+  <ion-card class="tareas-custom-card">
     <ion-card-content>
-      <ion-list>
-        <ion-item *ngFor="let tarea of tareasPendientes; trackBy: trackByTarea">
+      <ion-list lines="none">
+        <ion-item *ngFor="let tarea of tareasPendientes; trackBy: trackByTarea" lines="none">
           <ion-checkbox slot="start" [checked]="tarea.estado"
                         (ionChange)="onTareaCompletada(tarea)">
           </ion-checkbox>
@@ -98,13 +96,12 @@
   </ion-card>
 
   <!-- Tareas completadas -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Tareas completadas</ion-card-title>
-    </ion-card-header>
+  <h2 class="seccion-titulo">Tareas completadas</h2>
+  
+  <ion-card class="tareas-custom-card">
     <ion-card-content>
-      <ion-list>
-        <ion-item *ngFor="let tarea of tareasCompletadas; trackBy: trackByTarea">
+      <ion-list lines="none">
+        <ion-item *ngFor="let tarea of tareasCompletadas; trackBy: trackByTarea" lines="none">
           <ion-checkbox slot="start" [checked]="tarea.estado"
                         (ionChange)="onRevertirTarea(tarea)">
           </ion-checkbox>

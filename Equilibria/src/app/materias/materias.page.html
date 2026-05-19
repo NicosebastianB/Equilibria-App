@@ -1,147 +1,253 @@
-
+<!-- Encabezado principal de la aplicación -->
 <ion-header [translucent]="true">
   <ion-toolbar>
+
+    <!-- Acceso a configuración -->
     <ion-buttons slot="start">
       <ion-button routerLink="/settings">
-        <ion-icon slot="icon-only" name="settings-sharp"></ion-icon>
+        <ion-icon slot="icon-only" src="assets/icon/logo-setting.svg"></ion-icon>
       </ion-button>
     </ion-buttons>
 
     <ion-title>Equilibria</ion-title>
 
+    <!-- Acceso a sección de bienestar -->
     <ion-buttons slot="end">
       <ion-button routerLink="/bienestar">
-        <ion-icon slot="icon-only" name="rose-sharp"></ion-icon>
+        <ion-icon slot="icon-only" src="assets/icon/logo-bienestar.svg"></ion-icon>
       </ion-button>
     </ion-buttons>
+
   </ion-toolbar>
 </ion-header>
 
+<!-- Contenido principal -->
 <ion-content>
-  <ion-item>
-    <ion-label slot="start">Tus materias</ion-label>
-    <ion-button slot="end" (click)="abrirModalCrear()">
-      <ion-icon name="add"></ion-icon>
+  
+  <!-- Título de sección y botón para agregar materias -->
+  <div class="contenedor-titulo-seccion">
+    <h2 class="seccion-titulo">Tus materias</h2>
+
+    <ion-button class="boton-agregar-materia" (click)="abrirModalCrear()">
+      <ion-icon slot="start" name="add"></ion-icon>
       Agregar Materias
     </ion-button>
-  </ion-item>
+  </div>
 
-  <ion-card *ngFor="let materia of materias" class="materia-card">
+  <!-- Tarjetas dinámicas de materias -->
+  <ion-card *ngFor="let materia of materias" class="tareas-custom-card">
+    
     <ion-card-header>
-      <div class="materia-card-title">
-        <span class="materia-color-bubble" [style.background]="getColorHex(materia.color)"></span>
-        <span class="materia-card-title-text">{{ materia.nombre }}</span>
 
-        <!-- Estado de la materia -->
-        <ion-note *ngIf="materia.finalizado" color="success" class="estado-materia">
-          Completada
-        </ion-note>
-        <ion-note *ngIf="!materia.finalizado" color="medium" class="estado-materia">
-          Activa
-        </ion-note>
+      <!-- Información principal de la materia -->
+      <div class="materia-card-title-container">
 
-        <ion-button fill="clear" size="small" (click)="editarMateria(materia); $event.stopPropagation()">
-          <ion-icon slot="icon-only" name="pencil"></ion-icon>
-        </ion-button>
+        <!-- Nombre y color identificador -->
+        <div class="materia-titulo-izquierda">
+          <div class="materia-pildora-banner" [style.background]="getColorHex(materia.color)">
+            <span class="materia-card-title-text">{{ materia.nombre }}</span>
+          </div>
+        </div>
+
+        <!-- Estado y botón de edición -->
+        <div class="materia-acciones-derecha">
+
+          <!-- Estado de la materia -->
+          <span *ngIf="materia.finalizado" class="estado-tag completada-tag">Completada</span>
+          <span *ngIf="!materia.finalizado" class="estado-tag activa-tag">Activa</span>
+
+          <!-- Botón para editar -->
+          <ion-button fill="clear" class="boton-editar-materia" (click)="editarMateria(materia); $event.stopPropagation()">
+            <ion-icon slot="icon-only" name="pencil"></ion-icon>
+          </ion-button>
+
+        </div>
       </div>
     </ion-card-header>
 
+    <!-- Información resumida y navegación al detalle -->
+    <ion-card-content [routerLink]="['/student-subject', materia.idMateria]">
 
-    <ion-card-content>
-      <!-- Botón/ítem que lleva al detalle -->
-      <ion-item button detail="true" [routerLink]="['/student-subject', materia.idMateria]">
-        <ion-label>
-          <div>Dedicación: {{ obtenerDedicacion(materia.idMateria) }}</div>
-          <div>Cumplimiento semanal: {{ obtenerCumplimientoSemanal(materia.idMateria) }}</div>
-          <div>Última nota: {{ obtenerUltimaNotaMateria(materia.idMateria) }}</div>
-        </ion-label>
-      </ion-item>
+      <div class="materia-grid-info">
+        
+        <!-- Dedicación semanal -->
+        <div class="materia-col-info">
+          <span class="info-label">Dedicación</span>
+          <span class="info-value-grande">{{ obtenerDedicacion(materia.idMateria) }}</span>
+        </div>
+
+        <!-- Porcentaje de cumplimiento -->
+        <div class="materia-col-info">
+          <span class="info-label">Cumplimiento</span>
+          <span class="info-value-grande">{{ obtenerCumplimientoSemanal(materia.idMateria) }}</span>
+        </div>
+
+        <!-- Última calificación registrada -->
+        <div class="materia-col-info">
+          <span class="info-label">Última nota</span>
+          
+          <ng-container *ngIf="obtenerUltimaNotaMateria(materia.idMateria) as notaTxt">
+            <ng-container *ngIf="notaTxt && notaTxt.includes(':'); else notaSimple">
+              <span class="info-value-grande">{{ notaTxt.split(':')[1] }}</span>
+              <span class="info-nota-subtexto">{{ notaTxt.split(':')[0] }}</span>
+            </ng-container>
+
+            <!-- Caso sin notas -->
+            <ng-template #notaSimple>
+              <span class="info-nota-vacia">Sin calificaciones</span>
+            </ng-template>
+          </ng-container>
+        </div>
+
+      </div>
     </ion-card-content>
   </ion-card>
 
-
-  <!-- Modal para agregar/editar materias -->
+  <!-- Modal para crear o editar materias -->
   <ion-modal (willDismiss)="onWillDismiss($event)">
     <ng-template>
+
+      <!-- Header del modal -->
       <ion-header>
-        <ion-toolbar>
-          <ion-buttons slot="start">
-            <ion-button (click)="cancel()">Cancelar</ion-button>
-          </ion-buttons>
-          <ion-title>{{ modoEditar ? 'Editar Materia' : 'Agregar Materia' }}</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="confirm()" [strong]="true">{{ modoEditar ? 'Actualizar' : 'Confirmar' }}</ion-button>
-          </ion-buttons>
+        <ion-toolbar class="modal-toolbar-custom">
+
+          <div class="contenedor-header-modal">
+
+            <!-- Cancelar creación/edición -->
+            <ion-button fill="clear" class="boton-modal-header" (click)="cancel()">Cancelar</ion-button>
+            
+            <!-- Título dinámico -->
+            <span class="titulo-modal-header">
+              {{ modoEditar ? 'Editar Materia' : 'Agregar Materia' }}
+            </span>
+            
+            <!-- Confirmar cambios -->
+            <ion-button fill="clear"
+                        class="boton-modal-header boton-confirmar-header"
+                        (click)="confirm()"
+                        [strong]="true">
+              {{ modoEditar ? 'Actualizar' : 'Confirmar' }}
+            </ion-button>
+
+          </div>
         </ion-toolbar>
       </ion-header>
 
-      <ion-content class="ion-padding">
-        <ion-title>Campos obligatorios</ion-title>
+      <!-- Contenido del formulario -->
+      <ion-content class="ion-padding modal-contenido-custom">
 
-        <ion-item>
+        <!-- Campos obligatorios -->
+        <h3 class="titulo-modal-seccion">Campos obligatorios</h3>
+
+        <!-- Nombre de la materia -->
+        <ion-item class="input-custom-item">
           <ion-label position="stacked">Nombre de la materia</ion-label>
           <ion-input [(ngModel)]="materia.nombre" name="nombreMateria"></ion-input>
         </ion-item>
 
-        <ion-item>
+        <!-- Selección de color -->
+        <ion-item class="input-custom-item">
           <ion-label position="stacked">Color de la materia</ion-label>
+
           <div class="color-scroll">
             <div class="color-selector">
+
+              <!-- Colores disponibles -->
               <ion-chip *ngFor="let c of colores"
                         [class.selected]="materia.color === c.value"
                         (click)="materia.color = c.value"
                         [style.background-color]="c.hex">
               </ion-chip>
+
             </div>
           </div>
         </ion-item>
 
-
-
-
-        <ion-item>
+        <!-- Créditos académicos -->
+        <ion-item class="input-custom-item">
           <ion-label position="stacked">Créditos de la materia</ion-label>
-          <ion-input [(ngModel)]="materia.creditos" type="number" name="creditosMateria"></ion-input>
+          <ion-input [(ngModel)]="materia.creditos"
+                     type="number"
+                     name="creditosMateria">
+          </ion-input>
         </ion-item>
 
-        <ion-item>
+        <!-- Horas semanales -->
+        <ion-item class="input-custom-item item-con-boton">
+
           <ion-label position="stacked">Horas semanales de clase</ion-label>
+
           <ion-input type="number"
                      [(ngModel)]="materia.horasClaseSemanal"
                      (ionInput)="actualizarHoras($event)"
                      name="horasClaseSemanal">
           </ion-input>
-          <ion-button slot="end" (click)="confirmarHoras()">Confirmar</ion-button>
+
+          <!-- Confirmar horas ingresadas -->
+          <ion-button slot="end"
+                      class="boton-confirmar-interno"
+                      (click)="confirmarHoras()">
+            Confirmar
+          </ion-button>
+
         </ion-item>
 
+        <!-- Gestión de bloques horarios -->
+        <h3 class="titulo-modal-seccion">Bloques horarios (obligatorio)</h3>
 
-        <!-- Bloques horarios ahora son obligatorios -->
-        <ion-title>Bloques horarios (obligatorio)</ion-title>
-        <ion-button expand="block"
-                    (click)="abrirPopover($event)"
-                    [disabled]="!horasConfirmadas">
-          Agregar bloque horario
-        </ion-button>
+        <!-- Botón para agregar horarios -->
+        <div class="contenedor-boton-bloque">
+          <ion-button expand="block"
+                      class="boton-agregar-bloque"
+                      (click)="abrirPopover($event)"
+                      [disabled]="!horasConfirmadas">
+            Agregar bloque horario
+          </ion-button>
+        </div>
 
+        <!-- Lista de horarios agregados -->
+        <ion-list class="lista-horarios-modal">
 
+          <ion-item *ngFor="let h of horarios" class="horario-agregado-item">
 
-        <ion-list>
-          <ion-item *ngFor="let h of horarios">
             <ion-label>
-              {{ diasSemana[h.dia] }} | {{ h.horaInicio }}:00 - {{ h.obtenerFin() }}:00
-              <div *ngIf="h.salon">Salón: {{ h.salon }}</div>
+
+              <!-- Información del horario -->
+              <span class="texto-principal-horario">
+                {{ diasSemana[h.dia] }} |
+                {{ h.horaInicio }}:00 - {{ h.obtenerFin() }}:00
+              </span>
+
+              <!-- Salón opcional -->
+              <div *ngIf="h.salon" class="texto-salon-horario">
+                Salón: {{ h.salon }}
+              </div>
+
             </ion-label>
-            <ion-button fill="clear" color="danger" (click)="eliminarHorario(h.id)">
+
+            <!-- Eliminar horario -->
+            <ion-button fill="clear"
+                        class="boton-eliminar-horario"
+                        (click)="eliminarHorario(h.id)">
               <ion-icon slot="icon-only" name="trash"></ion-icon>
             </ion-button>
+
           </ion-item>
         </ion-list>
 
-        <ion-popover [isOpen]="popoverOpen" (didDismiss)="popoverOpen=false">
+        <!-- Popover para crear horarios -->
+        <ion-popover [isOpen]="popoverOpen"
+                     (didDismiss)="popoverOpen=false"
+                     class="popover-custom">
+
           <ng-template>
-            <ion-content>
-              <ion-item>
+
+            <ion-content class="ion-padding popover-content-custom">
+
+              <!-- Selección de día -->
+              <ion-item class="input-custom-item">
                 <ion-label position="stacked">Día</ion-label>
+
                 <ion-select [(ngModel)]="nuevoHorario.dia" name="diaHorario">
                   <ion-select-option [value]="1">Lunes</ion-select-option>
                   <ion-select-option [value]="2">Martes</ion-select-option>
@@ -152,8 +258,10 @@
                 </ion-select>
               </ion-item>
 
-              <ion-item>
+              <!-- Selección de hora -->
+              <ion-item class="input-custom-item">
                 <ion-label position="stacked">Hora inicio</ion-label>
+
                 <ion-select [(ngModel)]="horaSeleccionada" name="horaInicioHorario">
                   <ion-select-option *ngFor="let i of [7,8,9,10,11,12,13,14,15,16,17,18]" [value]="i">
                     {{ i < 10 ? '0' + i : i }}:00
@@ -161,32 +269,54 @@
                 </ion-select>
               </ion-item>
 
-              <ion-item>
+              <!-- Duración del bloque -->
+              <ion-item class="input-custom-item">
                 <ion-label position="stacked">Duración</ion-label>
-                <ion-input type="number" min="1" [(ngModel)]="nuevoHorario.duracionHoras" name="duracionHorario"></ion-input>
+
+                <ion-input type="number"
+                           min="1"
+                           [(ngModel)]="nuevoHorario.duracionHoras"
+                           name="duracionHorario">
+                </ion-input>
               </ion-item>
 
-              <ion-item>
+              <!-- Salón opcional -->
+              <ion-item class="input-custom-item">
                 <ion-label position="stacked">Salón (opcional)</ion-label>
-                <ion-input type="text" placeholder="Opcional" [(ngModel)]="nuevoHorario.salon" name="salonHorario"></ion-input>
+
+                <ion-input type="text"
+                           placeholder="Opcional"
+                           [(ngModel)]="nuevoHorario.salon"
+                           name="salonHorario">
+                </ion-input>
               </ion-item>
 
-              <ion-button expand="block" (click)="agregarHorario()">Agregar</ion-button>
+              <!-- Confirmar nuevo horario -->
+              <ion-button expand="block"
+                          class="boton-agregar-popover"
+                          (click)="agregarHorario()">
+                Agregar
+              </ion-button>
+
             </ion-content>
           </ng-template>
         </ion-popover>
 
+        <!-- Campos opcionales -->
+        <h3 class="titulo-modal-seccion">Campos opcionales</h3>
 
-
-        <ion-title>Campos opcionales</ion-title>
-        <ion-item>
+        <!-- Profesor de la materia -->
+        <ion-item class="input-custom-item">
           <ion-label position="stacked">Profesor (opcional)</ion-label>
-          <ion-input [(ngModel)]="materia.profesor" placeholder="Opcional" name="profesorMateria"></ion-input>
+
+          <ion-input [(ngModel)]="materia.profesor"
+                     placeholder="Opcional"
+                     name="profesorMateria">
+          </ion-input>
         </ion-item>
+
       </ion-content>
-
-
     </ng-template>
   </ion-modal>
-</ion-content>
 
+</ion-content>
