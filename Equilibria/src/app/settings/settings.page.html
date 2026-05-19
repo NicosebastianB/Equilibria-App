@@ -1,13 +1,187 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>settings</ion-title>
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/materias"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="titulo-header">Configuración</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">settings</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+
+  <!-- Sección: Perfil -->
+  <ion-item lines="full">
+    <ion-label class="titulo-seccion">Tu perfil</ion-label>
+  </ion-item>
+
+  <div class="perfil-container">
+    <ion-avatar class="avatar">
+      <img [src]="getAvatarUrl(avatar)" alt="Perfil">
+    </ion-avatar>
+    <ion-label class="nombre-usuario">{{ nombre || 'Tu nombre' }}</ion-label>
+    <ion-button fill="clear" color="medium" id="open-modal-perfil">
+      <ion-icon name="create-outline"></ion-icon>
+    </ion-button>
+  </div>
+
+  <ion-item-divider></ion-item-divider>
+
+  <!-- Sección: Semestre -->
+  <ion-item lines="full">
+    <ion-label class="titulo-seccion">Editar semestre actual</ion-label>
+    <ion-button fill="clear" color="medium" id="open-modal-semestre">
+      <ion-icon name="create-outline"></ion-icon>
+    </ion-button>
+  </ion-item>
+
+  <ion-item-divider></ion-item-divider>
+
+  <!-- Sección: Notificaciones -->
+  <ion-item lines="full">
+    <ion-label class="titulo-seccion">Notificaciones de la app</ion-label>
+    <ion-note slot="end" class="estado-notificaciones">Activadas</ion-note>
+  </ion-item>
+
+  <!-- Modal pantalla completa: Perfil -->
+  <ion-modal trigger="open-modal-perfil" [initialBreakpoint]="1" [breakpoints]="[1]" [backdropDismiss]="false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Editar perfil</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarModal()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-item>
+          <ion-label position="stacked">Tu nombre</ion-label>
+          <ion-input [(ngModel)]="nombre" placeholder="Nombre"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Avatar</ion-label>
+          <div class="avatar-grid">
+            <div class="avatar-item"
+                 *ngFor="let a of avatarFiles"
+                 (click)="selectAvatar(a.filename)"
+                 [class.selected]="a.filename === avatar">
+              <img [src]="a.url" alt="avatar">
+            </div>
+          </div>
+        </ion-item>
+
+        <ion-button expand="block" color="primary" (click)="guardarPerfil()">Guardar cambios</ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Modal pantalla completa: Semestre -->
+  <ion-modal trigger="open-modal-semestre" [initialBreakpoint]="1" [breakpoints]="[1]" [backdropDismiss]="false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Editar semestre</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarModal()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+
+
+        <!-- Botones para fechas semestre -->
+        <div class="button-row">
+          <ion-button (click)="popoverInicioSemestre = true">
+            <ion-icon slot="start" name="calendar-outline"></ion-icon>
+            Inicio del semestre
+          </ion-button>
+          <ion-button (click)="popoverFinSemestre = true">
+            <ion-icon slot="start" name="calendar-outline"></ion-icon>
+            Fin del semestre
+          </ion-button>
+        </div>
+
+        <!-- Popover Inicio Semestre -->
+        <ion-popover [isOpen]="popoverInicioSemestre" (didDismiss)="popoverInicioSemestre = false">
+          <ng-template>
+            <div class="datetime-wrapper">
+              <ion-datetime presentation="date" [(ngModel)]="semestreInicio"></ion-datetime>
+              <div class="button-row">
+                <ion-button color="primary" (click)="confirmarFecha('semestreInicio')">Aceptar</ion-button>
+                <ion-button color="medium" (click)="popoverInicioSemestre = false">Cancelar</ion-button>
+              </div>
+            </div>
+          </ng-template>
+        </ion-popover>
+
+        <!-- Popover Fin Semestre -->
+        <ion-popover [isOpen]="popoverFinSemestre" (didDismiss)="popoverFinSemestre = false">
+          <ng-template>
+            <div class="datetime-wrapper">
+              <ion-datetime presentation="date" [(ngModel)]="semestreFin"></ion-datetime>
+              <div class="button-row">
+                <ion-button color="primary" (click)="confirmarFecha('semestreFin')">Aceptar</ion-button>
+                <ion-button color="medium" (click)="popoverFinSemestre = false">Cancelar</ion-button>
+              </div>
+            </div>
+          </ng-template>
+        </ion-popover>
+
+        <!-- Botones para fechas vacaciones -->
+        <div class="button-row">
+          <ion-button (click)="popoverInicioVacaciones = true">
+            <ion-icon slot="start" name="calendar-outline"></ion-icon>
+            Inicio vacaciones
+          </ion-button>
+          <ion-button (click)="popoverFinVacaciones = true">
+            <ion-icon slot="start" name="calendar-outline"></ion-icon>
+            Fin vacaciones
+          </ion-button>
+        </div>
+
+        <!-- Popover Inicio Vacaciones -->
+        <ion-popover [isOpen]="popoverInicioVacaciones" (didDismiss)="popoverInicioVacaciones = false">
+          <ng-template>
+            <div class="datetime-wrapper">
+              <ion-datetime presentation="date" [(ngModel)]="vacacionesInicio"></ion-datetime>
+              <div class="button-row">
+                <ion-button color="primary" (click)="confirmarFecha('vacacionesInicio')">Aceptar</ion-button>
+                <ion-button color="medium" (click)="popoverInicioVacaciones = false">Cancelar</ion-button>
+              </div>
+            </div>
+          </ng-template>
+        </ion-popover>
+
+        <!-- Popover Fin Vacaciones -->
+        <ion-popover [isOpen]="popoverFinVacaciones" (didDismiss)="popoverFinVacaciones = false">
+          <ng-template>
+            <div class="datetime-wrapper">
+              <ion-datetime presentation="date" [(ngModel)]="vacacionesFin"></ion-datetime>
+              <div class="button-row">
+                <ion-button color="primary" (click)="confirmarFecha('vacacionesFin')">Aceptar</ion-button>
+                <ion-button color="medium" (click)="popoverFinVacaciones = false">Cancelar</ion-button>
+              </div>
+            </div>
+          </ng-template>
+        </ion-popover>
+
+
+
+        <div class="resumen-fechas">
+          <ion-item>
+            <ion-label>
+              <p><strong>Inicio semestre:</strong> {{ semestreInicio }}</p>
+              <p><strong>Fin semestre:</strong> {{ semestreFin }}</p>
+              <p><strong>Inicio vacaciones:</strong> {{ vacacionesInicio }}</p>
+              <p><strong>Fin vacaciones:</strong> {{ vacacionesFin }}</p>
+            </ion-label>
+          </ion-item>
+        </div>
+
+        <ion-button expand="block" color="primary" (click)="guardarSemestre()">Guardar cambios</ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
 </ion-content>

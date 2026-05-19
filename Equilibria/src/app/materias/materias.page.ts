@@ -31,7 +31,8 @@ import {
   IonCardTitle,
   IonCardHeader,
   IonCardContent,
-  IonNote
+  IonNote,
+  IonDatetime
 } from '@ionic/angular/standalone';
 import { add, close, trash, settingsSharp, roseSharp, pencil } from 'ionicons/icons';
 import { DataService } from '../services/data';
@@ -66,7 +67,8 @@ import { OverlayEventDetail } from '@ionic/core/components';
     IonCardTitle,
     IonCardHeader,
     IonCardContent,
-    IonNote
+    IonNote,
+    IonDatetime
   ]
 
 })

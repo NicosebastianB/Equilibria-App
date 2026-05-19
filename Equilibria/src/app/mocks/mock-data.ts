@@ -29,9 +29,17 @@ import { RegistroEstudio } from '../models/registroEstudio';
 
 
 // Unico semestre completo
-export const MOCK_SEMESTRE = new Semestre(1, "Semestre 2026-1", new Date("2026-01-20"), new Date("2026-05-23"), [
-  { inicio: new Date("2026-03-01"), fin: new Date("2026-03-07") },
-]);
+// 👇 Usa año, mes (0-based), día
+export const MOCK_SEMESTRE = new Semestre(
+  1,
+  "Semestre 2026-1",
+  new Date(2026, 0, 26), // 26 enero 2026
+  new Date(2026, 4, 23), // 23 mayo 2026
+  [
+    { inicio: new Date(2026, 2, 30), fin: new Date(2026, 3, 4) } // 30 marzo - 4 abril
+  ]
+);
+
 
 MOCK_SEMESTRE.calcularSemanasTotales();
 

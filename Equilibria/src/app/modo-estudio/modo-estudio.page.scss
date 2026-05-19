@@ -1,3 +1,19 @@
 ion-title {
   text-align: center;
 }
+
+.chip-recordatorio {
+  background-color: #4caf50 !important; /* verde sólido */
+  color: white !important;
+  font-weight: bold;
+}
+
+.temporizador-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center; /* centra horizontalmente */
+  justify-content: center; /* centra verticalmente si quieres */
+  text-align: center;
+}
+

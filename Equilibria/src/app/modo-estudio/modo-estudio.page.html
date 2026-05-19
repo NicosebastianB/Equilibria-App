@@ -16,10 +16,111 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">modo-estudio</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+
+  <!-- Selección de materia activa -->
+  <ion-item>
+    <ion-label>Materia</ion-label>
+    <ion-select [(ngModel)]="materiaSeleccionada"
+                name="materiaSeleccionada"
+                placeholder="Selecciona una materia"
+                (ionChange)="actualizarCumplimiento()">
+      <ion-select-option *ngFor="let m of materiasActivas" [value]="m.idMateria">
+        {{ m.nombre }}
+      </ion-select-option>
+    </ion-select>
+
+  </ion-item>
+
+  <ion-item *ngIf="materiaSeleccionada">
+    <ion-label>Progreso semanal</ion-label>
+    <ion-progress-bar [value]="cumplimientoSemanal / 100"></ion-progress-bar>
+    <ion-note slot="end">{{ cumplimientoSemanal.toFixed(0) }}%</ion-note>
+  </ion-item>
+
+
+
+
+  <!-- Configuración del temporizador -->
+  <ion-item>
+    <ion-label>Tiempo de concentración</ion-label>
+    <ion-datetime presentation="time"
+                  hour-cycle="h23"
+                  [value]="formatearDuracion(config.tiempoConcentracion)"
+                  (ionChange)="onDuracionChange($event, 'concentracion')">
+    </ion-datetime>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Tiempo de descanso</ion-label>
+    <ion-datetime presentation="time"
+                  hour-cycle="h23"
+                  [value]="formatearDuracion(config.tiempoDescanso)"
+                  (ionChange)="onDuracionChange($event, 'descanso')">
+    </ion-datetime>
+  </ion-item>
+
+
+  <ion-item>
+    <ion-label position="stacked">Número de ciclos</ion-label>
+    <ion-input type="number" [(ngModel)]="config.numeroCiclos" name="numeroCiclos"></ion-input>
+  </ion-item>
+
+  <!-- Recordatorios saludables -->
+  <ion-item>
+    <ion-label>Recordatorios saludables</ion-label>
+    <ion-toggle [checked]="config.recordatoriosSaludables"
+                (ionChange)="config.recordatoriosSaludables = $event.detail.checked">
+    </ion-toggle>
+  </ion-item>
+
+
+  <!-- Botón iniciar -->
+  <ion-button expand="block" color="primary" (click)="iniciarTemporizador()" [disabled]="!materiaSeleccionada">
+    Iniciar
+  </ion-button>
+
 </ion-content>
+
+<!-- Modal del temporizador -->
+<ion-modal [isOpen]="modalTemporizadorOpen"
+           (didDismiss)="cerrarTemporizador()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Temporizador</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="cerrarTemporizador()">Cerrar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <div class="temporizador-container">
+        <h1>{{ tiempoFormateado }}</h1>
+        <p>{{ estadoActual }}</p>
+
+
+        <div class="botones-container">
+          <ion-button color="success" (click)="pausarTemporizador()">Pausar</ion-button>
+          <ion-button color="warning" (click)="reanudarTemporizador()">Reanudar</ion-button>
+          <ion-button color="danger" (click)="finalizarTemporizador()">Finalizar</ion-button>
+        </div>
+            <!-- Chip centrado -->
+            <ion-chip *ngIf="recordatorioActual"
+                      [ngStyle]="{
+                'background-color': getHexColor(recordatorioActual.color),
+                'color': '#000',
+                'font-size': '1.2rem',
+                'padding': '12px 20px'
+              }"
+                      style="margin: 20px auto; display: block; font-weight: bold;">
+              <ion-label>
+                {{ obtenerEmoji(recordatorioActual.nombre) }} {{ recordatorioActual.nombre }}
+              </ion-label>
+            </ion-chip>
+      </div>
+</ion-content>
+  </ng-template>
+</ion-modal>
+

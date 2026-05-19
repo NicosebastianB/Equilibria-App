@@ -7,6 +7,7 @@ import { Corte } from '../models/corte';
 import { RegistroEstudio } from '../models/registroEstudio';
 import { Actividad } from '../models/actividad';
 import { Calificable } from '../models/calificable';
+import { MOCK_ESTUDIANTE } from '../mocks/mock-data';
 
 @Injectable({
   providedIn: 'root',
@@ -18,9 +19,15 @@ export class DataService {
     this.cargarDatos();
   }
 
+  private parseDate(value: string | Date): Date {
+    const d = new Date(value);
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  }
+
   // Cargar desde localStorage
   public cargarDatos() {
     const materiasGuardadas = localStorage.getItem('materias');
+    const usuarioConfigurado = localStorage.getItem('usuarioConfigurado');
 
     if (materiasGuardadas) {
       const materiasData = JSON.parse(materiasGuardadas);
@@ -121,6 +128,40 @@ export class DataService {
     } else {
       this.materias = [];
     }
+
+    // 🔑 Si no hay usuario configurado, usar el mock
+    if (!usuarioConfigurado && MOCK_ESTUDIANTE && MOCK_ESTUDIANTE.length > 0) {
+      const estudiante = MOCK_ESTUDIANTE[0];
+
+      // ✅ Normalizar fechas del semestre y vacaciones
+      if (estudiante.semestre) {
+        estudiante.semestre.fechaInicio = this.parseDate(estudiante.semestre.fechaInicio);
+        estudiante.semestre.fechaFin = this.parseDate(estudiante.semestre.fechaFin);
+        estudiante.semestre.vacaciones = estudiante.semestre.vacaciones.map(v => ({
+          inicio: this.parseDate(v.inicio),
+          fin: this.parseDate(v.fin)
+        }));
+      }
+
+      const usuario = {
+        nombre: estudiante.nombre,
+        avatar: estudiante.avatar,
+        semestre: {
+          idSemestre: estudiante.semestre?.idSemestre,
+          nombre: estudiante.semestre?.nombre,
+          fechaInicio: estudiante.semestre?.fechaInicio,
+          fechaFin: estudiante.semestre?.fechaFin,
+          vacaciones: estudiante.semestre?.vacaciones
+        }
+      };
+
+      localStorage.setItem('usuario', JSON.stringify(usuario));
+      localStorage.setItem('usuarioConfigurado', 'true');
+
+      // Guardar materias del mock
+      estudiante.materias.forEach(m => this.addMateria(m));
+    }
+
   }
 
 
@@ -347,7 +388,70 @@ export class DataService {
     }
   }
 
+  // --- Calificables (siempre desde materias) ---
+  agregarCalificable(idMateria: number, idCorte: number, idActividad: number, calificable: Calificable) {
+    console.log("Intentando agregar calificable:", calificable, "a materia:", idMateria, "corte:", idCorte, "actividad:", idActividad);
 
+    const materia = this.materias.find(m => m.idMateria === idMateria);
+    const corte = materia?.cortes.find(c => c.idCorte === idCorte);
+    const actividad = corte?.actividades.find(a => a.idActividad === idActividad);
+
+    console.log("Materia encontrada:", materia);
+    console.log("Corte encontrado:", corte);
+    console.log("Actividad encontrada:", actividad);
+
+    if (actividad) {
+      actividad.calificables.push(calificable);
+      console.log("Calificables actuales en actividad:", actividad.calificables);
+      actividad.calcularDefinitiva();
+      corte?.calcularDefinitiva();
+      materia?.recalcularTodo();
+      this.updateMateria(materia!);
+    }
+  }
+
+
+  editarCalificable(idMateria: number, idCorte: number, idActividad: number, idCalificable: number, cambios: Partial<Calificable>) {
+    const materia = this.materias.find(m => m.idMateria === idMateria);
+    const corte = materia?.cortes.find(c => c.idCorte === idCorte);
+    const actividad = corte?.actividades.find(a => a.idActividad === idActividad);
+
+    if (actividad) {
+      const calificable = actividad.calificables.find(c => c.idCalificable === idCalificable);
+      if (calificable) {
+        if (cambios.nombre !== undefined) calificable.nombre = cambios.nombre;
+        if (cambios.fecha !== undefined) calificable.fecha = cambios.fecha;
+        if (cambios.tipoRecordatorio !== undefined) calificable.tipoRecordatorio = cambios.tipoRecordatorio;
+        if (cambios.nota !== undefined) calificable.nota = cambios.nota;
+        actividad.calcularDefinitiva();
+        corte?.calcularDefinitiva();
+        materia?.recalcularTodo();
+        this.updateMateria(materia!);
+      }
+    }
+  }
+
+  eliminarCalificable(idMateria: number, idCorte: number, idActividad: number, idCalificable: number) {
+    const materia = this.materias.find(m => m.idMateria === idMateria);
+    const corte = materia?.cortes.find(c => c.idCorte === idCorte);
+    const actividad = corte?.actividades.find(a => a.idActividad === idActividad);
+
+    if (actividad) {
+      actividad.calificables = actividad.calificables.filter(c => c.idCalificable !== idCalificable);
+      actividad.calcularDefinitiva();
+      corte?.calcularDefinitiva();
+      materia?.recalcularTodo();
+      this.updateMateria(materia!);
+    }
+  }
+
+  agregarRegistro(idMateria: number, registro: RegistroEstudio) {
+    const materia = this.materias.find(m => m.idMateria === idMateria);
+    if (materia) {
+      materia.agregarRegistro(registro);
+      this.guardarDatos();
+    }
+  }
 
 
 }

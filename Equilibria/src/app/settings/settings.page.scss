@@ -1,0 +1,69 @@
+.titulo-header {
+  font-weight: 700;
+  color: #ffffff;
+  background-color: #7b6fbf;
+  padding: 12px;
+}
+
+.titulo-seccion {
+  font-weight: 600;
+  color: #7b6fbf;
+}
+
+.perfil-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  background-color: #90dbf4;
+}
+
+.nombre-usuario {
+  color: #7b6fbf;
+  font-weight: 500;
+}
+
+.estado-notificaciones {
+  font-style: italic;
+  color: #7b6fbf;
+}
+
+.modal-inner {
+  padding: 16px;
+}
+
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.avatar-item {
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+  .avatar-item.selected {
+    outline: 3px solid #7b6fbf;
+    transform: scale(1.05);
+  }
+
+.button-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.resumen-fechas {
+  margin-top: 12px;
+  font-size: 0.9rem;
+}
