@@ -5,7 +5,6 @@ import { RouterModule } from '@angular/router';
 import { Materia } from '../models/materia';
 import { DataService } from '../services/data';
 import { MockService } from '../services/MockService';
-import { EstudianteService } from '../services/EstudianteService';
 import { MateriaService } from '../services/MateriaService';
 import { DecimalPipe } from '@angular/common';
 import { NgChartsModule } from 'ng2-charts';
@@ -174,18 +173,14 @@ export class EstadisticasPage implements OnInit {
   constructor(
     private dataService: DataService,
     private mockService: MockService,
-    private estudianteService: EstudianteService,
     private materiaService: MateriaService
   ) { }
 
   ngOnInit() {
     this.materiasActivas = this.dataService.getMateriasActivas();
+    const semestre = this.dataService.obtenerSemestre() || this.mockService.getSemestre();
 
-    const estudiante = this.mockService.getEstudiante();
-    const semestre = this.mockService.getSemestre();
-    this.estudianteService.setEstudiante(estudiante);
-
-    this.proporciones = this.estudianteService.calcularProporcionEstudio();
+    this.proporciones = this.dataService.calcularProporcionEstudio();
     this.materiasActivas.forEach(m => {
       this.cumplimientoSemanal[m.idMateria] = this.materiaService.obtenerCumplimientoSemanal(m, semestre);
     });
@@ -241,11 +236,8 @@ export class EstadisticasPage implements OnInit {
   ionViewWillEnter() {
     this.materiasActivas = this.dataService.getMateriasActivas();
 
-    const estudiante = this.mockService.getEstudiante();
-    const semestre = this.mockService.getSemestre();
-    this.estudianteService.setEstudiante(estudiante);
-
-    this.proporciones = this.estudianteService.calcularProporcionEstudio();
+    const semestre = this.dataService.obtenerSemestre() || this.mockService.getSemestre();
+    this.proporciones = this.dataService.calcularProporcionEstudio();
 
     // 🔄 Recalcular definitivas y cumplimiento semanal
     this.materiasActivas.forEach(m => {

@@ -303,7 +303,7 @@ export class ModoEstudioPage implements OnInit, OnDestroy {
 
   actualizarCumplimiento() {
     const materia = this.dataService.getMaterias().find(m => m.idMateria === this.materiaSeleccionada);
-    const semestre = this.mockService.getSemestre(); // o el servicio real que tengas
+    const semestre = this.dataService.obtenerSemestre() || this.mockService.getSemestre();
 
     if (materia && semestre) {
       this.cumplimientoSemanal = this.materiaService.obtenerCumplimientoSemanal(materia, semestre);

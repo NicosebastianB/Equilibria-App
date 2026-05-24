@@ -1,14 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonDatetime, IonModal, IonIcon, IonList, IonNote} from '@ionic/angular/standalone';
+import { IonDatetime, IonModal, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { calendarOutline, calendarClearOutline } from 'ionicons/icons';
 import {
   IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
   IonItem,
   IonLabel,
   IonInput,
@@ -28,9 +25,6 @@ import { Semestre } from '../models/semestre';
   standalone: true,
   imports: [
     IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
     IonItem,
     IonLabel,
     IonInput,
@@ -38,8 +32,6 @@ import { Semestre } from '../models/semestre';
     IonDatetime,
     IonModal,
     IonIcon,
-    IonList,
-    IonNote,
     CommonModule,
     FormsModule,
   ],
@@ -79,10 +71,10 @@ export class OnboardingPage implements OnInit {
       return false;
     }
 
-    const inicio = new Date(this.semestreInicio);
-    const fin = new Date(this.semestreFin);
-    const vacInicio = new Date(this.vacacionesSemestreInicio);
-    const vacFin = new Date(this.vacacionesSemestreFin);
+    const inicio = this.parseLocalDate(this.semestreInicio);
+    const fin = this.parseLocalDate(this.semestreFin);
+    const vacInicio = this.parseLocalDate(this.vacacionesSemestreInicio);
+    const vacFin = this.parseLocalDate(this.vacacionesSemestreFin);
 
     // Reglas básicas
     if (inicio >= fin) return false;
@@ -100,6 +92,19 @@ export class OnboardingPage implements OnInit {
 
 
 
+  private parseLocalDate(value: string | Date): Date {
+    if (typeof value === 'string') {
+      const match = /^([0-9]{4})-([0-9]{2})-([0-9]{2})/.exec(value);
+      if (match) {
+        return new Date(+match[1], +match[2] - 1, +match[3]);
+      }
+      const parsed = new Date(value);
+      return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+    }
+
+    return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+  }
+
   ngOnInit() {
     this.avatarFiles = this.avatarSrv.getAvatarObjects();
   }
@@ -109,12 +114,12 @@ export class OnboardingPage implements OnInit {
     const semestre = new Semestre(
       Date.now(), // idSemestre simple, puedes cambiarlo por un generador
       'Semestre',
-      new Date(this.semestreInicio),
-      new Date(this.semestreFin),
+      this.parseLocalDate(this.semestreInicio)!,
+      this.parseLocalDate(this.semestreFin)!,
       [
         {
-          inicio: new Date(this.vacacionesSemestreInicio),
-          fin: new Date(this.vacacionesSemestreFin)
+          inicio: this.parseLocalDate(this.vacacionesSemestreInicio)!,
+          fin: this.parseLocalDate(this.vacacionesSemestreFin)!
         }
       ]
     );
@@ -139,9 +144,11 @@ export class OnboardingPage implements OnInit {
       semestre: {
         idSemestre: semestre.idSemestre,
         nombre: semestre.nombre,
-        fechaInicio: semestre.fechaInicio,
-        fechaFin: semestre.fechaFin,
-        vacaciones: semestre.vacaciones
+        fechaInicio: this.semestreInicio,
+        fechaFin: this.semestreFin,
+        vacaciones: [
+          { inicio: this.vacacionesSemestreInicio, fin: this.vacacionesSemestreFin }
+        ]
       }
     };
 

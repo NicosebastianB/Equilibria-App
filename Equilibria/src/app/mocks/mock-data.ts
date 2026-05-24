@@ -29,7 +29,6 @@ import { RegistroEstudio } from '../models/registroEstudio';
 
 
 // Unico semestre completo
-// 👇 Usa año, mes (0-based), día
 export const MOCK_SEMESTRE = new Semestre(
   1,
   "Semestre 2026-1",
