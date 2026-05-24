@@ -183,7 +183,7 @@ ion-modal {
     // SOLUCIÓN TOTAL AL BOTÓN GRIS:
     &[color="medium"] {
       // Usamos el color base puro para forzar al motor de Ionic a ignorar el gris nativo
-      --ion-color-base: #ffffff !important;
+      --ion-color-base: #636e86 !important;
       color: #000000 !important;
       border-radius: 25px !important;
     }

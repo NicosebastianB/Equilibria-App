@@ -2,7 +2,7 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-button routerLink="/settings">
-        <ion-icon slot="icon-only" name="settings-sharp"></ion-icon>
+        <ion-icon slot="icon-only" src="assets/icon/logo-setting.svg"></ion-icon>
       </ion-button>
     </ion-buttons>
 
@@ -10,13 +10,18 @@
 
     <ion-buttons slot="end">
       <ion-button routerLink="/bienestar">
-        <ion-icon slot="icon-only" name="rose-sharp"></ion-icon>
+        <ion-icon slot="icon-only" src="assets/icon/logo-bienestar.svg"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-padding modo-estudio-page">
+
+  <div class="modo-estudio-header">
+    <h2>Modo Estudio</h2>
+    <p>Configura tu temporizador y recordatorios de forma clara y agradable.</p>
+  </div>
 
   <!-- Selección de materia activa -->
   <ion-item>
@@ -42,23 +47,25 @@
 
 
   <!-- Configuración del temporizador -->
-  <ion-item>
+  <div class="configuracion-temporizador">
     <ion-label>Tiempo de concentración</ion-label>
     <ion-datetime presentation="time"
+                  [preferWheel]="true"
                   hour-cycle="h23"
                   [value]="formatearDuracion(config.tiempoConcentracion)"
                   (ionChange)="onDuracionChange($event, 'concentracion')">
     </ion-datetime>
-  </ion-item>
+  </div>
 
-  <ion-item>
+  <div class="configuracion-temporizador">
     <ion-label>Tiempo de descanso</ion-label>
     <ion-datetime presentation="time"
+                  [preferWheel]="true"
                   hour-cycle="h23"
                   [value]="formatearDuracion(config.tiempoDescanso)"
                   (ionChange)="onDuracionChange($event, 'descanso')">
     </ion-datetime>
-  </ion-item>
+  </div>
 
 
   <ion-item>
@@ -79,6 +86,8 @@
   <ion-button expand="block" color="primary" (click)="iniciarTemporizador()" [disabled]="!materiaSeleccionada">
     Iniciar
   </ion-button>
+  
+  <div style="height: 50px;"></div>
 
 </ion-content>
 
