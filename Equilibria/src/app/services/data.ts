@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Materia } from '../models/materia';
-import { MateriaService } from './MateriaService';
+import { Semestre } from '../models/semestre';
 import { Tarea } from '../models/tarea';
 import { Horario } from '../models/horario';
 import { Corte } from '../models/corte';
@@ -14,14 +14,43 @@ import { MOCK_ESTUDIANTE } from '../mocks/mock-data';
 })
 export class DataService {
   private materias: Materia[] = [];
+  private useMockData = true; // Cambia a true solo para desarrollo local
+  private readonly MOCK_MODE_KEY = 'useMockData';
 
   constructor() {
+    this.useMockData = this.getMockModeFromStorage();
     this.cargarDatos();
   }
 
+  private getMockModeFromStorage(): boolean {
+    const storedValue = localStorage.getItem(this.MOCK_MODE_KEY);
+    return storedValue === null ? this.useMockData : storedValue === 'true';
+  }
+
+  public isMockModeEnabled(): boolean {
+    return this.useMockData;
+  }
+
+  public setMockMode(enabled: boolean): void {
+    this.useMockData = enabled;
+    localStorage.setItem(this.MOCK_MODE_KEY, String(enabled));
+  }
+
   private parseDate(value: string | Date): Date {
-    const d = new Date(value);
-    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    if (!value) {
+      return new Date(NaN);
+    }
+
+    if (typeof value === 'string') {
+      const match = /^([0-9]{4})-([0-9]{2})-([0-9]{2})/.exec(value);
+      if (match) {
+        return new Date(+match[1], +match[2] - 1, +match[3]);
+      }
+      const parsed = new Date(value);
+      return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+    }
+
+    return new Date(value.getFullYear(), value.getMonth(), value.getDate());
   }
 
   // Cargar desde localStorage
@@ -129,8 +158,8 @@ export class DataService {
       this.materias = [];
     }
 
-    // 🔑 Si no hay usuario configurado, usar el mock
-    if (!usuarioConfigurado && MOCK_ESTUDIANTE && MOCK_ESTUDIANTE.length > 0) {
+    // 🔑 Si no hay usuario configurado y el modo mock está activado, usar el mock
+    if (!materiasGuardadas && !usuarioConfigurado && this.useMockData && MOCK_ESTUDIANTE && MOCK_ESTUDIANTE.length > 0) {
       const estudiante = MOCK_ESTUDIANTE[0];
 
       // ✅ Normalizar fechas del semestre y vacaciones
@@ -283,6 +312,43 @@ export class DataService {
     return this.materias.filter(m => !m.finalizado);
   }
 
+  public calcularProporcionEstudio(): { [idMateria: number]: number } {
+    const materiasActivas = this.getMateriasActivas();
+    const totalHoras = materiasActivas.reduce(
+      (acc, materia) => acc + materia.calcularHorasAcumuladas(),
+      0
+    );
+
+    return materiasActivas.reduce((result: { [idMateria: number]: number }, materia) => {
+      result[materia.idMateria] = totalHoras > 0 ? (materia.calcularHorasAcumuladas() / totalHoras) * 100 : 0;
+      return result;
+    }, {});
+  }
+
+  public obtenerSemestre(): Semestre | null {
+    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    if (!usuario?.semestre?.fechaInicio || !usuario?.semestre?.fechaFin) {
+      return null;
+    }
+
+    const vacaciones = Array.isArray(usuario.semestre.vacaciones)
+      ? usuario.semestre.vacaciones.map((v: any) => ({
+          inicio: this.parseDate(v.inicio),
+          fin: this.parseDate(v.fin)
+        }))
+      : [];
+
+    const semestre = new Semestre(
+      1,
+      usuario.semestre?.nombre || 'Semestre actual',
+      this.parseDate(usuario.semestre.fechaInicio),
+      this.parseDate(usuario.semestre.fechaFin),
+      vacaciones
+    );
+    semestre.calcularSemanasTotales();
+    return semestre;
+  }
+
   // Obtener todas las materias finalizadas
   getMateriasFinalizadas(): Materia[] {
     return this.materias.filter(m => m.finalizado);
@@ -328,63 +394,6 @@ export class DataService {
     if (tarea) {
       tarea.estado = false;
       this.guardarDatos();
-    }
-  }
-
-  // --- Calificables (siempre desde materias) ---
-  agregarCalificable(idMateria: number, idCorte: number, idActividad: number, calificable: Calificable) {
-    console.log("Intentando agregar calificable:", calificable, "a materia:", idMateria, "corte:", idCorte, "actividad:", idActividad);
-
-    const materia = this.materias.find(m => m.idMateria === idMateria);
-    const corte = materia?.cortes.find(c => c.idCorte === idCorte);
-    const actividad = corte?.actividades.find(a => a.idActividad === idActividad);
-
-    console.log("Materia encontrada:", materia);
-    console.log("Corte encontrado:", corte);
-    console.log("Actividad encontrada:", actividad);
-
-    if (actividad) {
-      actividad.calificables.push(calificable);
-      console.log("Calificables actuales en actividad:", actividad.calificables);
-      actividad.calcularDefinitiva();
-      corte?.calcularDefinitiva();
-      materia?.recalcularTodo();
-      this.updateMateria(materia!);
-    }
-  }
-
-
-  editarCalificable(idMateria: number, idCorte: number, idActividad: number, idCalificable: number, cambios: Partial<Calificable>) {
-    const materia = this.materias.find(m => m.idMateria === idMateria);
-    const corte = materia?.cortes.find(c => c.idCorte === idCorte);
-    const actividad = corte?.actividades.find(a => a.idActividad === idActividad);
-
-    if (actividad) {
-      const calificable = actividad.calificables.find(c => c.idCalificable === idCalificable);
-      if (calificable) {
-        if (cambios.nombre !== undefined) calificable.nombre = cambios.nombre;
-        if (cambios.fecha !== undefined) calificable.fecha = cambios.fecha;
-        if (cambios.tipoRecordatorio !== undefined) calificable.tipoRecordatorio = cambios.tipoRecordatorio;
-        if (cambios.nota !== undefined) calificable.nota = cambios.nota;
-        actividad.calcularDefinitiva();
-        corte?.calcularDefinitiva();
-        materia?.recalcularTodo();
-        this.updateMateria(materia!);
-      }
-    }
-  }
-
-  eliminarCalificable(idMateria: number, idCorte: number, idActividad: number, idCalificable: number) {
-    const materia = this.materias.find(m => m.idMateria === idMateria);
-    const corte = materia?.cortes.find(c => c.idCorte === idCorte);
-    const actividad = corte?.actividades.find(a => a.idActividad === idActividad);
-
-    if (actividad) {
-      actividad.calificables = actividad.calificables.filter(c => c.idCalificable !== idCalificable);
-      actividad.calcularDefinitiva();
-      corte?.calcularDefinitiva();
-      materia?.recalcularTodo();
-      this.updateMateria(materia!);
     }
   }
 
