@@ -129,31 +129,29 @@ ion-item {
   margin: 0 16px 16px 16px;
 }
 
+
 .horario-scroll {
-  max-height: 500px; 
-  overflow-y: auto; 
-  overflow-x: auto; 
-  -webkit-overflow-scrolling: touch; 
-  display: block;
+  overflow-x: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   width: 100%;
+  padding-bottom: 8px;
 }
 
-.horario-grid ion-row {
-  border-bottom: 1px solid #ccc;
-  display: flex; 
-  flex-wrap: nowrap; 
-  align-items: stretch;
+.horario-grid {
+  width: 100%;        /* ocupa todo el ancho del contenedor */
+  table-layout: fixed; /* mantiene proporciones uniformes */
 }
 
 .horario-grid ion-col {
-  border-right: 1px solid #ccc;
+  flex: 1 1 0;              /* todas las columnas se reparten igual */
+  min-width: 80px;          /* ancho mínimo */
+  max-width: 100px;         /* ancho máximo */
   text-align: center;
   padding: 6px;
   font-size: 14px;
-  white-space: nowrap; 
-  min-width: 90px; 
-  flex: 0 0 90px; 
   box-sizing: border-box;
+  border-right: 1px solid #ccc;
 }
 
 .horario-grid ion-row:first-child {
@@ -165,11 +163,6 @@ ion-item {
   }
 }
 
-.horario-grid {
-  width: max-content;
-  min-width: 100%;
-}
-
 .horario-bloque {
   font-size: 0.75rem;
   line-height: 1.1;
@@ -178,3 +171,31 @@ ion-item {
   font-family: 'Montserrat', sans-serif;
   font-weight: 500;
 }
+
+.horario-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Montserrat', sans-serif;
+  text-align: center;
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.horario-table th {
+  background: #EBEFFF;
+  color: #877DC0;
+  font-weight: 600;
+  padding: 8px;
+  border: 1px solid #ccc;
+}
+
+.horario-table td {
+  border: 1px solid #ccc;
+  padding: 6px;
+  min-width: 90px;
+  height: 40px;
+}
+
+
+

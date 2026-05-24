@@ -45,8 +45,8 @@ export class AppComponent implements OnInit {
     // 🔑 cargar datos desde localStorage
     this.dataService.cargarDatos();
 
-    // Si no hay materias en localStorage, poblar con mock
-    if (this.dataService.getMaterias().length === 0) {
+    // Si no hay materias en localStorage y el modo mock está activado, poblar con mock
+    if (this.dataService.getMaterias().length === 0 && this.dataService.isMockModeEnabled()) {
       const mockMaterias = this.mockService.getMaterias();
       mockMaterias.forEach(m => this.dataService.addMateria(m));
     }
@@ -62,7 +62,7 @@ export class AppComponent implements OnInit {
   private initialize() {
     this.dataService.cargarDatos(); // 🔑 ahora sí se ejecuta siempre
 
-    if (this.dataService.getMaterias().length === 0) {
+    if (this.dataService.getMaterias().length === 0 && this.dataService.isMockModeEnabled()) {
       const mockMaterias = this.mockService.getMaterias();
       mockMaterias.forEach(m => this.dataService.addMateria(m));
     }

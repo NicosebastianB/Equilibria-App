@@ -4,6 +4,17 @@ ion-content {
   --color: white;
 }
 
+/* Restore onboarding-specific surfaces to a lighter purple (override global white surface) */
+.onboarding-inner ion-item.custom-input-item,
+.onboarding-inner ion-list,
+.onboarding-inner ion-card,
+.onboarding-inner ion-card-content,
+.onboarding-inner .custom-input-item,
+.onboarding-inner .input-custom-item {
+  --background: #9086cb !important;
+  background: #9086cb !important;
+}
+
 .onboarding-inner {
   width: 100%;
   max-width: 450px; 
@@ -160,11 +171,14 @@ ion-modal {
 
 /* --- Resumen y Botón Comenzar --- */
 .resumen-fechas ion-item {
+  justify-content: center;
+  height: auto;
   --background: transparent;
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
-  p { color: white; margin: 4px 0; }
+  p { color: rgb(142, 109, 204); margin: 4px 0; }
   margin-left:-10px;
+  border-radius: 25px;
 }
 
 .btn-comenzar {
