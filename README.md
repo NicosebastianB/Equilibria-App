@@ -28,8 +28,7 @@ Esta combinación nos permite mantener flexibilidad en la asignación de tareas 
 | 2 | Diseño inicial de la base de datos | Pruebas de persistencia para confirmar almacenamiento correcto de información |
 | 3 | Implementación de diseños y estilos | Aplicar estilos y mockups a la interfaz para mejorar la experiencia visual |
 | 4 | Pruebas con mock data | Simulación del entorno visual con datos ficticios para validar flujo de la app |
-| 5 | Integración con base de datos en línea | Lista de estudiantes registrados (tarea académica adicional, no parte del requerimiento principal) |
-| 6 | Consolidación y empaquetamiento | Últimas pruebas de funcionamiento y empaquetado con Capacitor para entrega final |
+| 5 | Consolidación y empaquetamiento | Últimas pruebas de funcionamiento y empaquetado con Capacitor para entrega final |
 
 ## 📊 Estado del proyecto
 - [x] Documentación inicial (diagramas de clases, actividades, casos de uso)  
@@ -40,11 +39,10 @@ Esta combinación nos permite mantener flexibilidad en la asignación de tareas 
 - [x] Mockup de interfaz en Figma  
 - [x] Creación y relación de clases y servicios  
 - [x] Tests unitarios con Karma  
-- [ ] Interfaces iniciales en Ionic  
+- [x] Interfaces iniciales en Ionic  
 - [ ] Persistencia de datos con SQLite  
 - [ ] Estilos y mockups aplicados a la interfaz  
-- [ ] Pruebas con mock data  
-- [ ] Integración con base de datos en línea (tarea académica)  
+- [x] Pruebas con mock data   
 - [ ] Empaquetamiento final con Capacitor  
 
 ## 🛠️ Tecnologías utilizadas
