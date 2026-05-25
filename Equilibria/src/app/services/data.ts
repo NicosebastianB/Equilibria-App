@@ -284,18 +284,29 @@ export class DataService {
     if (index !== -1) {
       const existente = this.materias[index];
 
-      // Actualizar solo los campos editables
+      // Actualizar sólo los campos básicos editables.
+      // No sobreescribimos cortes/actividades/calificables existentes
+      // con la instancia del formulario que puede contener cortes recién creados.
       existente.nombre = materia.nombre;
       existente.color = materia.color;
       existente.creditos = materia.creditos;
       existente.profesor = materia.profesor;
       existente.horasClaseSemanal = materia.horasClaseSemanal;
-      existente.horarios = materia.horarios;
+      existente.semanas = materia.semanas;
+      existente.finalizado = materia.finalizado;
+      existente.definitiva = materia.definitiva;
+      existente.notaFaltante = materia.notaFaltante;
+      existente.horarios = materia.horarios ? materia.horarios.slice() : existente.horarios;
 
-      // Mantener cortes, actividades, calificables y tareas intactos
-      // existente.cortes, existente.tareas, etc. no se tocan
+      // Si el formulario envía tareas o registros explícitos, se actualizan.
+      if (materia.tareas && materia.tareas.length > 0) {
+        existente.tareas = materia.tareas.slice();
+      }
+      if (materia.registros && materia.registros.length > 0) {
+        existente.registros = materia.registros.slice();
+      }
 
-      console.log("Materia actualizada sin perder información interna:", existente);
+      console.log("Materia actualizada con datos completos:", existente);
       this.guardarDatos();
     }
   }

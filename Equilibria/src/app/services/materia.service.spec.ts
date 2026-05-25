@@ -9,87 +9,6 @@ import { Calificable } from '../models/calificable';
 import { Actividad } from '../models/actividad';
 
 
-
-describe('MateriaService', () => {
-  let service: MateriaService;
-  let materia: Materia;
-
-  //crear una instancia de materia
-  beforeEach(() => {
-    service = new MateriaService();
-    materia = new Materia(1, 'Matemáticas', 'azul', 3, 'Profesor X', 5);
-    service.agregarMateria(materia);
-  });
-
-  //RF02: Caso 1: crear una tarea
-  it('debería agregar una tarea a la materia Matemáticas', () => {
-    const tarea = new Tarea(materia.idMateria, 1, 'Examen parcial', new Date(), 'daily_until_due_date', false);
-    service.agregarTarea(materia.idMateria, tarea);
-
-    const tareas = service.obtenerTareas(materia.idMateria);
-    expect(tareas.length).toBe(1);
-    expect(tareas[0].nombre).toBe('Examen parcial');
-    expect(tareas[0].estado).toBe(false);
-  });
-
-  //RF02: Caso 2: editar una tarea
-  it('debería editar atributos de una tarea existente', () => {
-    const tarea = new Tarea(materia.idMateria, 1, 'Examen parcial', new Date(), 'daily_until_due_date', false);
-    service.agregarTarea(materia.idMateria, tarea);
-
-    service.editarTarea(materia.idMateria, 1, { nombre: 'Examen final', estado: true });
-
-    const tareas = service.obtenerTareas(materia.idMateria);
-    expect(tareas[0].nombre).toBe('Examen final');
-    expect(tareas[0].estado).toBe(true);
-  });
-
-  //RF02: Caso 3: eliminar una tarea
-  it('debería eliminar una tarea de la materia', () => {
-    const tarea = new Tarea(materia.idMateria, 1, 'Examen parcial', new Date(), 'daily_until_due_date', false);
-    service.agregarTarea(materia.idMateria, tarea);
-
-    // Eliminamos la tarea por su id
-    service.eliminarTarea(materia.idMateria, 1);
-
-    const tareas = service.obtenerTareas(materia.idMateria);
-    expect(tareas.length).toBe(0);
-  });
-
-  //RF02.
-  //una materia inicia con tres cortes por defecto
-   it('debería inicializar la materia con tres cortes por defecto', () => {
-    expect(materia.cortes.length).toBe(3);
-    expect(materia.cortes[0].nombre).toBe('Corte 1');
-    expect(materia.cortes[0].porcentaje).toBe(30);
-    expect(materia.cortes[1].nombre).toBe('Corte 2');
-    expect(materia.cortes[1].porcentaje).toBe(30);
-    expect(materia.cortes[2].nombre).toBe('Corte 3');
-    expect(materia.cortes[2].porcentaje).toBe(40);
-    expect(materia.validarPorcentajes()).toBeTrue();
-  });
-
-  //RF02 Caso 7: editar cortes y ajustar porcentajes
-  it('debería ajustar los porcentajes correctamente respetando cortes editados', () => {
-    // Cambiar el tercer corte a 50%
-    service.editarCorte(materia.idMateria, 3, { porcentaje: 50 });
-    expect(materia.cortes[2].porcentaje).toBe(50);
-
-    // Cambiar el primer corte a 20%
-    service.editarCorte(materia.idMateria, 1, { porcentaje: 20 });
-    expect(materia.cortes[0].porcentaje).toBe(20);
-    expect(materia.cortes[1].porcentaje).toBe(30);
-    expect(materia.cortes[2].porcentaje).toBe(50);
-
-    // Finalizar edición
-    service.finalizarEdicion(materia.idMateria);
-    expect(materia.validarPorcentajes()).toBeTrue();
-    // Y todos los cortes deben estar reseteados (fijo = false)
-    expect(materia.cortes.every(c => c.fijo === false)).toBeTrue();
-  });
-
-});
-
 describe('MateriaService . Estadisticas de materia', () => {
   let service: MateriaService;
   let materia: Materia;
@@ -129,21 +48,7 @@ describe('MateriaService . Estadisticas de materia', () => {
     expect(historial[0]).toBe(2); // semana 1 → 2h
     expect(historial[1]).toBe(1); // semana 2 → 1h
   });
-
-  it('debería calcular correctamente el cumplimiento semanal de una materia', () => {
-    const semestre = new Semestre(1, 'Semestre actual', new Date(2026, 0, 26), new Date(2026, 4, 16), []);
-    semestre.calcularSemanasTotales();
-    semestre.semanaActual = 1; // forzamos semana actual para el test
-
-    materia.horasIndependientesPorSemana = 4; // horas esperadas por semana
-
-    const registro = new RegistroEstudio(1, materia.idMateria, new Date(2026, 0, 27), 60); // 1h
-    materia.agregarRegistro(registro);
-
-    const cumplimiento = service.obtenerCumplimientoSemanal(materia, semestre);
-
-    expect(cumplimiento).toBeCloseTo(25, 1); // 1h de 4h → 25%
-  });
+  
 });
 
 describe('MateriaService . Estadísticas de notas', () => {

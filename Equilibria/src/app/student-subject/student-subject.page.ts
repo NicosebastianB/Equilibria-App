@@ -27,7 +27,6 @@ import {
   IonList,
   IonItem,
   IonModal,
-  IonChip,
   IonSelect,
   IonSelectOption,
   IonPopover,
@@ -38,9 +37,9 @@ import {
   IonCardContent,
   IonNote,
   IonBackButton,
+  IonDatetime,
   IonAccordion,
   IonAccordionGroup,
-  IonText,
   IonCheckbox,
   IonProgressBar
 } from '@ionic/angular/standalone';
@@ -54,8 +53,7 @@ import
   pencil,
   ellipsisVertical,
   arrowBackOutline,
-  addCircleOutline
-} from 'ionicons/icons';
+  addCircleOutline, closeOutline } from 'ionicons/icons';
 import { DataService } from '../services/data';
 import { OverlayEventDetail } from '@ionic/core/components';
 
@@ -79,7 +77,6 @@ import { OverlayEventDetail } from '@ionic/core/components';
     IonList,
     IonItem,
     IonModal,
-    IonChip,
     IonSelect,
     IonSelectOption,
     IonPopover,
@@ -90,9 +87,9 @@ import { OverlayEventDetail } from '@ionic/core/components';
     IonCardContent,
     IonNote,
     IonBackButton,
+    IonDatetime,
     IonAccordion,
     IonAccordionGroup,
-    IonText,
     IonCheckbox,
     IonProgressBar
   ]
@@ -116,7 +113,7 @@ export class StudentSubjectPage implements OnInit {
     {
       nombre: '',
       nota: null,
-      fecha: new Date(),
+      fecha: new Date().toISOString(),
       idActividad: null
     };
 
@@ -173,18 +170,7 @@ export class StudentSubjectPage implements OnInit {
     private corteService: CorteService,
     private toastController: ToastController
   ) {
-    addIcons(
-      {
-        settingsSharp,
-        roseSharp,
-        add,
-        pencil,
-        trash,
-        close,
-        ellipsisVertical,
-        arrowBackOutline,
-        addCircleOutline
-      });
+    addIcons({ellipsisVertical,pencil,trash,add,addCircleOutline,arrowBackOutline,closeOutline,settingsSharp,roseSharp,close});
   }
 
   ngOnInit() {
@@ -331,13 +317,19 @@ export class StudentSubjectPage implements OnInit {
 
   abrirModalNuevaTarea() {
     this.tareaSeleccionada = null;
-    this.formTarea = { nombre: '', fecha: new Date(), tipoRecordatorio: 'once' };
+    this.formTarea = { nombre: '', fecha: new Date().toISOString(), tipoRecordatorio: 'once' };
     this.modalTareaOpen = true;
   }
 
   abrirModalEditarTarea(tarea: Tarea) {
     this.tareaSeleccionada = tarea;
-    this.formTarea = { ...tarea }; // clonar datos
+    // clonar datos y normalizar la fecha a ISO string para ion-datetime
+    this.formTarea = { ...tarea };
+    try {
+      this.formTarea.fecha = tarea.fecha instanceof Date ? tarea.fecha.toISOString() : new Date(tarea.fecha).toISOString();
+    } catch (e) {
+      this.formTarea.fecha = new Date().toISOString();
+    }
     this.modalTareaOpen = true;
   }
 
@@ -372,6 +364,7 @@ export class StudentSubjectPage implements OnInit {
       this.mostrarToast("Tarea creada correctamente.", "success");
     }
 
+    this.refrescarTareas();
     this.cerrarModalTarea();
   }
 
@@ -381,14 +374,20 @@ export class StudentSubjectPage implements OnInit {
   // --- Abrir modal en modo creación ---
   abrirModalNuevoCalificable() {
     this.calificableSeleccionado = null;
-    this.formCalificable = { nombre: '', nota: null, fecha: new Date(), idActividad: null, idCorte: null };
+    this.formCalificable = { nombre: '', nota: null, fecha: new Date().toISOString(), idActividad: null, idCorte: null };
     this.modalCalificableOpen = true;
   }
 
   // --- Abrir modal en modo edición ---
   abrirModalEditarCalificable(cal: Calificable) {
     this.calificableSeleccionado = cal;
+    // clonar y normalizar fecha para el ion-datetime
     this.formCalificable = { ...cal };
+    try {
+      this.formCalificable.fecha = cal.fecha instanceof Date ? cal.fecha.toISOString() : new Date(cal.fecha).toISOString();
+    } catch (e) {
+      this.formCalificable.fecha = new Date().toISOString();
+    }
     this.modalCalificableOpen = true;
   }
 
@@ -433,6 +432,8 @@ export class StudentSubjectPage implements OnInit {
           this.formCalificable.tipoRecordatorio || ''
         );
         nuevo.nota = this.formCalificable.nota;
+        actividad.calcularDefinitiva();
+        this.materia.recalcularTodo();
         console.log("Nuevo calificable creado con ID jerárquico:", nuevo.idCalificable);
         this.dataService.updateMateria(this.materia);
       }
@@ -469,6 +470,17 @@ export class StudentSubjectPage implements OnInit {
       alert('La nota debe estar entre 0.00 y 5.00');
       this.formCalificable.nota = null;
     }
+  }
+
+  // Actualizar fecha cuando el ion-datetime emite ionChange
+  onFechaCalificableChange(event: any) {
+    const val = event?.detail?.value;
+    if (val) this.formCalificable.fecha = val;
+  }
+
+  onFechaTareaChange(event: any) {
+    const val = event?.detail?.value;
+    if (val) this.formTarea.fecha = val;
   }
 
   abrirModalCriterios() {
@@ -626,6 +638,12 @@ export class StudentSubjectPage implements OnInit {
   getColorHex(colorName: string): string {
     const found = this.colores.find(c => c.value === colorName);
     return found ? found.hex : colorName || '#c8c8c8';
+  }
+
+  tieneCalificables(): boolean {
+    return this.materia?.cortes?.some(corte =>
+      corte.actividades.some(actividad => actividad.calificables.length > 0)
+    );
   }
 
 }

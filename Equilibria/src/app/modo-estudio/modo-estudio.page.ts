@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule} from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { Materia } from '../models/materia';
 import { MateriaService } from '../services/MateriaService';
@@ -11,7 +10,6 @@ import { TemporizadorConfig } from '../models/temporizadorConfig';
 import { Recordatorio } from '../models/recordatorio';
 import { RecordatorioSaludable } from '../models/recordatorios-saludables';
 import { interval, Subscription } from 'rxjs';
-import { DatePipe } from '@angular/common';
 import { ToastController } from '@ionic/angular';
 import {
   IonContent,
@@ -58,7 +56,6 @@ import {
       FormsModule,
       CommonModule,
       RouterModule,
-      DatePipe,
       FormsModule,
       RouterModule,
       IonContent,
@@ -69,30 +66,16 @@ import {
       IonButton,
       IonIcon,
       IonLabel,
-      IonList,
       IonItem,
       IonModal,
       IonChip,
       IonSelect,
       IonSelectOption,
-      IonPopover,
       IonInput,
-      IonCard,
-      IonCardTitle,
-      IonCardHeader,
-      IonCardContent,
       IonNote,
-      IonBackButton,
-      IonAccordion,
-      IonAccordionGroup,
-      IonText,
-      IonCheckbox,
       IonProgressBar,
       IonToggle,
-      IonDatetime,
-      IonPicker,
-      IonPickerColumn,
-      IonDatetimeButton
+      IonDatetime
     ]
 })
 
@@ -287,12 +270,16 @@ export class ModoEstudioPage implements OnInit, OnDestroy {
     this.actualizarCumplimiento(); // refrescar barra
   }
 
-
-
-
   cerrarTemporizador() {
     this.detenerTemporizador();
     this.modalTemporizadorOpen = false;
+    // ⚠️ Advertencia al usuario
+    this.toastController.create({
+      message: 'Recuerda: solo los ciclos completados se registran. Si cierras antes, no se guardará tu progreso.',
+      duration: 3000,
+      color: 'warning',
+      position: 'top'
+    }).then(toast => toast.present());
   }
 
 

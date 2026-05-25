@@ -99,6 +99,13 @@ ion-header ion-button[fill="clear"] ion-icon {
   color: var(--primary);
 }
 
+h2{
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 1.2rem;
+}
+
 .seccion-titulo {
   font-family: 'Montserrat', sans-serif;
   font-weight: 500;
@@ -123,7 +130,6 @@ ion-header ion-button[fill="clear"] ion-icon {
 .boton-agregar-popover {
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
-  margin: 0 auto;
 }
 
 .tareas-custom-card {
@@ -141,7 +147,7 @@ ion-header ion-button[fill="clear"] ion-icon {
 
 .materia-card-title-container {
   justify-content: space-between;
-  width: 100%;
+  width: auto;
 }
 
 .materia-titulo-izquierda {
@@ -157,7 +163,7 @@ ion-header ion-button[fill="clear"] ion-icon {
   display: inline-flex;
   align-items: center;
   padding: 8px 16px;
-  width: 210px;
+  width: 150px;
   justify-content: flex-start;
   border-radius: 24px;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
@@ -174,9 +180,9 @@ ion-header ion-button[fill="clear"] ion-icon {
 .estado-tag {
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
-  font-size: 0.75rem;
+  font-size: 0.5rem;
   padding: 5px 0;
-  width: 95px;
+  width: 85px;
   border-radius: 12px;
   text-align: center;
   display: inline-block;

@@ -184,14 +184,49 @@
 
   <div class="linea-separadora-morada"></div>
 
+  <!-- Sección: Información de la materia -->
+  <h2 class="seccion-titulo">Información</h2>
+  <ion-card class="tareas-custom-card tarjeta-limpia-sin-borde resumen-materia-card">
+    <ion-card-content>
+      <div class="resumen-atributos-grid">
+        <div class="resumen-atributo">
+          <span class="resumen-label">Profesor</span>
+          <span class="resumen-value">{{ materia.profesor?.trim() ? materia.profesor : 'sin profesor' }}</span>
+        </div>
+        <div class="resumen-atributo">
+          <span class="resumen-label">Créditos</span>
+          <span class="resumen-value">{{ materia.creditos ?? 'N/A' }}</span>
+        </div>
+        <div class="resumen-atributo">
+          <span class="resumen-label">Horas clase/semana</span>
+          <span class="resumen-value">{{ materia.horasClaseSemanal ?? 'N/A' }}</span>
+        </div>
+        <div class="resumen-atributo">
+          <span class="resumen-label">Horas independientes</span>
+          <span class="resumen-value">{{ materia.horasIndependientes ?? 0 }}</span>
+        </div>
+        <div class="resumen-atributo">
+          <span class="resumen-label">Horas independientes/semana</span>
+          <span class="resumen-value">{{ materia.horasIndependientesPorSemana ?? 0 }}</span>
+        </div>
+        <div class="resumen-atributo">
+          <span class="resumen-label">Registros de estudio</span>
+          <span class="resumen-value">{{ materia.registros?.length || 0 }}</span>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <div class="linea-separadora-morada"></div>
+
   <!-- Sección: Nota definitiva parcial -->
   <h2 class="seccion-titulo" style="text-align: center; margin-bottom: 5px;">Definitiva parcial</h2>
   
   <div class="contenedor-definitiva-central">
-    <div class="nota-definitiva-gigante">
-      {{ materia.definitiva ? (materia.definitiva | number:'1.1-2') : 'Sin calificaciones aún' }}
+    <div [ngClass]="tieneCalificables() ? 'nota-definitiva-gigante' : 'nota-definitiva-placeholder'">
+      {{ tieneCalificables() ? (materia.definitiva | number:'1.1-2') : 'Sin calificaciones aún' }}
     </div>
-    <p *ngIf="materia.definitiva" class="subtexto-definitiva-central">
+    <p *ngIf="tieneCalificables()" class="subtexto-definitiva-central">
       Esta nota refleja el promedio parcial según los calificables registrados hasta ahora.
     </p>
   </div>
@@ -281,7 +316,7 @@
         <ion-popover [isOpen]="popoverOpenActividad" (didDismiss)="popoverOpenActividad=false">
           <ng-template>
             <ion-content class="ion-padding cuerpo-modal-blanco">
-              <div *ngFor="let actividad of corteSeleccionado?.actividades" style="margin-bottom: 14px;">
+              <div *ngFor="let actividad of corteSeleccionado.actividades" style="margin-bottom: 14px;">
                 <ion-item class="item-formulario">
                   <ion-label position="stacked">Nombre de la actividad</ion-label>
                   <ion-input [(ngModel)]="actividad.nombre"></ion-input>
@@ -322,6 +357,11 @@
     <ng-template>
       <ion-header>
         <ion-toolbar class="toolbar-modal">
+          <ion-buttons slot="start">
+            <ion-button fill="clear" (click)="cerrarModalCalificable()">
+              <ion-icon name="close-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
           <ion-title>{{ calificableSeleccionado ? 'Editar Calificable' : 'Nuevo Calificable' }}</ion-title>
         </ion-toolbar>
       </ion-header>
@@ -336,7 +376,7 @@
         </ion-item>
         <ion-item class="item-formulario">
           <ion-label position="stacked">Fecha</ion-label>
-          <ion-datetime [(ngModel)]="formCalificable.fecha" presentation="date" locale="es-CO"></ion-datetime>
+          <ion-datetime [(ngModel)]="formCalificable.fecha" presentation="date" locale="es-CO" (ionChange)="onFechaCalificableChange($event)"></ion-datetime>
         </ion-item>
         <ion-item class="item-formulario">
           <ion-label position="stacked">Actividad</ion-label>
@@ -360,6 +400,11 @@
     <ng-template>
       <ion-header>
         <ion-toolbar class="toolbar-modal">
+          <ion-buttons slot="start">
+            <ion-button fill="clear" (click)="cerrarModalTarea()">
+              <ion-icon name="close-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
           <ion-title>{{ formTarea.idTarea ? 'Editar Tarea' : 'Nueva Tarea' }}</ion-title>
         </ion-toolbar>
       </ion-header>
@@ -370,7 +415,7 @@
         </ion-item>
         <ion-item class="item-formulario">
           <ion-label position="stacked">Fecha</ion-label>
-          <ion-datetime [(ngModel)]="formTarea.fecha" presentation="date"></ion-datetime>
+          <ion-datetime [(ngModel)]="formTarea.fecha" presentation="date" (ionChange)="onFechaTareaChange($event)"></ion-datetime>
         </ion-item>
         <ion-item class="item-formulario">
           <ion-label position="stacked">Recordatorio</ion-label>

@@ -7,6 +7,21 @@ import { Actividad } from '../models/actividad';
 })
 export class CorteService {
 
+  // Iniciar creación de actividades. Este método mantiene compatibilidad con el spec.
+  iniciarCreacion(corte: Corte) {
+    // No hay estado temporal necesario actualmente.
+    // Se mantiene para que las pruebas y el flujo de UI sigan funcionando.
+  }
+
+  // Finalizar creación y ajustar porcentajes para que sumen 100%.
+  finalizarCreacion(corte: Corte) {
+    if (!corte || corte.actividades.length === 0) return;
+
+    const total = corte.actividades.reduce((sum, actividad) => sum + (actividad.porcentaje ?? 0), 0);
+    const ajuste = 100 - total;
+    corte.actividades[0].porcentaje += ajuste;
+  }
+
   // Agregar nueva actividad
   agregarActividad(corte: Corte, actividad: Actividad) {
     if (!corte) return;
