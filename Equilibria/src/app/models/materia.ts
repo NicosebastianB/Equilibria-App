@@ -147,11 +147,15 @@ export class Materia {
   agregarTarea(nombre: string, fecha: Date, tipoRecordatorio: string) {
     const nueva = new Tarea(this.idMateria, nombre, fecha, tipoRecordatorio);
 
-    // autonumeración única por materia
-    nueva.idTarea = this.idMateria * 100 + this.nextTareaId++;
+    // Buscar el máximo ID actual en la materia
+    const maxId = this.tareas.length > 0 ? Math.max(...this.tareas.map(t => t.idTarea)) : this.idMateria * 100;
+
+    // Asignar el siguiente ID disponible
+    nueva.idTarea = maxId + 1;
 
     this.tareas.push(nueva);
   }
+
 
 
   validarPorcentajes(): boolean {

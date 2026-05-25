@@ -38,36 +38,34 @@
   <ion-card class="horario-card">
     <ion-card-content>
       <div class="horario-scroll">
-        <ion-grid class="horario-grid">
-          <!-- Encabezado -->
-          <ion-row>
-            <ion-col size="1">Hora</ion-col>
-            <ion-col size="2">Lunes</ion-col>
-            <ion-col size="2">Martes</ion-col>
-            <ion-col size="2">Miércoles</ion-col>
-            <ion-col size="2">Jueves</ion-col>
-            <ion-col size="2">Viernes</ion-col>
-            <ion-col size="2">Sábado</ion-col>
-          </ion-row>
-
-          <!-- Filas de horas -->
-          <ion-row *ngFor="let hora of horas">
-            <ion-col size="1">{{ hora }}:00</ion-col>
-
-            <!-- Columna por cada día -->
-            <ion-col size="2" *ngFor="let dia of [1,2,3,4,5,6]">
-              <div *ngIf="getHorario(dia, hora)"
-                   class="horario-bloque"
-                   [style.background]="getHorario(dia, hora)?.materiaColor">
-                {{ getHorario(dia, hora)?.materiaNombre }}
-                <span *ngIf="getHorario(dia, hora)?.materiaSalon">
-                  ({{ getHorario(dia, hora)?.materiaSalon }})
-                </span>
-              </div>
-            </ion-col>
-
-          </ion-row>
-        </ion-grid>
+        <table class="horario-table">
+          <thead>
+            <tr>
+              <th>Hora</th>
+              <th>Lunes</th>
+              <th>Martes</th>
+              <th>Miércoles</th>
+              <th>Jueves</th>
+              <th>Viernes</th>
+              <th>Sábado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let hora of horas">
+              <td>{{ hora }}:00</td>
+              <td *ngFor="let dia of [1,2,3,4,5,6]">
+                <div *ngIf="getHorario(dia, hora)"
+                    class="horario-bloque"
+                    [style.background]="getHorario(dia, hora)?.materiaColor">
+                  {{ getHorario(dia, hora)?.materiaNombre }}
+                  <span *ngIf="getHorario(dia, hora)?.materiaSalon">
+                    ({{ getHorario(dia, hora)?.materiaSalon }})
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </ion-card-content>
   </ion-card>
@@ -116,5 +114,8 @@
       </ion-list>
     </ion-card-content>
   </ion-card>
+
+  <div style="height: 80px;"></div>
+
 
 </ion-content>

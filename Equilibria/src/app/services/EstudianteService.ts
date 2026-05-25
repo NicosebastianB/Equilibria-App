@@ -144,38 +144,6 @@ export class EstudianteService {
     this.estudiante?.desactivarTodosLosRecordatorios();
   }
 
-  // Permitir registrar un cliente remoto (no obligatorio)
-  setRemoteClient(client: RemoteStudentClient) {
-    this.remoteClient = client;
-  }
-
-  // Exponer resumen local (útil para la UI o para ensamblar el payload del backend)
-  getLocalStudentSummary() {
-    if (!this.estudiante) return null;
-    return this.estudiante.getSummary();
-  }
-
-  // Método para obtener lista pública desde el servidor (si hay cliente)
-  async fetchRemoteSummaries(): Promise<{ id: string; nombre: string; avatar: string }[]> {
-    if (!this.remoteClient) return [];
-    return this.remoteClient.listSummaries();
-  }
-
-  // Ejemplo de stub de sincronización: empujar cambios locales marcados como 'dirty'
-  async syncIfNeeded(): Promise<void> {
-    if (!this.remoteClient || !this.estudiante) return;
-    if (this.estudiante.dirty) {
-      const dto = this.estudiante.toDTO();
-      if (!this.estudiante.idEstudiante.startsWith('st_')) {
-        await this.remoteClient.createStudent(dto);
-      } else {
-        await this.remoteClient.updateStudent(dto);
-      }
-      this.estudiante.markDirty(false);
-      this.estudiante.lastSyncAt = new Date().toISOString();
-    }
-  }
-
   // Nuevos métodos para el estado de onboarding
   isOnboardingCompleted(): boolean {
     return this.onboardingCompleted;

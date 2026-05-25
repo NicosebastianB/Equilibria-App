@@ -1,26 +1,62 @@
 import { Injectable } from '@angular/core';
 import { Materia } from '../models/materia';
-import { MateriaService } from './MateriaService';
+import { Semestre } from '../models/semestre';
 import { Tarea } from '../models/tarea';
 import { Horario } from '../models/horario';
 import { Corte } from '../models/corte';
 import { RegistroEstudio } from '../models/registroEstudio';
 import { Actividad } from '../models/actividad';
 import { Calificable } from '../models/calificable';
+import { MOCK_ESTUDIANTE } from '../mocks/mock-data';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DataService {
   private materias: Materia[] = [];
+  private useMockData = false; // Cambia a true solo para desarrollo local
+  private readonly MOCK_MODE_KEY = 'useMockData';
 
   constructor() {
+    this.useMockData = this.getMockModeFromStorage();
     this.cargarDatos();
+  }
+
+  private getMockModeFromStorage(): boolean {
+    const storedValue = localStorage.getItem(this.MOCK_MODE_KEY);
+    return storedValue === null ? this.useMockData : storedValue === 'true';
+  }
+
+  public isMockModeEnabled(): boolean {
+    return this.useMockData;
+  }
+
+  public setMockMode(enabled: boolean): void {
+    this.useMockData = enabled;
+    localStorage.setItem(this.MOCK_MODE_KEY, String(enabled));
+  }
+
+  private parseDate(value: string | Date): Date {
+    if (!value) {
+      return new Date(NaN);
+    }
+
+    if (typeof value === 'string') {
+      const match = /^([0-9]{4})-([0-9]{2})-([0-9]{2})/.exec(value);
+      if (match) {
+        return new Date(+match[1], +match[2] - 1, +match[3]);
+      }
+      const parsed = new Date(value);
+      return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+    }
+
+    return new Date(value.getFullYear(), value.getMonth(), value.getDate());
   }
 
   // Cargar desde localStorage
   public cargarDatos() {
     const materiasGuardadas = localStorage.getItem('materias');
+    const usuarioConfigurado = localStorage.getItem('usuarioConfigurado');
 
     if (materiasGuardadas) {
       const materiasData = JSON.parse(materiasGuardadas);
@@ -121,6 +157,40 @@ export class DataService {
     } else {
       this.materias = [];
     }
+
+    // 🔑 Si no hay usuario configurado y el modo mock está activado, usar el mock
+    if (!materiasGuardadas && !usuarioConfigurado && this.useMockData && MOCK_ESTUDIANTE && MOCK_ESTUDIANTE.length > 0) {
+      const estudiante = MOCK_ESTUDIANTE[0];
+
+      // ✅ Normalizar fechas del semestre y vacaciones
+      if (estudiante.semestre) {
+        estudiante.semestre.fechaInicio = this.parseDate(estudiante.semestre.fechaInicio);
+        estudiante.semestre.fechaFin = this.parseDate(estudiante.semestre.fechaFin);
+        estudiante.semestre.vacaciones = estudiante.semestre.vacaciones.map(v => ({
+          inicio: this.parseDate(v.inicio),
+          fin: this.parseDate(v.fin)
+        }));
+      }
+
+      const usuario = {
+        nombre: estudiante.nombre,
+        avatar: estudiante.avatar,
+        semestre: {
+          idSemestre: estudiante.semestre?.idSemestre,
+          nombre: estudiante.semestre?.nombre,
+          fechaInicio: estudiante.semestre?.fechaInicio,
+          fechaFin: estudiante.semestre?.fechaFin,
+          vacaciones: estudiante.semestre?.vacaciones
+        }
+      };
+
+      localStorage.setItem('usuario', JSON.stringify(usuario));
+      localStorage.setItem('usuarioConfigurado', 'true');
+
+      // Guardar materias del mock
+      estudiante.materias.forEach(m => this.addMateria(m));
+    }
+
   }
 
 
@@ -242,6 +312,43 @@ export class DataService {
     return this.materias.filter(m => !m.finalizado);
   }
 
+  public calcularProporcionEstudio(): { [idMateria: number]: number } {
+    const materiasActivas = this.getMateriasActivas();
+    const totalHoras = materiasActivas.reduce(
+      (acc, materia) => acc + materia.calcularHorasAcumuladas(),
+      0
+    );
+
+    return materiasActivas.reduce((result: { [idMateria: number]: number }, materia) => {
+      result[materia.idMateria] = totalHoras > 0 ? (materia.calcularHorasAcumuladas() / totalHoras) * 100 : 0;
+      return result;
+    }, {});
+  }
+
+  public obtenerSemestre(): Semestre | null {
+    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    if (!usuario?.semestre?.fechaInicio || !usuario?.semestre?.fechaFin) {
+      return null;
+    }
+
+    const vacaciones = Array.isArray(usuario.semestre.vacaciones)
+      ? usuario.semestre.vacaciones.map((v: any) => ({
+          inicio: this.parseDate(v.inicio),
+          fin: this.parseDate(v.fin)
+        }))
+      : [];
+
+    const semestre = new Semestre(
+      1,
+      usuario.semestre?.nombre || 'Semestre actual',
+      this.parseDate(usuario.semestre.fechaInicio),
+      this.parseDate(usuario.semestre.fechaFin),
+      vacaciones
+    );
+    semestre.calcularSemanasTotales();
+    return semestre;
+  }
+
   // Obtener todas las materias finalizadas
   getMateriasFinalizadas(): Materia[] {
     return this.materias.filter(m => m.finalizado);
@@ -347,7 +454,13 @@ export class DataService {
     }
   }
 
-
+  agregarRegistro(idMateria: number, registro: RegistroEstudio) {
+    const materia = this.materias.find(m => m.idMateria === idMateria);
+    if (materia) {
+      materia.agregarRegistro(registro);
+      this.guardarDatos();
+    }
+  }
 
 
 }

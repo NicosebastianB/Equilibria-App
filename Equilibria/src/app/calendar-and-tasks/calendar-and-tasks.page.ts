@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { Materia } from '../models/materia';
 import { Tarea } from '../models/tarea';
 import { HorarioEnriquecido } from '../models/horario-enriquecido';
@@ -34,6 +35,7 @@ import
   styleUrls: ['./calendar-and-tasks.page.scss'],
   standalone: true,
   imports: [
+    RouterModule,
     FormsModule,
     IonContent, IonHeader, IonToolbar, IonTitle, 
     IonButtons, IonButton, IonIcon, 

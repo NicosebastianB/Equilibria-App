@@ -16,7 +16,7 @@ export class Estudiante {
     public avatar: string,
     public materias: Materia[] = [],
     public recordatorios: Recordatorio[] = [],
-    public semestre: Semestre | null = null
+    public semestre: Semestre,
   ) {
     this.idEstudiante = idEstudiante ?? Estudiante.generateId();
     this.createdAt = new Date().toISOString();
@@ -25,34 +25,6 @@ export class Estudiante {
   // Generador simple de id (puede reemplazarse por UUID en backend)
   static generateId(): string {
     return 'st_' + Date.now().toString(36) + Math.floor(Math.random() * 10000).toString(36);
-  }
-
-  // Devuelve la representación mínima que el backend necesita para el listado público
-  toSummaryDTO() {
-    return { id: this.idEstudiante, nombre: this.nombre, avatar: this.avatar };
-  }
-
-  // DTO completo para sincronización
-  toDTO() {
-    return {
-      id: this.idEstudiante,
-      nombre: this.nombre,
-      avatar: this.avatar,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
-      version: this.version
-      // NOTA: no incluir objetos pesados si el endpoint solo necesita resumen
-    };
-  }
-
-  static fromDTO(dto: any): Estudiante {
-    const e = new Estudiante(dto.id, dto.nombre, dto.avatar);
-    e.createdAt = dto.createdAt;
-    e.updatedAt = dto.updatedAt;
-    e.version = dto.version ?? 1;
-    e.lastSyncAt = new Date().toISOString();
-    e.dirty = false;
-    return e;
   }
 
   markDirty(flag: boolean = true) {
@@ -124,8 +96,4 @@ export class Estudiante {
     this.recordatorios.forEach(r => r.desactivarNotificaciones());
   }
 
-  // método utilitario para UI/servicio
-  getSummary() {
-    return this.toSummaryDTO();
-  }
 }

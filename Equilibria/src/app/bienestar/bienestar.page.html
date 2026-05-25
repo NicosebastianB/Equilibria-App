@@ -1,13 +1,106 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>bienestar</ion-title>
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/calendar-and-tasks"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Bienestar</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">bienestar</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+  <ion-item lines="none">
+    <ion-label>
+      <h2>Recordatorios saludables</h2>
+      <p>Gestiona qué recordatorios aparecen en modo estudio y con qué frecuencia quieres recibirlos.</p>
+    </ion-label>
+  </ion-item>
+
+  <ion-list>
+    <ion-card *ngFor="let recordatorio of recordatorios"
+              [style.borderLeft]="'6px solid ' + getColorHex(recordatorio.color)"
+              [style.boxShadow]="'0 2px 10px rgba(0,0,0,0.05)'">
+      <ion-card-header>
+        <ion-card-title>
+          <span class="color-indicator" [style.background]="getColorHex(recordatorio.color)"></span>
+          {{ recordatorio.nombre }}
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item lines="none">
+          <ion-label>Modo estudio</ion-label>
+          <ion-toggle
+            slot="end"
+            [checked]="recordatorio.modoEstudio === 'on'"
+            (ionChange)="updateModoEstudio(recordatorio, $event.detail.checked)">
+          </ion-toggle>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label>Frecuencia</ion-label>
+          <ion-select slot="end" [(ngModel)]="recordatorio.frecuencia" (ionChange)="persistRecordatorios()">
+            <ion-select-option value="daily">Todos los días</ion-select-option>
+            <ion-select-option value="weekly">Semanal</ion-select-option>
+            <ion-select-option value="once">Una vez</ion-select-option>
+            <ion-select-option value="never">Nunca</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-button *ngIf="recordatorio.isCustom" color="danger" fill="clear" expand="block" (click)="eliminarRecordatorio(recordatorio)">
+          <ion-icon slot="start" name="trash-outline"></ion-icon>
+          Eliminar recordatorio
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Crear recordatorio personalizado</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Nombre</ion-label>
+        <ion-input [(ngModel)]="newNombre" placeholder="Ej. Toma un descanso"></ion-input>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-label position="stacked">Color</ion-label>
+        <div class="color-scroll">
+          <div class="color-selector">
+            <div *ngFor="let color of colores"
+                 class="color-chip"
+                 [class.selected]="newColor === color.value"
+                 (click)="newColor = color.value"
+                 [style.background]="color.hex"
+                 [style.border]="newColor === color.value ? '2px solid #555' : '1px solid rgba(0,0,0,0.15)'">
+              {{ color.value }}
+            </div>
+          </div>
+        </div>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Modo estudio</ion-label>
+        <ion-toggle
+          slot="end"
+          [checked]="newModoEstudio === 'on'"
+          (ionChange)="newModoEstudio = $event.detail.checked ? 'on' : 'off'">
+        </ion-toggle>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Frecuencia</ion-label>
+        <ion-select slot="end" [(ngModel)]="newFrecuencia">
+          <ion-select-option value="daily">Todos los días</ion-select-option>
+          <ion-select-option value="weekly">Semanal</ion-select-option>
+          <ion-select-option value="once">Una vez</ion-select-option>
+          <ion-select-option value="never">Nunca</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-button expand="block" color="primary" [disabled]="!newNombre.trim()" (click)="agregarRecordatorioPersonalizado()">
+        Agregar recordatorio
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

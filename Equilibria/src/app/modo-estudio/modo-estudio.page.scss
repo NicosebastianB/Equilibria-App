@@ -1,3 +1,308 @@
 ion-title {
   text-align: center;
 }
+
+ion-header ion-toolbar.page-top-toolbar {
+  --background: #ffffff;
+  --color: #877DC0;
+}
+
+ion-header ion-toolbar.page-top-toolbar ion-title,
+ion-header ion-toolbar.page-top-toolbar ion-button,
+ion-header ion-toolbar.page-top-toolbar ion-icon {
+  color: #877DC0 !important;
+}
+
+ion-toolbar {
+  --background: #ffffff;
+  --border-style: none;
+  border: none;
+  --min-height: 100px; 
+  
+  ion-button {
+    width: 70px !important;
+    height: 70px !important;
+    margin: 0px 0px -20px 0px !important;
+
+    ion-icon {
+      font-size: 60px !important; 
+      width: 60px !important;
+      height: 60px !important;
+    }
+  }
+}
+
+ion-title {
+  text-align: center;
+  font-family: 'RTL-Roman', serif; 
+  color: #877DC0; 
+  font-size: 2.5rem;
+  margin-top: 20px;
+}
+
+.modo-estudio-page {
+  --background: #EEF0FF;
+
+  ion-item {
+    --background: #ffffff !important;
+    background: #ffffff !important;
+    --border-style: solid !important;
+    --border-width: 0 0 1px 0 !important;
+    --border-color: rgba(135, 125, 192, 0.16) !important;
+    border-radius: 20px !important;
+    margin-bottom: 16px;
+    padding-left: 18px;
+    padding-right: 18px;
+    min-height: 72px;
+    box-shadow: 0 10px 30px rgba(135, 125, 192, 0.08);
+  }
+
+  ion-item:last-child {
+    margin-bottom: 0;
+  }
+
+  ion-label {
+    color: #3d2f72 !important;
+    font-weight: 700;
+  }
+
+  ion-select,
+  ion-input,
+  ion-toggle {
+    --color: #3d2f72 !important;
+    color: #3d2f72 !important;
+  }
+
+  ion-datetime {
+    --background: #ffffff !important;
+    --color: #3d2f72 !important;
+    --placeholder-color: rgba(61, 47, 114, 0.45) !important;
+    --border-radius: 16px !important;
+    --padding-start: 14px !important;
+    --padding-end: 14px !important;
+    --box-shadow: none !important;
+    --picker-background: #ffffff;
+    --picker-toolbar-background: #877DC0;
+    --picker-button-color: #ffffff;
+    --picker-button-disabled-color: rgba(255, 255, 255, 0.6);
+    --picker-column-background: #f4f1ff;
+  }
+
+  ion-datetime::part(display-text) {
+    color: #3d2f72 !important;
+  }
+
+  ion-progress-bar {
+    --background: rgba(135, 125, 192, 0.12);
+    --progress-background: #877DC0;
+  }
+
+  .modo-estudio-header {
+    margin-bottom: 20px;
+    padding: 0 6px;
+  }
+
+  .modo-estudio-header h2 {
+    margin: 0 0 8px 0;
+    font-family: 'Montserrat', sans-serif;
+    color: #3d2f72;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  .modo-estudio-header p {
+    margin: 0;
+    color: #5b4d8d;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .botones-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 18px;
+  }
+
+  .botones-container ion-button {
+    --border-radius: 18px;
+    width: 100%;
+  }
+}
+
+.chip-recordatorio {
+  background-color: #4caf50 !important; /* verde sólido */
+  color: white !important;
+  font-weight: bold;
+}
+
+.temporizador-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+ion-datetime {
+  --background: rgb(245, 235, 247);
+  --background-rgb: rgb(186, 157, 192);
+  --wheel-highlight-background: rgb(240, 233, 255);
+  --wheel-highlight-border-radius: 48px;
+  --wheel-fade-background-rgb: rgb(248, 241, 255) ;
+}
+
+ion-datetime::part(wheel):focus {
+  background: rgb(191, 194, 233);
+}
+
+ion-datetime::part(wheel-item) {
+  color: rgb(89, 53, 146);
+}
+
+ion-datetime::part(wheel-item active) {
+  color: rgb(91, 128, 209);
+}
+
+.configuracion-temporizador {
+  background: #ffffff;
+  border-radius: 20px;
+  margin-bottom: 16px;
+  padding: 16px 18px;
+  min-height: 72px;
+  box-shadow: 0 10px 30px rgba(135, 125, 192, 0.08);
+  border: 1px solid rgba(135, 125, 192, 0.16);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* centra horizontalmente */
+  justify-content: center; /* centra verticalmente */
+
+  text-align: center; /* centra el texto dentro de los hijos */
+
+  ion-label {
+    color: #3d2f72 !important;
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-align: center; /* asegura que el texto del label esté centrado */
+  }
+
+  ion-datetime {
+    --background: #ffffff !important;
+    --color: #3d2f72 !important;
+    --border-radius: 16px !important;
+    --padding-start: 14px !important;
+    --padding-end: 14px !important;
+    box-shadow: none !important;
+    text-align: center; /* centra el texto del datetime */
+  }
+
+  ion-datetime::part(display-text) {
+    color: #3d2f72 !important;
+    font-weight: 600;
+    text-align: center;
+  }
+}
+
+/* --- Modal del Temporizador --- */
+ion-modal {
+  --background: #EBEFFF; /* Fondo suave */
+  --border-radius: 24px;
+  --box-shadow: 0 8px 30px rgba(135, 125, 192, 0.25);
+}
+
+ion-modal ion-toolbar {
+  --background: #ffffff;
+  --color: #877DC0;
+  font-family: 'RTL-Roman', serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  text-align: center;
+  border-bottom: 2px solid rgba(135, 125, 192, 0.15);
+}
+
+ion-modal ion-button {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* --- Contenedor principal --- */
+.temporizador-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  gap: 12px;
+}
+
+.temporizador-container h1 {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #3d2f72;
+  margin: 10px 0 0 0;
+}
+
+.temporizador-container p {
+  font-size: 1.1rem;
+  color: #5b4d8d;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+/* --- Botones --- */
+.botones-container {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.botones-container ion-button {
+  --border-radius: 14px;
+  --box-shadow: 0 4px 10px rgba(135, 125, 192, 0.15);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  width: 110px;
+}
+
+/* Colores personalizados */
+ion-button[color="success"] {
+  --background: #CEFACC;
+  --color: #2e7d32;
+}
+
+ion-button[color="warning"] {
+  --background: #FFF5AC;
+  --color: #8a6d00;
+}
+
+ion-button[color="danger"] {
+  --background: #ff6b6b;
+  --color: #ffffff;
+}
+
+/* --- Chip de recordatorio --- */
+ion-chip {
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(135, 125, 192, 0.15);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  margin-top: 20px;
+  transition: transform 0.3s ease;
+}
+
+ion-chip:hover {
+  transform: scale(1.05);
+}
+
+
+
+
+

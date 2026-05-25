@@ -1,64 +1,72 @@
-/* --- Contenedor general de la barra de navegación --- */
 ion-tab-bar {
-  //display: none !important;
-  --background: transparent; 
+  --background: transparent;
   border-top: none;
-  height: 120px; 
-  padding: 0 10px 15px 10px;
-  
-  // CONTROL DE ESPACIADO
+  height: 90px; /* altura más compacta */
   display: flex;
-  justify-content: center;
-  gap: 25px;
-  align-items: center;
+  justify-content: space-around;
+  align-items: flex-end;
+  padding: 0 10px;
+  position: relative;
+  z-index: 10;
 
-  // Barra con circulos
-  background-image: url('/assets/icon/bg-tabs-wave.svg');
-  background-repeat: no-repeat;
-  background-size: 100%;
-  background-position: center 15px;
-
-  // Sombra
-  filter: drop-shadow(0px -1px 3px #7f75b355); 
-
-  margin-top: -50px;
-  overflow: visible;
+  /* mitad inferior blanca */
+  background: linear-gradient(to top, #ffffff 60%, transparent 40%);
 }
 
-/* --- Estado normal: Las burbujas apagadas --- */
+/* pseudo-element solo para sombra en la parte blanca */
+ion-tab-bar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 55%; /* cubre solo la franja blanca */
+  background: transparent; /* no pinta nada, solo sirve de soporte */
+  box-shadow: 0 -2px 8px rgba(135, 125, 192, 0.15);
+  z-index: -1; /* detrás de los botones */
+}
+
+/* Botones */
 ion-tab-button {
-  // El fondo de la burbuja cuando NO está seleccionada
-  --background: #EBEFFF; 
-  // El color que tomará tu icono SVG de Illustrator automáticamente
-  --color: #979FC2; 
-  
-  width: 70px;
-  height: 70px;
-  max-width: 70px;
-  border-radius: 50%;
-  margin: 0;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --background: transparent;
+  --color: #979FC2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+  transition: all 0.2s ease-in-out;
+  z-index: 1;
 
   ion-icon {
-    font-size: 70px; /* tamaño de icono*/
+    font-size: 34px;
+    z-index: 2;
+    transform: translateY(35px);
+  }
+
+  .bubble {
+    position: absolute;
+    bottom: 0;
+    width: 75px;
+    height: 75px;
+    background: #ffffff;
+    border-radius: 50%;
+    z-index: 1;
+    transform: translateY(2px);
   }
 }
 
-/* --- Estado ACTIVO: La burbuja presionada --- */
+/* Estado activo */
 ion-tab-button.tab-selected {
-  // El fondo cambia
-  --background: #72CBF1; 
-  // cambio de color del icono
-  --color: #ffffff; 
-  
-  transform: translateY(-2px); /* Efecto flotante hacia arriba */
+  --color: #72CBF1;
 
-  //CAMBIO DE COLOR EN EL SVG
+  .bubble {
+    background: #72CBF1;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15); /* sombra solo en burbuja activa */
+  }
+
   ion-icon {
     color: #ffffff !important;
-    &::part(svg), path, rect, circle, polygon {
-      fill: #ffffff !important;
-      stroke: #ffffff;
-    }
   }
 }

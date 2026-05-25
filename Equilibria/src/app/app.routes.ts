@@ -12,5 +12,13 @@ export const routes: Routes = [
   {
     path: 'onboarding',
     loadComponent: () => import('./onboarding/onboarding.page').then(m => m.OnboardingPage)
+  },
+  {
+    path: 'settings',
+    loadComponent: () => import('./settings/settings.page').then(m => m.SettingsPage)
+  },
+  {
+    path: 'bienestar',
+    loadComponent: () => import('./bienestar/bienestar.page').then(m => m.BienestarPage)
   }
 ];

@@ -31,7 +31,8 @@ import {
   IonCardTitle,
   IonCardHeader,
   IonCardContent,
-  IonNote
+  IonNote,
+  IonDatetime
 } from '@ionic/angular/standalone';
 import { add, close, trash, settingsSharp, roseSharp, pencil } from 'ionicons/icons';
 import { DataService } from '../services/data';
@@ -66,7 +67,8 @@ import { OverlayEventDetail } from '@ionic/core/components';
     IonCardTitle,
     IonCardHeader,
     IonCardContent,
-    IonNote
+    IonNote,
+    IonDatetime
   ]
 
 })
@@ -409,20 +411,14 @@ export class MateriasPage implements OnInit {
   //a partir de este comentario hasta el final se encarga de gestionar la lista de materias guardadas en el mock data, permitiendo editar la materia (lo que basicamente solo abre la pagina dedicada a la materia y toda su informacion). Esto es para verificar que el flujo de navegación entre paginas funciona correctamente, y que la informacion de cada materia se muestra correctamente en su pagina dedicada.
 
   private loadDedicacion() {
-    const estudiante = this.mockService.getEstudiante();
-    if (!estudiante) return;
-
-    this.estudianteService.setEstudiante(estudiante);
-    const proporciones = this.estudianteService.calcularProporcionEstudio();
+    const proporciones = this.dataService.calcularProporcionEstudio();
     this.tiempoDedicadoPorMateria = {};
 
-    const semestre = this.mockService.getSemestre();
+    const semestre = this.dataService.obtenerSemestre() || this.mockService.getSemestre();
     this.cumplimientoSemanal = {};
 
     this.materias.forEach(materia => {
       materia.calcularHorasTrabajo(semestre);
-
-      // ✅ usar idMateria como clave en ambos diccionarios
       this.tiempoDedicadoPorMateria[materia.idMateria] = proporciones[materia.idMateria] ?? 0;
       this.cumplimientoSemanal[materia.idMateria] = this.materiaService.obtenerCumplimientoSemanal(materia, semestre);
     });

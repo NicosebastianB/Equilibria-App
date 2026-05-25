@@ -52,7 +52,7 @@
     <ion-modal trigger="open-modal" [initialBreakpoint]="0.5" [breakpoints]="[0.5]">
       <ng-template>
         <div class="datetime-wrapper">
-          <ion-datetime presentation="date" [showDefaultButtons]="true" [(ngModel)]="semestreInicio"></ion-datetime>
+          <ion-datetime presentation="date" displayFormat="YYYY-MM-DD" pickerFormat="YYYY-MM-DD" [(ngModel)]="semestreInicio" name="semestreInicio" show-default-buttons="true" acceptText="Aceptar" cancelText="Cancelar"></ion-datetime>
         </div>
       </ng-template>
     </ion-modal>
@@ -61,7 +61,7 @@
     <ion-modal trigger="open-modal-2" [initialBreakpoint]="0.5" [breakpoints]="[0.5]">
       <ng-template>
         <div class="datetime-wrapper">
-          <ion-datetime presentation="date" [showDefaultButtons]="true" [(ngModel)]="semestreFin"></ion-datetime>
+          <ion-datetime presentation="date" displayFormat="YYYY-MM-DD" pickerFormat="YYYY-MM-DD" [(ngModel)]="semestreFin" name="semestreFin" show-default-buttons="true" acceptText="Aceptar" cancelText="Cancelar"></ion-datetime>
         </div>
       </ng-template>
     </ion-modal>
@@ -81,7 +81,7 @@
     <ion-modal trigger="open-vacaciones-inicio" [initialBreakpoint]="0.5" [breakpoints]="[0.5]">
       <ng-template>
         <div class="datetime-wrapper">
-          <ion-datetime presentation="date" [showDefaultButtons]="true" [(ngModel)]="vacacionesSemestreInicio"></ion-datetime>
+          <ion-datetime presentation="date" displayFormat="YYYY-MM-DD" pickerFormat="YYYY-MM-DD" [(ngModel)]="vacacionesSemestreInicio" name="vacacionesSemestreInicio" show-default-buttons="true" acceptText="Aceptar" cancelText="Cancelar"></ion-datetime>
         </div>
       </ng-template>
     </ion-modal>
@@ -90,7 +90,7 @@
     <ion-modal trigger="open-vacaciones-fin" [initialBreakpoint]="0.5" [breakpoints]="[0.5]">
       <ng-template>
         <div class="datetime-wrapper">
-          <ion-datetime presentation="date" [showDefaultButtons]="true" [(ngModel)]="vacacionesSemestreFin"></ion-datetime>
+          <ion-datetime presentation="date" displayFormat="YYYY-MM-DD" pickerFormat="YYYY-MM-DD" [(ngModel)]="vacacionesSemestreFin" name="vacacionesSemestreFin" show-default-buttons="true" acceptText="Aceptar" cancelText="Cancelar"></ion-datetime>
         </div>
       </ng-template>
     </ion-modal>
