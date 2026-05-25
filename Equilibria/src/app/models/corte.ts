@@ -14,6 +14,11 @@ export class Corte {
     public fijo: boolean = false
   )
   {
+    if (!actividades || actividades.length === 0) {
+      this.actividades = [
+        new Actividad(this.idMateria, this.idCorte, this.idCorte * 10 + 1, 'Actividad 1', 100)
+      ];
+    }
   }
 
   crearActividad(nombre: string, porcentaje: number): Actividad {

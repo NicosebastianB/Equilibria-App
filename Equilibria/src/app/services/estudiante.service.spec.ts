@@ -3,6 +3,7 @@ import { EstudianteService } from './EstudianteService';
 import { Estudiante } from '../models/estudiante';
 import { Materia } from '../models/materia';
 import { RegistroEstudio } from '../models/registroEstudio';
+import { Semestre } from '../models/semestre';
 
 describe('EstudianteService', () => {
   let service: EstudianteService;
@@ -11,7 +12,14 @@ describe('EstudianteService', () => {
   beforeEach(() => {
     service = new EstudianteService();
     // Inicializar el unico estudiante de la app con un nombre y avatar
-    estudiante = new Estudiante(undefined, 'Nico', 'Avatar_1');
+    estudiante = new Estudiante(
+      undefined,
+      'Nico',
+      'Avatar_1',
+      [],
+      [],
+      new Semestre(1, 'Semestre dummy', new Date(2026, 0, 1), new Date(2026, 0, 1), [])
+    );
     service.setEstudiante(estudiante);
   });
 
@@ -170,7 +178,14 @@ describe('EstudianteService - Proporción de estudio', () => {
 
   beforeEach(() => {
     service = new EstudianteService();
-    estudiante = new Estudiante(undefined, 'Nico', 'Avatar_1');
+    estudiante = new Estudiante(
+      undefined,
+      'Nico',
+      'Avatar_1',
+      [],
+      [],
+      new Semestre(1, 'Semestre dummy', new Date(2026, 0, 1), new Date(2026, 0, 1), [])
+    );
     service.setEstudiante(estudiante);
   });
 
@@ -188,8 +203,8 @@ describe('EstudianteService - Proporción de estudio', () => {
 
     const proporciones = service.calcularProporcionEstudio();
 
-    expect(proporciones['Física']).toBeCloseTo(40, 1); // 40%
-    expect(proporciones['Ingeniería de Software']).toBeCloseTo(60, 1); // 60%
+    expect(proporciones[fisica.idMateria]).toBeCloseTo(40, 1); // 40%
+    expect(proporciones[software.idMateria]).toBeCloseTo(60, 1); // 60%
   });
 
   it('no debería incluir materias finalizadas en la proporción', () => {
@@ -207,8 +222,8 @@ describe('EstudianteService - Proporción de estudio', () => {
 
     const proporciones = service.calcularProporcionEstudio();
 
-    expect(proporciones['Física']).toBeUndefined();
-    expect(proporciones['Ingeniería de Software']).toBeCloseTo(100, 1); // 100% porque es la única activa
+    expect(proporciones[fisica.idMateria]).toBeUndefined();
+    expect(proporciones[software.idMateria]).toBeCloseTo(100, 1); // 100% porque es la única activa
   });
 });
 

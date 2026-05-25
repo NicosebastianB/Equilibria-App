@@ -75,7 +75,7 @@ ion-datetime {
 
 .titulo-materia-header {
   @extend %montserrat-bold;
-  font-size: 1.9rem;
+  font-size: 1.4rem;
   color: $color-primary;
   margin: 0;
   flex: 1;
@@ -164,6 +164,11 @@ ion-datetime {
   }
 }
 
+.completada {
+  text-decoration: line-through;
+  color: $color-secondary;
+}
+
 .bloque-acciones-derecha {
   display: flex;
   flex-direction: column;
@@ -177,6 +182,39 @@ ion-datetime {
   font-size: 0.78rem;
   color: $color-danger;
   margin-bottom: 2px;
+}
+
+.resumen-materia-card {
+  background: #fbf9ff;
+  border: 1px solid rgba(135, 125, 192, 0.16);
+}
+
+.resumen-atributos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.resumen-atributo {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(135, 125, 192, 0.06);
+}
+
+.resumen-label {
+  @extend %montserrat-regular;
+  color: $color-secondary;
+  font-size: 0.75rem;
+  margin-bottom: 6px;
+}
+
+.resumen-value {
+  @extend %montserrat-semibold;
+  color: $color-primary;
+  font-size: 0.95rem;
+  line-height: 1.3;
 }
 
 .texto-completado {
@@ -224,6 +262,14 @@ ion-datetime {
   font-size: 4.2rem;
   color: $color-primary;
   line-height: 1;
+  margin-bottom: 6px;
+}
+
+.nota-definitiva-placeholder {
+  @extend %montserrat-semibold;
+  font-size: 1.3rem;
+  color: $color-secondary;
+  line-height: 1.2;
   margin-bottom: 6px;
 }
 

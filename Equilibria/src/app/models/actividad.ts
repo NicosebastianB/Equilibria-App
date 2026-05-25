@@ -15,8 +15,9 @@ export class Actividad {
     public fijo: boolean = false
   )
   {
+    const idBase = this.idActividad * 10;
     const maxId = calificables.length > 0
-      ? Math.max(...calificables.map(c => c.idCalificable % 10)) // último dígito
+      ? Math.max(...calificables.map(c => c.idCalificable - idBase))
       : 0;
     this.nextCalificableId = maxId + 1;
   }
