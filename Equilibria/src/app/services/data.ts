@@ -14,7 +14,7 @@ import { MOCK_ESTUDIANTE } from '../mocks/mock-data';
 })
 export class DataService {
   private materias: Materia[] = [];
-  private useMockData = true; // Cambia a true solo para desarrollo local
+  private useMockData = false; // Cambia a true solo para desarrollo local
   private readonly MOCK_MODE_KEY = 'useMockData';
 
   constructor() {
