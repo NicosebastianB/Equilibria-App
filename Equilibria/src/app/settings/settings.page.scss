@@ -1,37 +1,75 @@
+.toolbar-header {
+  --background: #877DC0;
+  --color: white;
+  height: 90px;
+}
+
 .titulo-header {
+  font-family: 'Montserrat', sans-serif;
+  color: #EBEFFF;
+  font-size: 1.9rem;
   font-weight: 700;
-  color: #ffffff;
-  background-color: #7b6fbf;
-  padding: 12px;
+  margin-top: 20px;
+  text-align: right;
+  padding-right: 50px;
+}
+
+.icono-back {
+  --icon-font-size: 50px;
+  --color: white;
+  margin-top: 20px;
+}
+
+ion-content {
+  --background: #ffffff;
 }
 
 .titulo-seccion {
+  font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   color: #7b6fbf;
+}
+
+.titulo-perfil {
+  font-size: 1.6rem;
 }
 
 .perfil-container {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
   gap: 12px;
-  padding: 12px 0;
+  padding: 12px 16px;
 }
 
 .avatar {
-  width: 48px;
-  height: 48px;
+  width: 90px;
+  height: 90px;
   background-color: #90dbf4;
 }
 
 .nombre-usuario {
+  padding: 0px 30px 0px 5px;
+  font-family: 'Montserrat', sans-serif;
   color: #7b6fbf;
-  font-weight: 500;
+  font-weight: 300;
+  font-size: 1.3rem;
 }
 
 .estado-notificaciones {
   font-style: italic;
   color: #7b6fbf;
+}
+
+.separador {
+  border: none;
+  border-top: 2px solid #877DC0;
+  margin: 10px;
+}
+
+.btn-editar-perfil {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  font-size: 1.4rem;
 }
 
 .modal-inner {
@@ -52,10 +90,10 @@
   transition: transform 0.2s ease;
 }
 
-  .avatar-item.selected {
-    outline: 3px solid #7b6fbf;
-    transform: scale(1.05);
-  }
+.avatar-item.selected {
+  outline: 3px solid #7b6fbf;
+  transform: scale(1.05);
+}
 
 .button-row {
   display: flex;
@@ -66,4 +104,14 @@
 .resumen-fechas {
   margin-top: 12px;
   font-size: 0.9rem;
+}
+.modal-inner ion-title,
+ion-modal ion-title,
+ion-modal ion-button,
+ion-modal ion-label,
+ion-modal ion-input {
+  color: #7b6fbf;
+}
+.button-row ion-button {
+  color: white;
 }

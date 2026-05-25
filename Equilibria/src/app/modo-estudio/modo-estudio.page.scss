@@ -62,21 +62,21 @@ ion-title {
   }
 
   ion-label {
-    color: #3d2f72 !important;
+    color: #877DC0 !important;
     font-weight: 700;
   }
 
   ion-select,
   ion-input,
   ion-toggle {
-    --color: #3d2f72 !important;
-    color: #3d2f72 !important;
+    --color: #877DC0 !important;
+    color: #877DC0 !important;
   }
 
   ion-datetime {
     --background: #ffffff !important;
-    --color: #3d2f72 !important;
-    --placeholder-color: rgba(61, 47, 114, 0.45) !important;
+    --color: #877DC0 !important;
+    --placeholder-color: #877DC0 !important;
     --border-radius: 16px !important;
     --padding-start: 14px !important;
     --padding-end: 14px !important;
@@ -89,7 +89,7 @@ ion-title {
   }
 
   ion-datetime::part(display-text) {
-    color: #3d2f72 !important;
+    color: #877DC0 !important;
   }
 
   ion-progress-bar {
@@ -105,14 +105,14 @@ ion-title {
   .modo-estudio-header h2 {
     margin: 0 0 8px 0;
     font-family: 'Montserrat', sans-serif;
-    color: #3d2f72;
+    color: #877DC0;
     font-size: 2rem;
     font-weight: 700;
   }
 
   .modo-estudio-header p {
     margin: 0;
-    color: #5b4d8d;
+    color: #877DC0;
     font-family: 'Montserrat', sans-serif;
     font-size: 0.95rem;
     line-height: 1.4;
@@ -160,7 +160,7 @@ ion-datetime::part(wheel):focus {
 }
 
 ion-datetime::part(wheel-item) {
-  color: rgb(89, 53, 146);
+  color: #877DC0;
 }
 
 ion-datetime::part(wheel-item active) {
@@ -184,7 +184,7 @@ ion-datetime::part(wheel-item active) {
   text-align: center; /* centra el texto dentro de los hijos */
 
   ion-label {
-    color: #3d2f72 !important;
+    color: #877DC0 !important;
     font-weight: 700;
     margin-bottom: 8px;
     text-align: center; /* asegura que el texto del label esté centrado */
@@ -192,7 +192,7 @@ ion-datetime::part(wheel-item active) {
 
   ion-datetime {
     --background: #ffffff !important;
-    --color: #3d2f72 !important;
+    --color: #877DC0 !important;
     --border-radius: 16px !important;
     --padding-start: 14px !important;
     --padding-end: 14px !important;
@@ -201,7 +201,7 @@ ion-datetime::part(wheel-item active) {
   }
 
   ion-datetime::part(display-text) {
-    color: #3d2f72 !important;
+    color: #877DC0 !important;
     font-weight: 600;
     text-align: center;
   }
@@ -244,13 +244,13 @@ ion-modal ion-button {
 .temporizador-container h1 {
   font-size: 3.5rem;
   font-weight: 700;
-  color: #3d2f72;
+  color: #877DC0;
   margin: 10px 0 0 0;
 }
 
 .temporizador-container p {
   font-size: 1.1rem;
-  color: #5b4d8d;
+  color: #877DC0;
   font-weight: 500;
   margin-bottom: 20px;
 }
