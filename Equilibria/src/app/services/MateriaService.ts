@@ -33,9 +33,6 @@ export class MateriaService {
     if (materia) {
       materia.agregarRegistro(registro);
     }
-
-    corteEditado!.calcularDefinitiva();
-    console.log("Definitiva recalculada:", corteEditado!.notaDefinitiva);
   }
 
   // --- Cortes dentro de materia ---
