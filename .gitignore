@@ -1,4 +1,5 @@
-# Archivos temporales de Visual Studio
+node_modules/
+.vscode/
+android/
+resources/
 .vs/
-*.vsidx
-*.slnx
