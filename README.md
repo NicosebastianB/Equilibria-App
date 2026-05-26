@@ -43,7 +43,6 @@ Esta combinación nos permite mantener flexibilidad en la asignación de tareas 
 ## 🛠️ Tecnologías utilizadas
 - **Frontend:** Ionic + Angular  
 - **Backend/Servicios:** Node.js  
-- **Base de datos:** SQLite  
 - **Herramientas de empaquetado:** Capacitor  
 - **Pruebas:** Karma  
 
@@ -51,18 +50,7 @@ Esta combinación nos permite mantener flexibilidad en la asignación de tareas 
 La aplicación se organiza en tres capas principales:
 1. **Interfaz (UI):** pantallas y componentes en Ionic.  
 2. **Servicios:** lógica de negocio y conexión con la base de datos.  
-3. **Persistencia:** almacenamiento local con SQLite.  
 
-## 📸 Vista previa del diseño
-<img width="408" height="845" alt="image" src="https://github.com/user-attachments/assets/a2d5aa30-9727-4948-84e1-6e5814075c7c" />
-<img width="408" height="843" alt="image" src="https://github.com/user-attachments/assets/a73005fa-f229-41da-b4dd-ec1c9ff57f3e" />
-<img width="400" height="834" alt="image" src="https://github.com/user-attachments/assets/b587da19-9a1d-40b8-bf77-bc8d7c5668f4" />
-<img width="404" height="834" alt="image" src="https://github.com/user-attachments/assets/f63199c9-fd4d-4903-907f-342b8e61c5a4" />
-<img width="404" height="834" alt="image" src="https://github.com/user-attachments/assets/d1b58989-3e6b-41c3-87c3-807793e770fe" />
-
-## 📂 Documentación adicional
-- `docs/requerimientos.md` → especificación de requerimientos
-- `docs/diagramas` → diagramas de clases, modelos de datos, entre otra documentación
 
 ## 👥 Equipo de desarrollo
 - Carlos Mateo Chimunja — Interfaz  
