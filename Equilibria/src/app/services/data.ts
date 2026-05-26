@@ -8,17 +8,21 @@ import { RegistroEstudio } from '../models/registroEstudio';
 import { Actividad } from '../models/actividad';
 import { Calificable } from '../models/calificable';
 import { MOCK_ESTUDIANTE } from '../mocks/mock-data';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DataService {
   private materias: Materia[] = [];
-  private useMockData = false; // Cambia a true solo para desarrollo local
+  private useMockData = environment.useMockData;
   private readonly MOCK_MODE_KEY = 'useMockData';
 
   constructor() {
-    this.useMockData = this.getMockModeFromStorage();
+    const storedValue = localStorage.getItem(this.MOCK_MODE_KEY);
+    if (storedValue !== null) {
+      this.useMockData = storedValue === 'true';
+    }
     this.cargarDatos();
   }
 

@@ -67,6 +67,18 @@
               "sourceMap": true,
               "namedChunks": true
             },
+            "mock": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.mock.ts"
+                }
+              ],
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            },
             "ci": {
               "progress": false
             }
@@ -81,6 +93,9 @@
             },
             "development": {
               "buildTarget": "app:build:development"
+            },
+            "mock": {
+              "buildTarget": "app:build:mock"
             },
             "ci": {
               "progress": false
