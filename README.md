@@ -20,15 +20,11 @@ Esta combinación nos permite mantener flexibilidad en la asignación de tareas 
 | 4 | Navegación inicial | Implementación de navegación primitiva por tabs |
 | 5 | Diseño visual | Mockup de interfaz en Figma |
 | 6 | Lógica y servicios | Creación y relación de clases y servicios + tests unitarios con Karma |
-
-## 📅 Roadmap de Sprints (actuales)
-| Sprint | Objetivo principal | Entregables |
-|--------|-------------------|-------------|
-| 1 | Diseño inicial de interfaces | Pantallas sencillas en Ionic que validen el funcionamiento de clases y páginas |
-| 2 | Diseño inicial de la base de datos | Pruebas de persistencia para confirmar almacenamiento correcto de información |
-| 3 | Implementación de diseños y estilos | Aplicar estilos y mockups a la interfaz para mejorar la experiencia visual |
-| 4 | Pruebas con mock data | Simulación del entorno visual con datos ficticios para validar flujo de la app |
-| 5 | Consolidación y empaquetamiento | Últimas pruebas de funcionamiento y empaquetado con Capacitor para entrega final |
+| 7 | Diseño inicial de interfaces | Pantallas sencillas en Ionic que validen el funcionamiento de clases y páginas |
+| 8 | Diseño inicial de la base de datos | Pruebas de persistencia para confirmar almacenamiento correcto de información |
+| 9 | Implementación de diseños y estilos | Aplicar estilos y mockups a la interfaz para mejorar la experiencia visual |
+| 10 | Pruebas con mock data | Simulación del entorno visual con datos ficticios para validar flujo de la app |
+| 11 | Consolidación y empaquetamiento | Últimas pruebas de funcionamiento y empaquetado con Capacitor para entrega final |
 
 ## 📊 Estado del proyecto
 - [x] Documentación inicial (diagramas de clases, actividades, casos de uso)  
@@ -40,10 +36,9 @@ Esta combinación nos permite mantener flexibilidad en la asignación de tareas 
 - [x] Creación y relación de clases y servicios  
 - [x] Tests unitarios con Karma  
 - [x] Interfaces iniciales en Ionic  
-- [ ] Persistencia de datos con SQLite  
-- [ ] Estilos y mockups aplicados a la interfaz  
+- [x] Estilos y mockups aplicados a la interfaz  
 - [x] Pruebas con mock data   
-- [ ] Empaquetamiento final con Capacitor  
+- [x] Empaquetamiento final con Capacitor  
 
 ## 🛠️ Tecnologías utilizadas
 - **Frontend:** Ionic + Angular  
